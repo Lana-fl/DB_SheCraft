@@ -1,17 +1,23 @@
-// src/pages/WelcomePage.js
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/WelcomePage.css";
-import bannerImg from "../assets/welcomeBanner.png"; 
+import bannerImg from "../assets/welcomeBanner.png";
+
+import necklacesImg from "../assets/necklaces.jpg";
+import ringsImg from "../assets/rings.jpg";
+import braceletsImg from "../assets/bracelets.jpg";
+import earringsImg from "../assets/earrings.jpg";
+
 export default function WelcomePage() {
   const navigate = useNavigate();
 
-  // later we’ll replace these placeholder images with your real ones
+  
   const categories = [
-    { name: "Necklaces", path: "./assets/necklaces.jpg", placeholder: "N" },
-    { name: "Rings", path: "./assets/rings.jpg", placeholder: "R" },
-    { name: "Bracelets", path: "./assets/bracelets.jpg", placeholder: "B" },
-    { name: "Earrings", path: "./assets/earrings.jpg", placeholder: "E" },
+    { name: "Necklaces", route: "/necklaces", image: necklacesImg },
+    { name: "Rings", route: "/rings", image: ringsImg },
+    { name: "Bracelets", route: "/bracelets", image: braceletsImg },
+    { name: "Earrings", route: "/earrings", image: earringsImg },
   ];
 
   return (
@@ -34,7 +40,7 @@ export default function WelcomePage() {
         
       </section>
 
-      {/* ---------- CATEGORY SECTION (SCROLL DOWN) ---------- */}
+      {/* ---------- CATEGORY SECTION ---------- */}
       <section className="category-section">
         <h2 className="section-title">Discover Our Creations</h2>
         <p className="section-subtitle">
@@ -46,11 +52,14 @@ export default function WelcomePage() {
             <div
               key={cat.name}
               className="category-card"
-              onClick={() => navigate(cat.path)}
+              onClick={() => navigate(cat.route)}
             >
-              {/* This block will become an <img> once you have real photos */}
-              <div className="category-image-placeholder">
-                <span>{cat.placeholder}</span>
+              <div className="category-image-wrapper">
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="category-image"
+                />
               </div>
               <h3>{cat.name}</h3>
             </div>
@@ -58,7 +67,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ---------- FOOTER / ABOUT + CONTACT ---------- */}
+      {/* ---------- FOOTER ---------- */}
       <footer className="footer">
         <div className="footer-about">
           <h3>About SheCraft</h3>
@@ -74,8 +83,7 @@ export default function WelcomePage() {
             Phone: <a href="tel:+96171234567">+961 71 234 567</a>
           </p>
           <p>
-            Email:{" "}
-            <a href="mailto:info@shecraft.com">info@shecraft.com</a>
+            Email: <a href="mailto:info@shecraft.com">info@shecraft.com</a>
           </p>
         </div>
       </footer>
