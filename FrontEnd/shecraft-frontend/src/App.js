@@ -8,14 +8,19 @@ import NecklacesPage from "./pages/NecklacesPage";
 import RingsPage from "./pages/RingsPage";
 import BraceletsPage from "./pages/BraceletsPage";
 import EarringsPage from "./pages/EarringsPage";
+import OrderPage from "./pages/OrderPage";
+
+
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomePage />} />
+        <Route path="/" element={<OrderPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/order" element={<OrderPage />} />
 
         {/* Best seller pages per category */}
         <Route path="/necklaces" element={<NecklacesPage />} />
