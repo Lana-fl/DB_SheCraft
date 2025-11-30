@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/OrderPage.css";
+import Footer from "./Footer";
 
 import ringsImg from "../assets/rings2.png";
 import necklacesImg from "../assets/necklaces2.png";
@@ -41,8 +42,10 @@ export default function OrderPage() {
               {/* <span>Engagement, wedding &amp; more</span> */}
             </div>
           </div>
+          
         ))}
       </div>
+      <Footer />
     </div>
   );
 }

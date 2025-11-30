@@ -8,6 +8,8 @@ import BraceletsPage from "./pages/BraceletsPage";
 import EarringsPage from "./pages/EarringsPage";
 import LoginPage from "./pages/LoginPage";
 import SigninPage from "./pages/LoginPage"; // <-- import added
+import OrderPage from "./pages/OrderPage";
+
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signin" element={<SigninPage />} />
+        <Route path="/orderpage" element={<OrderPage />} />
         <Route path="/necklaces" element={<NecklacesPage />} />
         <Route path="/rings" element={<RingsPage />} />
         <Route path="/bracelets" element={<BraceletsPage />} />
