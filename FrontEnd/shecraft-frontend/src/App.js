@@ -1,13 +1,13 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WelcomePage from "./pages/WelcomePage";
 import AboutPage from "./pages/AboutPage";
-import LoginPage from "./pages/LoginPage";
 import NecklacesPage from "./pages/NecklacesPage";
 import RingsPage from "./pages/RingsPage";
 import BraceletsPage from "./pages/BraceletsPage";
 import EarringsPage from "./pages/EarringsPage";
+import LoginPage from "./pages/LoginPage";
+import SigninPage from "./pages/LoginPage"; // <-- import added
 
 function App() {
   return (
@@ -16,8 +16,7 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Best seller pages per category */}
+        <Route path="/signin" element={<SigninPage />} />
         <Route path="/necklaces" element={<NecklacesPage />} />
         <Route path="/rings" element={<RingsPage />} />
         <Route path="/bracelets" element={<BraceletsPage />} />
