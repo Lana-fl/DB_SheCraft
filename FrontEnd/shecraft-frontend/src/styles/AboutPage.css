@@ -1,0 +1,92 @@
+.about-page {
+  background-color: #1a1a1a;
+  color: #f5f0e6;
+  font-family: "Playfair Display", "Cinzel", serif;
+  min-height: 100vh;
+}
+
+/* reuse your existing navbar + footer styles from WelcomePage.css */
+/* or keep them here if you prefer the same look */
+
+.about-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 20px 60px;
+}
+
+/* ---------- TOP TITLE SECTION ---------- */
+
+.about-hero {
+  text-align: center;
+  margin-bottom: 70px;
+}
+
+.about-hero h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.about-hero p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* ---------- REPEATED TEXT + IMAGE SECTIONS ---------- */
+
+.about-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  margin-bottom: 90px;
+}
+
+.about-section.reverse {
+  flex-direction: row-reverse;
+}
+
+.about-text {
+  flex: 1;
+}
+
+.about-text h2 {
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.about-text p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+/* image side */
+
+.about-image-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.about-image {
+  width: 100%;
+  max-width: 430px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 900px) {
+  .about-section,
+  .about-section.reverse {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .about-image {
+    max-width: 100%;
+  }
+}
