@@ -1,4 +1,3 @@
-// src/pages/OrderPage.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/OrderPage.css";
@@ -13,10 +12,10 @@ export default function OrderPage() {
   const navigate = useNavigate();
 
   const categories = [
-    { name: "Rings",        route: "/rings",        image: ringsImg },
-    { name: "Necklaces",    route: "/necklaces",    image: necklacesImg },
-    { name: "Bracelets",    route: "/bracelets",    image: braceletsImg },
-    { name: "Earrings",     route: "/earrings",     image: earringsImg },
+    { name: "Rings", route: "/rings", image: ringsImg },
+    { name: "Necklaces", route: "/necklaces", image: necklacesImg },
+    { name: "Bracelets", route: "/bracelets", image: braceletsImg },
+    { name: "Earrings", route: "/earrings", image: earringsImg },
   ];
 
   return (
@@ -38,11 +37,8 @@ export default function OrderPage() {
             </div>
             <div className="order-card-footer">
               <h2>{cat.name}</h2>
-              {/* optional subtitle text */}
-              {/* <span>Engagement, wedding &amp; more</span> */}
             </div>
           </div>
-          
         ))}
       </div>
       <Footer />
