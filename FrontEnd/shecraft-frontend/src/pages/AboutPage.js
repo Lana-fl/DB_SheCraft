@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/AboutPage.css";
-
+import Footer from './Footer';
 // use your own images here
 import aboutStoryImg from "../assets/ourstory.png";
 import aboutCraftImg from "../assets/craftmanship.png";
@@ -106,26 +106,9 @@ export default function AboutPage() {
         </section>
       </main>
 
-      {/* ---------- FOOTER (same as WelcomePage) ---------- */}
-      <footer className="footer">
-        <div className="footer-about">
-          <h3>About SheCraft</h3>
-          <p>
-            SheCraft specializes in bespoke necklaces, rings, bracelets and
-            earrings, crafted to reflect your story, style, and legacy.
-          </p>
-        </div>
-
-        <div className="footer-contact">
-          <h3>Contact</h3>
-          <p>
-            Phone: <a href="tel:+96171234567">+961 71 234 567</a>
-          </p>
-          <p>
-            Email: <a href="mailto:info@shecraft.com">info@shecraft.com</a>
-          </p>
-        </div>
-      </footer>
+     
+  
+       <Footer />
     </div>
   );
 }
