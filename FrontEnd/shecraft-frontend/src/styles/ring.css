@@ -1,0 +1,166 @@
+/* Page */
+.ring-page {
+  text-align: center;
+  padding: 30px;
+  background: #0b2e26; /* dark green base */
+  color: #e0f7fa;      /* icy light text */
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Title */
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #898b4c92; 
+}
+
+/* Container */
+.customizer-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* LEFT — Ring Preview */
+.preview-section {
+  flex: 1;
+  min-width: 350px;
+}
+
+.ring-display,
+.ai-ring-preview,
+.placeholder {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 15px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #fadc8169; /* icy blue border */
+  box-shadow: 0 0 20px rgba(191, 211, 42, 0.6);
+  margin: 0 auto 20px auto;
+  position: relative;
+}
+
+.ring-base {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.ring-gem,
+.ring-color-overlay {
+  position: absolute;
+  width: 110px;
+  top: 95px;
+  left: 120px;
+  border-radius: 50%;
+}
+
+.ring-color-overlay {
+  opacity: 0.7;
+}
+
+/* Placeholder */
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  color: #898b4c92; 
+  font-weight: bold;
+  font-size: 1rem;
+  border: 2px dashed #cbbc4a;
+}
+
+/* RIGHT — Options Section */
+.options-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Cold luxury tones */
+.ring-page {
+  background: #0b2e26; /* dark green base */
+  color: #c5ad4c;      /* icy text */
+}
+
+.option-card {
+  background: #0b3a35; /* colder, darker green/teal */
+  border: 2px solid #c8bd48; /* icy blue border */
+}
+
+.option-card.selected {
+  border: 2px solid #bdbd4c;
+  box-shadow: 0 0 20px rgba(179, 150, 66, 0.829); /* cold glow */
+}
+
+.tabs-header .tab-btn {
+  border-color: #908134; /* icy border for tabs */
+  color: #e0f7fa;
+}
+
+.tabs-header .tab-btn:hover,
+.active-tab {
+  background: #bda035;
+  color: #0b2e26; /* cold dark text on hover */
+}
+
+
+/* Options Grid */
+.options-grid {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  max-height: 400px;
+  overflow-y: auto; /* scrollable options */
+}
+
+/* Option Cards */
+.option-card {
+  background: #0b2e26;
+  border: 2px solid #947614bb;
+  border-radius: 10px;
+  padding: 10px;
+  width: 100px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.option-card img {
+  width: 80px;
+  margin-bottom: 5px;
+}
+
+.option-card p {
+  color: #e0f7fa;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.option-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(158, 135, 20, 0.71);
+}
+
+.option-card.selected {
+  border: 2px solid #ac7e22ad;
+  box-shadow: 0 0 20px rgba(160, 144, 17, 0.783);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .customizer-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .options-grid {
+    justify-content: center;
+    max-height: unset;
+  }
+}

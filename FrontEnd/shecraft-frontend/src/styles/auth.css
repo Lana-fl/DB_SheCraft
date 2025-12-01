@@ -1,0 +1,64 @@
+/* same as login.css but you can slightly tweak colors or input styles */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Raleway',sans-serif; }
+
+.signup-page {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background: url('../assets/login.png') no-repeat center center fixed;
+  background-size:cover;
+}
+
+.auth-container {
+  background: rgba(0,0,0,0.65);
+  padding: 50px 30px;
+  max-width: 400px;
+  margin: 80px auto 40px auto;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid #ffd90046;
+}
+
+.auth-container h1 {
+  color:#ffd9005e;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.auth-container input {
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:25px;
+  border:1px solid #796e2b;
+  background: rgba(255,255,255,0.1);
+  color:#655706;
+}
+
+.auth-container input:focus {
+  outline:none;
+  border:2px solid #87740b56;
+}
+
+.auth-container button {
+  width:100%;
+  padding:12px;
+  border-radius:25px;
+  border:none;
+  background:#222;
+  color:#6f60080a;
+  font-size:17px;
+  cursor:pointer;
+  transition:0.3s ease;
+  margin-top:15px;
+}
+
+.auth-container button:hover {
+  background:#444;
+}
+
+.error-message {
+  color: #ff7f50;
+  margin-top: 10px;
+}
