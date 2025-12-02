@@ -36,10 +36,12 @@
   flex-wrap: wrap;
   justify-content: space-between;
   padding: 40px 60px;
-  background-color: #1c1b18; /* dark classy background */
-  border-top: 2px solid #d4af37; /* gold top border */
+  background-color: #1c1b18;
+  border-top: 2px solid #d4af37;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  flex-shrink: 0; /* ensure it doesn’t collapse */
 }
+
 
 .footer-about,
 .footer-contact {
