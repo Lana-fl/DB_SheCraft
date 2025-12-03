@@ -9,6 +9,7 @@ import EarringsPage from "./pages/EarringsPage";
 import LoginPage from "./pages/LoginPage";
 import SigninPage from "./pages/LoginPage"; // <-- import added
 import OrderPage from "./pages/OrderPage";
+import Checkout from "./pages/CheckOut";
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
         <Route path="/orderpage" element={<OrderPage />} />
         <Route path="/necklaces" element={<NecklacesPage />} />
         <Route path="/rings" element={<RingsPage />} />
+        <Route path="/checkout" element={<Checkout />} />
+       
         <Route path="/bracelets" element={<BraceletsPage />} />
         <Route path="/earrings" element={<EarringsPage />} />
       </Routes>

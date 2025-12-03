@@ -1,123 +1,205 @@
-/* ----------------------------- */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Raleway', sans-serif;
-}
-.ring-page {
-  min-height: 100vh;
-  padding: 90px 60px 60px;
-  background: radial-gradient(circle at top, #1b4a3a 0%, #0f2d25 50%, #050b0a 100%);
-  color: #f5f0e6;
-}
-
-/* Main content wrapper to push footer down */
-.ring-page-main {
-  flex: 1; /* take all available space */
+/* Horizontal Steps Container */
+.steps-horizontal {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-}
-
-
-/* Title */
-.title {
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-  color: #82752bbd; /* realistic gold */
-  text-shadow: 0 0 10px #917e1182;
-}
-
-/* Container */
-.customizer-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: center; /* Center horizontally */
   gap: 40px;
+  margin: 30px 0;
   flex-wrap: wrap;
-  flex: 1; /* fill space to push footer down */
+  font-family: Arial, sans-serif;
 }
 
-/* LEFT — 3D Ring Preview */
-.preview-section {
-  flex: 1;
-  min-width: 350px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.preview-section canvas {
-  width: 100% !important;
-  max-width: 450px;
-  height: 400px !important;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 2px solid #ffd70044;
-  box-shadow: 0 0 25px rgba(96, 86, 27, 0.758);
-  display: block;
-  margin: 0 auto 20px auto;
-  cursor: grab;
-}
-
-/* RIGHT — Options Section */
-.options-section {
-  flex: 1;
-  min-width: 250px;
-}
-
-/* Option Cards */
-.option-card {
-  background: #1f4d33;
-  border: 2px solid #ffd90087;
-  border-radius: 10px;
-  padding: 10px;
-  width: 100px;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.option-card input[type="color"] {
+/* Individual Step Box */
+.step-box {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 2px solid #fff;
-  margin-bottom: 8px;
+  background-color: #ffffff; /* default white */
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
   cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
 }
 
-.option-card p {
-  color: #fff9e6;
+/* Active Step Highlight */
+.step-box.active {
+  background-color: #0d753a; /* dark green */
+  color: white;
+  border-color: #0d753a;
+}
+
+/* Arrow Between Steps */
+.steps-horizontal .step-box:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -35px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #ccc;
+}
+
+.step-box.active + .step-box::after {
+  color: #0d753a; /* green arrow for next step */
+}
+
+/* Step Labels */
+.step-labels {
+  display: flex;
+  justify-content: center;
+  gap: 85px;
+  margin-top: 10px;
   font-weight: bold;
-  font-size: 0.9rem;
+  color: #034d29;
+}
+
+/* Ring Customizer Layout */
+.ring-customizer {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 50px auto;
+  align-items: flex-start;
+}
+
+/* 3D Viewer */
+.viewer {
+  flex: 2;
+  min-width: 500px;
+  height: 650px;
+  background: #f8f8f8;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs Sidebar (Right side) */
+.tabs-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Tab Header */
+.tab-header {
+  padding: 12px 20px;
+  border-radius: 15px;
+  border: 2px solid #0d753a;
+  background: #0d753a;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-header:hover {
+  background: #09592c;
+}
+
+.tab-header.active {
+  background: #09592c;
+  box-shadow: 0 4px 12px rgba(13, 117, 58, 0.4);
+}
+
+/* Tab Body */
+.tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* Option Cards Grid */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Option Card */
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, border-color 0.2s;
 }
 
 .option-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(109, 98, 34, 0.7);
 }
 
 .option-card.selected {
-  border: 2px solid #98861ed5;
-  box-shadow: 0 0 20px rgba(181, 155, 9, 0.8);
+  border-color: #0d753a;
+  transform: scale(1.05);
 }
 
-/* Options Grid */
-.options-grid {
-  display: flex;
-  justify-content: flex-start;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 5px;
+/* Color Swatch */
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
 }
 
+/* Inputs */
+input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
+  width: 100%;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Checkout Button */
+.checkout-btn {
+  background: #0d753a;
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background: #09592c;
+  transform: translateY(-1px);
+}
+
+/* Diamond Color Option */
+.diamond-color-option {
+  margin-bottom: 10px;
+}
+
+/* Footer at bottom */
+footer {
+  width: 100%;
+  background: #f8f8f8;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  position: relative;
+  bottom: 0;
+}
