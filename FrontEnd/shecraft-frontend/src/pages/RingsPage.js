@@ -977,7 +977,7 @@ import ringGLB from "../assets/ring/ring.glb"; // ensure path is correct
 const BASE_OPTIONS = [
   { name: "Silver", color: "#C0C0C0", roughness: 0.3, metalness: 1 },
   { name: "Gold", color: "#FFD700", roughness: 0.25, metalness: 1 },
-  { name: "Rose Gold", color: "#B76E79", roughness: 0.25, metalness: 1 },
+  { name: "Rose Gold", color: "#190f10ff", roughness: 0.25, metalness: 1 },
 ];
 
 // --- Diamond mesh names ---
