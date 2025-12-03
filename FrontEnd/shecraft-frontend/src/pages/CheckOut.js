@@ -128,3 +128,24 @@
 //     </div>
 //   );
 // }
+import React from "react";
+import { useLocation } from "react-router-dom";
+
+export default function CheckoutPage() {
+  const { state } = useLocation();
+  const { ringType, baseColor, diamondColors, engraving, thickness, designer } = state || {};
+
+  return (
+    <div style={{ padding: "50px", textAlign: "center" }}>
+      <h2>Checkout</h2>
+      <p>Ring Type: {ringType}</p>
+      <p>Base Color: {baseColor}</p>
+      <p>Diamonds: {diamondColors.map(d => d.color).join(", ")}</p>
+      <p>Engraving: {engraving}</p>
+      <p>Thickness: {thickness}</p>
+      <p>Designer: {designer}</p>
+
+      <button className="checkout-btn">Confirm & Pay</button>
+    </div>
+  );
+}

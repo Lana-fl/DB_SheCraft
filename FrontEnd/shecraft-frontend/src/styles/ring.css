@@ -1,38 +1,50 @@
-/* Horizontal Steps Container */
+/* General */
+.full-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background: #f9f9f9;
+}
+
+/* Page Title */
+.ring-page h2 {
+  text-align: center;
+  color: #034d29;
+  margin-bottom: 30px;
+}
+
+/* Horizontal Steps */
 .steps-horizontal {
   display: flex;
   align-items: center;
-  justify-content: center; /* Center horizontally */
+  justify-content: center;
   gap: 40px;
-  margin: 30px 0;
+  margin: 20px 0;
   flex-wrap: wrap;
-  font-family: Arial, sans-serif;
 }
 
-/* Individual Step Box */
 .step-box {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #ffffff; /* default white */
+  background-color: #ffffff;
   border: 2px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
   cursor: pointer;
-  position: relative;
   transition: all 0.3s;
+  position: relative;
 }
 
-/* Active Step Highlight */
 .step-box.active {
-  background-color: #0d753a; /* dark green */
+  background-color: #0d753a;
   color: white;
   border-color: #0d753a;
 }
 
-/* Arrow Between Steps */
 .steps-horizontal .step-box:not(:last-child)::after {
   content: "→";
   position: absolute;
@@ -44,26 +56,25 @@
 }
 
 .step-box.active + .step-box::after {
-  color: #0d753a; /* green arrow for next step */
+  color: #0d753a;
 }
 
-/* Step Labels */
 .step-labels {
   display: flex;
   justify-content: center;
   gap: 85px;
-  margin-top: 10px;
+  margin-bottom: 20px;
   font-weight: bold;
   color: #034d29;
 }
 
-/* Ring Customizer Layout */
+/* Ring Customizer */
 .ring-customizer {
   display: flex;
   flex-direction: row;
   gap: 30px;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1500px;
   margin: 0 auto 50px auto;
   align-items: flex-start;
 }
@@ -71,14 +82,17 @@
 /* 3D Viewer */
 .viewer {
   flex: 2;
-  min-width: 500px;
-  height: 650px;
-  background: #f8f8f8;
+  min-width: 600px;
+  height: 700px;
+  background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Tabs Sidebar (Right side) */
+/* Tabs Sidebar */
 .tabs-sidebar {
   flex: 1;
   display: flex;
@@ -119,7 +133,7 @@
   margin-top: 10px;
 }
 
-/* Option Cards Grid */
+/* Options Grid */
 .options-grid {
   display: flex;
   flex-wrap: wrap;
@@ -135,9 +149,10 @@
   padding: 12px;
   border-radius: 12px;
   border: 2px solid transparent;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background: #f5f5f5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s, border-color 0.2s;
+  width: 100px;
 }
 
 .option-card:hover {
@@ -161,12 +176,23 @@
 /* Inputs */
 input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
   width: 100%;
-  margin: 10px 0;
+  margin: 5px 0;
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 14px;
   box-sizing: border-box;
+}
+
+/* Diamond Color Option */
+.diamond-color-option p {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.diamond-color-option input,
+.diamond-color-option select {
+  margin-bottom: 10px;
 }
 
 /* Checkout Button */
@@ -188,12 +214,7 @@ input[type="range"], input[type="text"], select, input[type="number"], input[typ
   transform: translateY(-1px);
 }
 
-/* Diamond Color Option */
-.diamond-color-option {
-  margin-bottom: 10px;
-}
-
-/* Footer at bottom */
+/* Footer */
 footer {
   width: 100%;
   background: #f8f8f8;
@@ -202,4 +223,67 @@ footer {
   box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
   position: relative;
   bottom: 0;
+}
+.steps-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 0 auto 25px auto;
+  flex-wrap: wrap;
+  max-width: 700px; /* keep it compact */
+}
+
+.step-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  flex: 1;
+  min-width: 80px;
+}
+
+.step-number {
+  width: 28px;       /* smaller circle */
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+  font-weight: bold;
+  font-size: 14px;    /* smaller font */
+  transition: all 0.3s;
+}
+
+.step-box.active .step-number {
+  background-color: #0d753a;
+  color: #fff;
+  border: 2px solid #0d753a;
+}
+
+.step-labels {
+  font-size: 12px;   /* smaller text */
+  text-align: center;
+  font-weight: 600;
+  color: #034d29;
+  max-width: 90px;
+}
+
+.step-box:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #ccc;
+  z-index: 0;
+}
+
+.step-box.active + .step-box::after {
+  color: #0d753a;
 }

@@ -10,6 +10,9 @@ import LoginPage from "./pages/LoginPage";
 import SigninPage from "./pages/LoginPage"; // <-- import added
 import OrderPage from "./pages/OrderPage";
 import Checkout from "./pages/CheckOut";
+import RingSelection from "./pages/RingSelection";
+import DesignerPage from "./pages/DesignerPage";
+
 
 
 function App() {
@@ -22,9 +25,15 @@ function App() {
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/orderpage" element={<OrderPage />} />
         <Route path="/necklaces" element={<NecklacesPage />} />
-        <Route path="/rings" element={<RingsPage />} />
+          
         <Route path="/checkout" element={<Checkout />} />
-       
+        <Route path="/rings" element={<RingSelection />} />
+        <Route path="/ringspage" element={<RingsPage />} />
+  
+
+<Route path="/designer" element={<DesignerPage />} />
+
+
         <Route path="/bracelets" element={<BraceletsPage />} />
         <Route path="/earrings" element={<EarringsPage />} />
       </Routes>

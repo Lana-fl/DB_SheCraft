@@ -1945,267 +1945,839 @@
 //     </div>
 //   );
 // }
-import React, { useState, Suspense, useRef, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
+
+
+// import React, { useState, Suspense, useRef, useEffect } from "react";
+// import { Canvas } from "@react-three/fiber";
+// import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+// import * as THREE from "three";
+// import "../styles/ring.css";
+// import Footer from "./Footer";
+// import ringGLB from "../assets/ring/ring.glb";
+
+// // Base metals
+// const BASE_OPTIONS = [
+//   { name: "Silver", color: "#C0C0C0", roughness: 0.3, metalness: 1, price: 100 },
+//   { name: "Gold", color: "#FFD700", roughness: 0.25, metalness: 1, price: 200 },
+//   { name: "Rose Gold", color: "#B76E79", roughness: 0.25, metalness: 1, price: 220 },
+//   { name: "14K Gold", color: "#E6BE8A", roughness: 0.25, metalness: 1, price: 240 },
+//   { name: "14K Silver", color: "#D3D3D3", roughness: 0.3, metalness: 1, price: 150 },
+// ];
+
+// // Gems
+// const REAL_GEMS = [
+//   { name: "Diamond", color: "#FFFFFF" },
+//   { name: "Ruby", color: "#8B0000" },
+//   { name: "Emerald", color: "#006400" },
+//   { name: "Sapphire", color: "#00008B" },
+// ];
+
+// // Diamonds meshes
+// const DIAMOND_MESHES = [
+//   { name: "Middle Diamond", meshName: "ThinRing_ThinRing_0", defaultColor: "#FFFFFF", price: 300 },
+//   { name: "Side Diamond 1", meshName: "ThinRing1_ThinRing1_0", defaultColor: "#FFFFFF", price: 250 },
+//   { name: "Side Diamond 2", meshName: "ThinRing2_ThinRing2_0", defaultColor: "#FFFFFF", price: 250 },
+// ];
+
+// const BASE_MESHES = ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"];
+
+// function RingModel({ baseColor, diamondColors, showDiamonds }) {
+//   const gltf = useGLTF(ringGLB);
+//   const sceneRef = useRef();
+//   const [scale, setScale] = useState(1);
+//   const [position, setPosition] = useState([0, 0, 0]);
+
+//   useEffect(() => {
+//     const scene = gltf.scene.clone();
+//     sceneRef.current = scene;
+//     const bbox = new THREE.Box3().setFromObject(scene);
+//     const size = bbox.getSize(new THREE.Vector3());
+//     const maxDim = Math.max(size.x, size.y, size.z);
+//     const scaleFactor = 2 / maxDim;
+//     setScale(scaleFactor);
+//     const center = bbox.getCenter(new THREE.Vector3());
+//     setPosition([-center.x * scaleFactor, -center.y * scaleFactor, -center.z * scaleFactor]);
+//   }, [gltf]);
+
+//   useEffect(() => {
+//     if (!sceneRef.current) return;
+//     const baseMat = BASE_OPTIONS.find(b => b.color === baseColor);
+//     sceneRef.current.traverse(mesh => {
+//       if (mesh.isMesh && BASE_MESHES.includes(mesh.name)) {
+//         mesh.material = new THREE.MeshPhysicalMaterial({
+//           color: baseColor,
+//           roughness: baseMat?.roughness || 0.3,
+//           metalness: baseMat?.metalness || 1,
+//           clearcoat: 1,
+//           clearcoatRoughness: 0.1,
+//           reflectivity: 0.9,
+//         });
+//       }
+//     });
+//   }, [baseColor, sceneRef.current]);
+
+//   useEffect(() => {
+//     if (!sceneRef.current) return;
+//     DIAMOND_MESHES.forEach((d, i) => {
+//       const mesh = sceneRef.current.getObjectByName(d.meshName);
+//       if (mesh) {
+//         mesh.visible = showDiamonds && i < diamondColors.length;
+//         mesh.material = new THREE.MeshPhysicalMaterial({
+//           color: diamondColors[i]?.color || "#FFFFFF",
+//           roughness: 0,
+//           metalness: 0,
+//           transparent: true,
+//           opacity: 1,
+//           transmission: 1,
+//           ior: 2.4,
+//           reflectivity: 1,
+//           clearcoat: 1,
+//           clearcoatRoughness: 0.05,
+//         });
+//       }
+//     });
+//   }, [diamondColors, showDiamonds, sceneRef.current]);
+
+//   if (!sceneRef.current) return null;
+//   return <primitive object={sceneRef.current} scale={[scale, scale, scale]} position={position} />;
+// }
+
+// export default function RingsPage() {
+//   const [currentStep, setCurrentStep] = useState(1);
+
+//   const [activeTab, setActiveTab] = useState("base");
+//   const [baseColor, setBaseColor] = useState(BASE_OPTIONS[0].color);
+//   const [baseThickness, setBaseThickness] = useState(1);
+
+//   const [diamondType, setDiamondType] = useState("lab");
+//   const [diamondCount, setDiamondCount] = useState(0); 
+//   const [diamondColors, setDiamondColors] = useState(DIAMOND_MESHES.map(d => ({ color: d.defaultColor })));
+
+//   const [engraving, setEngraving] = useState("");
+//   const [price, setPrice] = useState(0);
+
+//   const handleDiamondColorChange = (index, color) => {
+//     setDiamondColors(prev => prev.map((d, i) => (i === index ? { ...d, color } : d)));
+//   };
+
+//   const calculatePrice = () => {
+//     let total = 0;
+//     const base = BASE_OPTIONS.find(b => b.color === baseColor);
+//     total += base?.price || 100;
+//     DIAMOND_MESHES.forEach((d, i) => {
+//       if (i < diamondCount) total += d.price;
+//     });
+//     if (engraving) total += 50;
+//     setPrice(total);
+//   };
+
+//   useEffect(() => {
+//     calculatePrice();
+//   }, [baseColor, diamondCount, engraving, diamondColors]);
+
+//   const toggleTab = (tab) => {
+//     setActiveTab(activeTab === tab ? "" : tab);
+//   };
+
+//   return (
+//     <div className="ring-page full-page">
+//       {/* Horizontal Steps */}
+//       <div className="steps-horizontal">
+//         <div className={`step-box ${currentStep === 1 ? "active" : ""}`} onClick={() => setCurrentStep(1)}>1</div>
+//         <div className={`step-box ${currentStep === 2 ? "active" : ""}`} onClick={() => setCurrentStep(2)}>2</div>
+//         <div className={`step-box ${currentStep === 3 ? "active" : ""}`} onClick={() => setCurrentStep(3)}>3</div>
+//       </div>
+//       <div className="step-labels">
+//         <span>Customize Ring</span>
+//         <span>Choose Design</span>
+//         <span>Checkout</span>
+//       </div>
+
+//       <div className="ring-customizer">
+//         {/* 3D Viewer */}
+//         <div className="viewer">
+//           <Canvas shadows gl={{ physicallyCorrectLights: true }} camera={{ position: [0, 2, 5], fov: 50 }}>
+//             <ambientLight intensity={0.6} />
+//             <directionalLight position={[5, 5, 5]} intensity={1.5} />
+//             <directionalLight position={[-5, 5, -5]} intensity={1} />
+//             <Suspense fallback={null}>
+//               <RingModel
+//                 baseColor={baseColor}
+//                 diamondColors={diamondColors.slice(0, diamondCount)}
+//                 showDiamonds={diamondCount > 0}
+//               />
+//               <Environment preset="city" background={false} />
+//               <color attach="background" args={["#ffffff"]} />
+//             </Suspense>
+//             <OrbitControls enablePan enableZoom enableRotate />
+//           </Canvas>
+//         </div>
+
+//         {/* Tabs Sidebar */}
+//         <div className="tabs-sidebar">
+//           {currentStep === 1 && (
+//             <>
+//               <div className="tab-section">
+//                 <button className={`tab-header ${activeTab === "base" ? "active" : ""}`} onClick={() => toggleTab("base")}>
+//                   Base Metal & Thickness
+//                 </button>
+//                 {activeTab === "base" && (
+//                   <div className="tab-body">
+//                     <div className="options-grid">
+//                       {BASE_OPTIONS.map(option => (
+//                         <div
+//                           key={option.name}
+//                           className={`option-card ${baseColor === option.color ? "selected" : ""}`}
+//                           onClick={() => setBaseColor(option.color)}
+//                         >
+//                           <div className="color-swatch" style={{ backgroundColor: option.color }} />
+//                           <p>{option.name}</p>
+//                         </div>
+//                       ))}
+//                     </div>
+//                     <label>Thickness:</label>
+//                     <input
+//                       type="range"
+//                       min={0.5}
+//                       max={2}
+//                       step={0.1}
+//                       value={baseThickness}
+//                       onChange={e => setBaseThickness(parseFloat(e.target.value))}
+//                     />
+//                   </div>
+//                 )}
+//               </div>
+
+//               <div className="tab-section">
+//                 <button className={`tab-header ${activeTab === "diamonds" ? "active" : ""}`} onClick={() => toggleTab("diamonds")}>
+//                   Diamonds / Gems
+//                 </button>
+//                 {activeTab === "diamonds" && (
+//                   <div className="tab-body">
+//                     <label>Type:</label>
+//                     <select value={diamondType} onChange={e => setDiamondType(e.target.value)}>
+//                       <option value="lab">Lab Grown</option>
+//                       <option value="real">Real Gem</option>
+//                     </select>
+
+//                     <label>Number of Diamonds:</label>
+//                     <input
+//                       type="number"
+//                       min={0}
+//                       max={3}
+//                       value={diamondCount}
+//                       onChange={e => setDiamondCount(parseInt(e.target.value))}
+//                     />
+
+//                     {Array.from({ length: diamondCount }).map((_, i) => (
+//                       <div key={i} className="diamond-color-option">
+//                         <p>Diamond {i + 1} Color</p>
+//                         {diamondType === "lab" ? (
+//                           <input
+//                             type="color"
+//                             value={diamondColors[i]?.color}
+//                             onChange={e => handleDiamondColorChange(i, e.target.value)}
+//                           />
+//                         ) : (
+//                           <select value={diamondColors[i]?.color} onChange={e => handleDiamondColorChange(i, e.target.value)}>
+//                             {REAL_GEMS.map(gem => (
+//                               <option key={gem.name} value={gem.color}>{gem.name}</option>
+//                             ))}
+//                           </select>
+//                         )}
+//                       </div>
+//                     ))}
+//                   </div>
+//                 )}
+//               </div>
+//             </>
+//           )}
+
+//           {currentStep === 3 && (
+//             <div className="tab-section">
+//               <button className="tab-header active">Engraving & Checkout</button>
+//               <div className="tab-body">
+//                 <input
+//                   type="text"
+//                   placeholder="Enter engraving text"
+//                   value={engraving}
+//                   onChange={e => setEngraving(e.target.value)}
+//                 />
+//                 <h4>Total Price: ${price}</h4>
+//                 <button className="checkout-btn">Checkout</button>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       <Footer />
+//     </div>
+//   );
+// }
+
+
+// import React, { useState, Suspense, useRef, useEffect } from "react";
+// import { Canvas } from "@react-three/fiber";
+// import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+// import * as THREE from "three";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import Footer from "./Footer";
+
+// import ringGLB from "../assets/ring/ring.glb";
+// import ring1GLB from "../assets/ring/ring1.glb";
+
+// // ================= BASE METALS =================
+// const BASE_OPTIONS = [
+//   { name: "Silver", color: "#C0C0C0", price: 100 },
+//   { name: "Gold", color: "#FFD700", price: 200 },
+//   { name: "Rose Gold", color: "#B76E79", price: 220 },
+// ];
+
+// // ================= DIAMOND MESHES =================
+// // ring.glb
+// const SIMPLE_DIAMOND = "ThinRing_ThinRing_0";
+
+// // ring1.glb
+// const MIDDLE_DIAMOND = "ThinRing_ThinRing_0";
+// const SIDE_DIAMONDS = [
+//   "ThinRing1_ThinRing1_0",
+//   "ThinRing2_ThinRing2_0",
+// ];
+
+// const BASE_MESHES = ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"];
+
+// // ================= MODEL =================
+// function RingModel({ ringType, baseColor, simpleColor, middleColor, sideColor }) {
+//   const gltf = useGLTF(ringType === "simple" ? ringGLB : ring1GLB);
+//   const ref = useRef();
+
+//   useEffect(() => {
+//     ref.current = gltf.scene.clone();
+//   }, [gltf]);
+
+//   useEffect(() => {
+//     if (!ref.current) return;
+
+//     ref.current.traverse((mesh) => {
+//       if (mesh.isMesh && BASE_MESHES.includes(mesh.name)) {
+//         mesh.material = new THREE.MeshPhysicalMaterial({
+//           color: baseColor,
+//           metalness: 1,
+//           roughness: 0.3,
+//         });
+//       }
+//     });
+
+//     if (ringType === "simple") {
+//       const gem = ref.current.getObjectByName(SIMPLE_DIAMOND);
+//       if (gem)
+//         gem.material = new THREE.MeshPhysicalMaterial({
+//           color: simpleColor,
+//           transmission: 1,
+//           ior: 2.4,
+//         });
+//     }
+
+//     if (ringType === "advanced") {
+//       const middle = ref.current.getObjectByName(MIDDLE_DIAMOND);
+//       SIDE_DIAMONDS.forEach((name) => {
+//         const side = ref.current.getObjectByName(name);
+//         if (side)
+//           side.material = new THREE.MeshPhysicalMaterial({
+//             color: sideColor,
+//             transmission: 1,
+//             ior: 2.4,
+//           });
+//       });
+
+//       if (middle)
+//         middle.material = new THREE.MeshPhysicalMaterial({
+//           color: middleColor,
+//           transmission: 1,
+//           ior: 2.4,
+//         });
+//     }
+//   }, [baseColor, simpleColor, middleColor, sideColor, ringType]);
+
+//   return ref.current ? <primitive object={ref.current} /> : null;
+// }
+
+// // ================= PAGE =================
+// export default function RingsPage() {
+//   const { state } = useLocation();
+//   const navigate = useNavigate();
+//   const ringType = state?.ringType || "simple";
+
+//   const [step, setStep] = useState(1);
+//   const [baseColor, setBaseColor] = useState(BASE_OPTIONS[0].color);
+
+//   const [simpleColor, setSimpleColor] = useState("#ffffff");
+//   const [middleColor, setMiddleColor] = useState("#ffffff");
+//   const [sideColor, setSideColor] = useState("#ffffff");
+
+//   return (
+//     <div className="ring-page">
+//       <div className="steps-horizontal">
+//         {[1, 2, 3].map((n) => (
+//           <div key={n} className={`step-box ${step === n ? "active" : ""}`} onClick={() => setStep(n)}>
+//             {n}
+//           </div>
+//         ))}
+//       </div>
+
+//       <div className="ring-customizer">
+//         <div className="viewer">
+//           <Canvas camera={{ position: [0, 2, 5] }}>
+//             <ambientLight intensity={1} />
+//             <Suspense fallback={null}>
+//               <RingModel
+//                 ringType={ringType}
+//                 baseColor={baseColor}
+//                 simpleColor={simpleColor}
+//                 middleColor={middleColor}
+//                 sideColor={sideColor}
+//               />
+//               <Environment preset="city" />
+//             </Suspense>
+//             <OrbitControls />
+//           </Canvas>
+//         </div>
+
+//         <div className="tabs-sidebar">
+//           {step === 1 && (
+//             <>
+//               <h3>Base Color</h3>
+//               {BASE_OPTIONS.map((b) => (
+//                 <button key={b.name} onClick={() => setBaseColor(b.color)}>
+//                   {b.name}
+//                 </button>
+//               ))}
+//             </>
+//           )}
+
+//           {step === 2 && (
+//             <>
+//               {ringType === "simple" && (
+//                 <>
+//                   <h3>Diamond Color</h3>
+//                   <input type="color" value={simpleColor} onChange={(e) => setSimpleColor(e.target.value)} />
+//                 </>
+//               )}
+
+//               {ringType === "advanced" && (
+//                 <>
+//                   <h3>Middle Diamond</h3>
+//                   <input type="color" value={middleColor} onChange={(e) => setMiddleColor(e.target.value)} />
+
+//                   <h3>Side Diamonds (Together)</h3>
+//                   <input type="color" value={sideColor} onChange={(e) => setSideColor(e.target.value)} />
+//                 </>
+//               )}
+//             </>
+//           )}
+
+//           {step === 3 && (
+//             <button className="checkout-btn" onClick={() => navigate("/checkout")}>
+//               Go To Checkout
+//             </button>
+//           )}
+//         </div>
+//       </div>
+
+//       <Footer />
+//     </div>
+//   );
+// }
+
+import React, { useState, useRef, useEffect, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import "../styles/ring.css";
 import Footer from "./Footer";
+
 import ringGLB from "../assets/ring/ring.glb";
+import ring1GLB from "../assets/ring/ring1.glb";
 
-// Base metals
 const BASE_OPTIONS = [
-  { name: "Silver", color: "#C0C0C0", roughness: 0.3, metalness: 1, price: 100 },
-  { name: "Gold", color: "#FFD700", roughness: 0.25, metalness: 1, price: 200 },
-  { name: "Rose Gold", color: "#B76E79", roughness: 0.25, metalness: 1, price: 220 },
-  { name: "14K Gold", color: "#E6BE8A", roughness: 0.25, metalness: 1, price: 240 },
-  { name: "14K Silver", color: "#D3D3D3", roughness: 0.3, metalness: 1, price: 150 },
+  { name: "Silver", color: "#C0C0C0", price: 100 },
+  { name: "Gold", color: "#FFD700", price: 200 },
+  { name: "Rose Gold", color: "#B76E79", price: 220 },
+  { name: "14K Gold", color: "#E6BE8A", price: 240 },
+  { name: "14K Silver", color: "#D3D3D3", price: 150 },
 ];
-
-// Gems
 const REAL_GEMS = [
-  { name: "Diamond", color: "#FFFFFF" },
-  { name: "Ruby", color: "#8B0000" },
-  { name: "Emerald", color: "#006400" },
-  { name: "Sapphire", color: "#00008B" },
+  { name: "Diamond", color: "#ffffff" },
+  { name: "Ruby", color: "#E0115F" },      // Real ruby red
+  { name: "Emerald", color: "#50C878" },  // Emerald green
+  { name: "Sapphire", color: "#0F52BA" }, // Sapphire blue
 ];
 
-// Diamonds meshes
-const DIAMOND_MESHES = [
-  { name: "Middle Diamond", meshName: "ThinRing_ThinRing_0", defaultColor: "#FFFFFF", price: 300 },
-  { name: "Side Diamond 1", meshName: "ThinRing1_ThinRing1_0", defaultColor: "#FFFFFF", price: 250 },
-  { name: "Side Diamond 2", meshName: "ThinRing2_ThinRing2_0", defaultColor: "#FFFFFF", price: 250 },
-];
 
-const BASE_MESHES = ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"];
+const RING_MESHES = {
+  ring: {
+    base: ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"],
+    diamonds: ["ThinRing_ThinRing_0"],     // Middle only
+    sides: ["ThinRing1_ThinRing1_0", "ThinRing2_ThinRing2_0"],
+  },
 
-function RingModel({ baseColor, diamondColors, showDiamonds }) {
-  const gltf = useGLTF(ringGLB);
-  const sceneRef = useRef();
+  ring1: {
+    base: ["Object_2", "Object_3"],
+    diamonds: ["Diamond_Round"],           // Middle only
+    sides: [
+      "Diamond_Round_2",
+      "Diamond_Round_3",
+      "Diamond_Round_4",
+      "Diamond_Round_5",
+      "Diamond_Round_6",
+      "Diamond_Round_7",
+      "Diamond_Round_8",
+      "Diamond_Round_9",
+    ],
+  },
+};
+
+
+function RingModel({
+  ringType,
+  baseColor,
+  diamondColors,
+  showDiamonds,
+  thickness = 1,
+  selectedDiamond,
+  diamondCount,
+}) {
+  const { scene } = useGLTF(ringType === "ring" ? ringGLB : ring1GLB);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState([0, 0, 0]);
 
+  /* ================= PERFECT CENTERING ================= */
   useEffect(() => {
-    const scene = gltf.scene.clone();
-    sceneRef.current = scene;
+    if (!scene) return;
+
     const bbox = new THREE.Box3().setFromObject(scene);
     const size = bbox.getSize(new THREE.Vector3());
+    const center = bbox.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
+
     const scaleFactor = 2 / maxDim;
     setScale(scaleFactor);
-    const center = bbox.getCenter(new THREE.Vector3());
-    setPosition([-center.x * scaleFactor, -center.y * scaleFactor, -center.z * scaleFactor]);
-  }, [gltf]);
+    setPosition([
+      -center.x * scaleFactor,
+      -center.y * scaleFactor,
+      -center.z * scaleFactor,
+    ]);
+  }, [scene]);
+ 
 
+  /* ================= ALL MATERIAL + VISIBILITY ================= */
   useEffect(() => {
-    if (!sceneRef.current) return;
-    const baseMat = BASE_OPTIONS.find(b => b.color === baseColor);
-    sceneRef.current.traverse(mesh => {
-      if (mesh.isMesh && BASE_MESHES.includes(mesh.name)) {
-        mesh.material = new THREE.MeshPhysicalMaterial({
-          color: baseColor,
-          roughness: baseMat?.roughness || 0.3,
-          metalness: baseMat?.metalness || 1,
-          clearcoat: 1,
-          clearcoatRoughness: 0.1,
-          reflectivity: 0.9,
-        });
-      }
-    });
-  }, [baseColor, sceneRef.current]);
+    if (!scene) return;
 
-  useEffect(() => {
-    if (!sceneRef.current) return;
-    DIAMOND_MESHES.forEach((d, i) => {
-      const mesh = sceneRef.current.getObjectByName(d.meshName);
-      if (mesh) {
-        mesh.visible = showDiamonds && i < diamondColors.length;
-        mesh.material = new THREE.MeshPhysicalMaterial({
-          color: diamondColors[i]?.color || "#FFFFFF",
-          roughness: 0,
-          metalness: 0,
-          transparent: true,
-          opacity: 1,
-          transmission: 1,
-          ior: 2.4,
-          reflectivity: 1,
-          clearcoat: 1,
-          clearcoatRoughness: 0.05,
-        });
-      }
-    });
-  }, [diamondColors, showDiamonds, sceneRef.current]);
+    /* ========== BASE METAL ========== */
+    RING_MESHES[ringType].base.forEach((name) => {
+      const mesh = scene.getObjectByName(name);
+      if (!mesh) return;
 
-  if (!sceneRef.current) return null;
-  return <primitive object={sceneRef.current} scale={[scale, scale, scale]} position={position} />;
+      if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+        mesh.material = new THREE.MeshPhysicalMaterial();
+      }
+
+      mesh.material.color.set(baseColor);
+      mesh.material.roughness = 0.3;
+      mesh.material.metalness = 1;
+      mesh.material.clearcoat = 1;
+
+      mesh.scale.y = thickness;
+    });
+
+    /* ========== MIDDLE DIAMOND ========== */
+    const middleMesh =
+      scene.getObjectByName(RING_MESHES[ringType].diamonds[0]);
+
+    if (middleMesh) {
+      middleMesh.visible = showDiamonds && diamondCount >= 1;
+
+      if (
+        !middleMesh.material ||
+        !middleMesh.material.isMeshPhysicalMaterial
+      ) {
+        middleMesh.material = new THREE.MeshPhysicalMaterial();
+      }
+
+      middleMesh.material.color.set(
+        diamondColors[0]?.color || "#ffffff"
+      );
+      middleMesh.material.roughness = 0;
+      middleMesh.material.metalness = 0;
+      middleMesh.material.transmission = 1;
+      middleMesh.material.ior = 2.4;
+      middleMesh.material.transparent = true;
+
+      middleMesh.material.emissive.set(
+        selectedDiamond === 0 ? "#ffff00" : "#000000"
+      );
+      middleMesh.material.emissiveIntensity =
+        selectedDiamond === 0 ? 0.5 : 0;
+    }
+
+    /* ========== SIDE DIAMONDS (FINAL FIX) ========== */
+const sideMeshes = RING_MESHES[ringType].sides || [];
+
+if (ringType === "ring") {
+  // ✅ ring logic: 1 or 2 side diamonds MAX
+  sideMeshes.forEach((name, index) => {
+    const mesh = scene.getObjectByName(name);
+    if (!mesh) return;
+
+    let visible = false;
+
+    if (diamondCount === 2 && index === 0) visible = true; // ✅ ONLY ONE
+    if (diamondCount >= 3 && index < 2) visible = true;   // ✅ TWO SIDES
+
+    mesh.visible = showDiamonds && visible;
+
+    if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+      mesh.material = new THREE.MeshPhysicalMaterial();
+    }
+
+    mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+    mesh.material.roughness = 0;
+    mesh.material.metalness = 0;
+    mesh.material.transmission = 1;
+    mesh.material.ior = 2.4;
+    mesh.material.transparent = true;
+
+    mesh.material.emissive.set(
+      selectedDiamond === 1 ? "#ffff00" : "#000000"
+    );
+    mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+  });
+
+} else {
+  // ✅ ring1 logic: ALL side diamonds together as ONE group
+  sideMeshes.forEach((name) => {
+    const mesh = scene.getObjectByName(name);
+    if (!mesh) return;
+
+    mesh.visible = showDiamonds && diamondCount === 2;
+
+    if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+      mesh.material = new THREE.MeshPhysicalMaterial();
+    }
+
+    mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+    mesh.material.roughness = 0;
+    mesh.material.metalness = 0;
+    mesh.material.transmission = 1;
+    mesh.material.ior = 2.4;
+    mesh.material.transparent = true;
+
+    mesh.material.emissive.set(
+      selectedDiamond === 1 ? "#ffff00" : "#000000"
+    );
+    mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+  });
 }
 
+  }, [
+    scene,
+    baseColor,
+    diamondColors,
+    showDiamonds,
+    thickness,
+    selectedDiamond,
+    ringType,
+    diamondCount,
+  ]);
+
+  useFrame(() => {
+    if (scene) scene.rotation.y += 0.005;
+  });
+
+  if (!scene) return null;
+
+  return (
+    <primitive
+      object={scene}
+      scale={[scale, scale, scale]}
+      position={position}
+    />
+  );
+  
+}
+
+
+
+
+// Rings Page
 export default function RingsPage() {
+  const { state } = useLocation();
+  const { ringType } = state || { ringType: "ring" };
+
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
 
-  const [activeTab, setActiveTab] = useState("base");
-  const [baseColor, setBaseColor] = useState(BASE_OPTIONS[0].color);
-  const [baseThickness, setBaseThickness] = useState(1);
+  const baseOptions = ringType === "ring1" ? BASE_OPTIONS.slice(0, 2) : BASE_OPTIONS;
+
+  const [baseColor, setBaseColor] = useState(baseOptions[0].color);
+  const [diamondCount, setDiamondCount] = useState(0);
+  const [diamondColors, setDiamondColors] = useState(
+    ringType === "ring1" ? Array(2).fill({ color: "#FFFFFF" }) : Array(3).fill({ color: "#FFFFFF" })
+  );
+  useEffect(() => {
+  setDiamondColors((prev) => {
+    const newArr = [...prev];
+
+    if (diamondCount > newArr.length) {
+      return [
+        ...newArr,
+        ...Array(diamondCount - newArr.length).fill({ color: "#FFFFFF" }),
+      ];
+    }
+
+    return newArr.slice(0, diamondCount);
+  });
+}, [diamondCount]);
 
   const [diamondType, setDiamondType] = useState("lab");
-  const [diamondCount, setDiamondCount] = useState(0); 
-  const [diamondColors, setDiamondColors] = useState(DIAMOND_MESHES.map(d => ({ color: d.defaultColor })));
-
+  const [selectedDiamond, setSelectedDiamond] = useState(null);
+  const [thickness, setThickness] = useState(1);
   const [engraving, setEngraving] = useState("");
   const [price, setPrice] = useState(0);
 
+  const toggleDiamond = (index) => setSelectedDiamond(index);
+
   const handleDiamondColorChange = (index, color) => {
-    setDiamondColors(prev => prev.map((d, i) => (i === index ? { ...d, color } : d)));
+    setDiamondColors((prev) => {
+      const newColors = [...prev];
+      newColors[index] = { color };
+      return newColors;
+    });
   };
 
   const calculatePrice = () => {
-    let total = 0;
-    const base = BASE_OPTIONS.find(b => b.color === baseColor);
-    total += base?.price || 100;
-    DIAMOND_MESHES.forEach((d, i) => {
-      if (i < diamondCount) total += d.price;
-    });
+    let total = baseOptions.find((b) => b.color === baseColor)?.price || 100;
+    if (diamondCount > 0) total += 300;
+    if (diamondCount > 1) total += 250;
+    if (diamondCount > 2) total += 250;
     if (engraving) total += 50;
     setPrice(total);
   };
 
-  useEffect(() => {
-    calculatePrice();
-  }, [baseColor, diamondCount, engraving, diamondColors]);
-
-  const toggleTab = (tab) => {
-    setActiveTab(activeTab === tab ? "" : tab);
-  };
+  useEffect(() => calculatePrice(), [baseColor, diamondCount, diamondColors, engraving]);
 
   return (
     <div className="ring-page full-page">
+      <h2>{ringType === "ring1" ? "Customize Ring 1" : "Customize Ring"}</h2>
       {/* Horizontal Steps */}
-      <div className="steps-horizontal">
-        <div className={`step-box ${currentStep === 1 ? "active" : ""}`} onClick={() => setCurrentStep(1)}>1</div>
-        <div className={`step-box ${currentStep === 2 ? "active" : ""}`} onClick={() => setCurrentStep(2)}>2</div>
-        <div className={`step-box ${currentStep === 3 ? "active" : ""}`} onClick={() => setCurrentStep(3)}>3</div>
-      </div>
-      <div className="step-labels">
-        <span>Customize Ring</span>
-        <span>Choose Design</span>
-        <span>Checkout</span>
-      </div>
+<div className="steps-horizontal">
+  {["Customize Your Ring", "Choose Your Designer", "Checkout"].map((label, index) => (
+    <div
+      key={index}
+      className={`step-box ${currentStep === index + 1 ? "active" : ""}`}
+      onClick={() => setCurrentStep(index + 1)}
+    >
+      <div className="step-number">{index + 1}</div>
+      <div className="step-labels">{label}</div>
+    </div>
+  ))}
+</div>
 
       <div className="ring-customizer">
-        {/* 3D Viewer */}
+        {/* Viewer */}
         <div className="viewer">
-          <Canvas shadows gl={{ physicallyCorrectLights: true }} camera={{ position: [0, 2, 5], fov: 50 }}>
+          <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
             <ambientLight intensity={0.6} />
             <directionalLight position={[5, 5, 5]} intensity={1.5} />
             <directionalLight position={[-5, 5, -5]} intensity={1} />
             <Suspense fallback={null}>
               <RingModel
+                ringType={ringType}
                 baseColor={baseColor}
-                diamondColors={diamondColors.slice(0, diamondCount)}
+                diamondColors={diamondColors}
                 showDiamonds={diamondCount > 0}
+                thickness={thickness}
+                selectedDiamond={selectedDiamond}
+                diamondCount={diamondCount}   
               />
               <Environment preset="city" background={false} />
-              <color attach="background" args={["#ffffff"]} />
             </Suspense>
-            <OrbitControls enablePan enableZoom enableRotate />
+            <OrbitControls enablePan={false} enableZoom={false} enableRotate />
           </Canvas>
         </div>
 
-        {/* Tabs Sidebar */}
+        {/* Controls */}
         <div className="tabs-sidebar">
-          {currentStep === 1 && (
-            <>
-              <div className="tab-section">
-                <button className={`tab-header ${activeTab === "base" ? "active" : ""}`} onClick={() => toggleTab("base")}>
-                  Base Metal & Thickness
-                </button>
-                {activeTab === "base" && (
-                  <div className="tab-body">
-                    <div className="options-grid">
-                      {BASE_OPTIONS.map(option => (
-                        <div
-                          key={option.name}
-                          className={`option-card ${baseColor === option.color ? "selected" : ""}`}
-                          onClick={() => setBaseColor(option.color)}
-                        >
-                          <div className="color-swatch" style={{ backgroundColor: option.color }} />
-                          <p>{option.name}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <label>Thickness:</label>
-                    <input
-                      type="range"
-                      min={0.5}
-                      max={2}
-                      step={0.1}
-                      value={baseThickness}
-                      onChange={e => setBaseThickness(parseFloat(e.target.value))}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="tab-section">
-                <button className={`tab-header ${activeTab === "diamonds" ? "active" : ""}`} onClick={() => toggleTab("diamonds")}>
-                  Diamonds / Gems
-                </button>
-                {activeTab === "diamonds" && (
-                  <div className="tab-body">
-                    <label>Type:</label>
-                    <select value={diamondType} onChange={e => setDiamondType(e.target.value)}>
-                      <option value="lab">Lab Grown</option>
-                      <option value="real">Real Gem</option>
-                    </select>
-
-                    <label>Number of Diamonds:</label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={diamondCount}
-                      onChange={e => setDiamondCount(parseInt(e.target.value))}
-                    />
-
-                    {Array.from({ length: diamondCount }).map((_, i) => (
-                      <div key={i} className="diamond-color-option">
-                        <p>Diamond {i + 1} Color</p>
-                        {diamondType === "lab" ? (
-                          <input
-                            type="color"
-                            value={diamondColors[i]?.color}
-                            onChange={e => handleDiamondColorChange(i, e.target.value)}
-                          />
-                        ) : (
-                          <select value={diamondColors[i]?.color} onChange={e => handleDiamondColorChange(i, e.target.value)}>
-                            {REAL_GEMS.map(gem => (
-                              <option key={gem.name} value={gem.color}>{gem.name}</option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          {currentStep === 3 && (
-            <div className="tab-section">
-              <button className="tab-header active">Engraving & Checkout</button>
-              <div className="tab-body">
-                <input
-                  type="text"
-                  placeholder="Enter engraving text"
-                  value={engraving}
-                  onChange={e => setEngraving(e.target.value)}
-                />
-                <h4>Total Price: ${price}</h4>
-                <button className="checkout-btn">Checkout</button>
-              </div>
+          {/* Base Metal */}
+          <div className="tab-section">
+            <label>Base Metal & Thickness</label>
+            <div className="options-grid">
+              {baseOptions.map((option) => (
+                <div
+                  key={option.name}
+                  className={`option-card ${baseColor === option.color ? "selected" : ""}`}
+                  onClick={() => setBaseColor(option.color)}
+                >
+                  <div className="color-swatch" style={{ backgroundColor: option.color }} />
+                  <p>{option.name}</p>
+                </div>
+              ))}
             </div>
-          )}
+            <label>Band Thickness:</label>
+            <input type="range" min={0.5} max={2} step={0.05} value={thickness} onChange={(e) => setThickness(parseFloat(e.target.value))} />
+          </div>
+
+          {/* Diamonds */}
+          <div className="tab-section">
+            <label>Diamonds / Gems</label>
+            <select value={diamondType} onChange={(e) => setDiamondType(e.target.value)}>
+              <option value="lab">Lab Grown</option>
+              <option value="real">Real Gem</option>
+            </select>
+
+            <label>Number of Diamonds:</label>
+            <input type="number" min={0} max={ringType === "ring1" ? 2 : 3} value={diamondCount} onChange={(e) => setDiamondCount(parseInt(e.target.value))} />
+
+            {Array.from({ length: diamondCount }).map((_, i) => (
+              <div key={i} className="diamond-color-option">
+                <p onClick={() => toggleDiamond(i)} style={{ cursor: "pointer" }}>
+                  {i === 0 ? "Middle Diamond" : "Side Diamond"} {selectedDiamond === i ? "(Selected)" : ""}
+                </p>
+                {selectedDiamond === i &&
+                  (diamondType === "lab" ? (
+                    <input type="color" value={diamondColors[i]?.color} onChange={(e) => handleDiamondColorChange(i, e.target.value)} />
+                  ) : (
+                    <select value={diamondColors[i]?.color} onChange={(e) => handleDiamondColorChange(i, e.target.value)}>
+                      {REAL_GEMS.map((gem) => (
+                        <option key={gem.name} value={gem.color}>
+                          {gem.name}
+                        </option>
+                      ))}
+                    </select>
+                  ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Engraving */}
+          <div className="tab-section">
+            <label>Engraving</label>
+            <input type="text" placeholder="Enter engraving text" value={engraving} onChange={(e) => setEngraving(e.target.value)} />
+            <h4>Total Price: ${price}</h4>
+          </div>
+
+          <button
+            className="checkout-btn"
+            onClick={() =>
+              navigate("/checkout", { state: { ringType, baseColor, diamondColors, engraving, thickness } })
+            }
+          >
+            Proceed to Checkout
+          </button>
         </div>
       </div>
 
