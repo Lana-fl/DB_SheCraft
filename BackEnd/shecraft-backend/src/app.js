@@ -6,6 +6,11 @@ require("dotenv").config();
 const customerRoutes = require("./routes/customerRoutes");
 const { requestLogger } = require("./middleware"); // optional but nice
 
+const authRoutes = require("./routes/authRoutes");
+
+app.use("/api/auth", authRoutes);
+
+
 const app = express();
 
 // Global middleware
