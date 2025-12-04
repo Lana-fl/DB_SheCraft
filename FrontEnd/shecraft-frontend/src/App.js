@@ -12,6 +12,7 @@ import OrderPage from "./pages/OrderPage";
 import Checkout from "./pages/CheckOut";
 import RingSelection from "./pages/RingSelection";
 import DesignerPage from "./pages/DesignerPage";
+import StepsBar from "./pages/StepsBar";
 
 
 
@@ -29,8 +30,9 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/rings" element={<RingSelection />} />
         <Route path="/ringspage" element={<RingsPage />} />
-  
+        <Route path="/steps" element={<StepsBar />} />
 
+    
 <Route path="/designer" element={<DesignerPage />} />
 
 

@@ -1,0 +1,189 @@
+/* Full page layout */
+.designer-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 60px 20px 120px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+}
+
+/* Title */
+.designer-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #0b5932;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Subtitle */
+.designer-subtitle {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+/* Main content area */
+.designer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 50px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Ring viewer */
+.designer-viewer {
+  width: 500px;
+  height: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #e6e6e6, #cfcfcf);
+  border: 1px solid #ddd;
+}
+
+/* Designer options */
+.designer-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Designer card */
+.designer-card {
+  width: 200px;
+  padding: 20px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+  background: #fff;
+}
+
+.designer-card:hover {
+  border-color: #0d753a;
+  transform: translateY(-3px);
+}
+
+.designer-card.selected {
+  border-color: #0d753a;
+  background-color: #e6f2e6;
+}
+
+/* Checkout button */
+.checkout-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background-color: #0d753a;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #0b472f;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .designer-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .designer-viewer {
+    width: 100%;
+    height: 400px;
+  }
+
+  .designer-options {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .designer-card {
+    width: 120px;
+  }
+}
+.steps-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 0 auto 25px auto;
+  flex-wrap: wrap;
+  max-width: 700px; /* keep it compact */
+}
+
+.step-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  flex: 1;
+  min-width: 80px;
+}
+
+.step-number {
+  width: 28px;       /* smaller circle */
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+  font-weight: bold;
+  font-size: 14px;    /* smaller font */
+  transition: all 0.3s;
+}
+
+.step-box.active .step-number {
+  background-color: #0d753a;
+  color: #fff;
+  border: 2px solid #0d753a;
+}
+
+.step-labels {
+  font-size: 12px;   /* smaller text */
+  text-align: center;
+  font-weight: 600;
+  color: #034d29;
+  max-width: 90px;
+}
+
+.step-box:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #ccc;
+  z-index: 0;
+}
+
+.step-box.active + .step-box::after {
+  color: #0d753a;
+}
+

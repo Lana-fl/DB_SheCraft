@@ -227,6 +227,10 @@
 // }
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, Environment } from "@react-three/drei";
+import "../styles/DesignerPage.css";
+import Footer from "./Footer";
 
 export default function DesignerPage() {
   const { state } = useLocation();
@@ -234,41 +238,82 @@ export default function DesignerPage() {
   const { ringType, baseColor, diamondColors, engraving, thickness } = state || {};
 
   const [designer, setDesigner] = useState("");
-
-  const designers = ["Alice", "Bob", "Charlie"]; // example options
+  const designers = ["Alice", "Bob", "Charlie"];
 
   const handleNext = () => {
     if (!designer) return alert("Please choose a designer.");
     navigate("/checkout", {
-      state: { ringType, baseColor, diamondColors, engraving, thickness, designer }
+      state: { ringType, baseColor, diamondColors, engraving, thickness, designer },
     });
   };
 
   return (
-    <div style={{ padding: "50px", textAlign: "center" }}>
-      <h2>Choose Your Designer</h2>
-      <p>Selected Ring Type: {ringType}</p>
-
-      <div style={{ display: "flex", justifyContent: "center", gap: "20px", margin: "30px 0" }}>
-        {designers.map((d) => (
-          <div
-            key={d}
-            style={{
-              padding: "20px",
-              border: designer === d ? "2px solid #0d753a" : "2px solid #ccc",
-              borderRadius: "10px",
-              cursor: "pointer",
-            }}
-            onClick={() => setDesigner(d)}
-          >
-            {d}
-          </div>
-        ))}
+    <div className="designer-page full-page">
+      {/* Steps Header */}
+      <div className="steps-horizontal">
+        <div className="step-box completed">
+          <div className="step-number">1</div>
+          <div className="step-labels">Customize Your Ring</div>
+        </div>
+        <div className="step-box active">
+          <div className="step-number">2</div>
+          <div className="step-labels">Choose Your Designer</div>
+        </div>
+        <div className="step-box">
+          <div className="step-number">3</div>
+          <div className="step-labels">Checkout</div>
+        </div>
       </div>
 
-      <button className="checkout-btn" onClick={handleNext}>
-        Next: Checkout
-      </button>
+      <h2 className="designer-title">Choose Your Designer</h2>
+      <p className="designer-subtitle">Selected Ring Type: {ringType}</p>
+
+      <div className="designer-content">
+        {/* Ring Viewer */}
+        <div className="designer-viewer">
+          <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
+            <ambientLight intensity={0.6} />
+            <directionalLight position={[5, 5, 5]} intensity={1.5} />
+            <directionalLight position={[-5, 5, -5]} intensity={1} />
+            <Environment preset="city" background={false} />
+
+            {/* Ring Band */}
+            <mesh>
+              <cylinderGeometry args={[1, 1, thickness, 64]} />
+              <meshStandardMaterial color={baseColor} />
+            </mesh>
+
+            {/* Diamonds */}
+            {diamondColors?.map((d, i) => (
+              <mesh key={i} position={d.position || [0, 0.5, 0]}>
+                <sphereGeometry args={[0.1, 32, 32]} />
+                <meshStandardMaterial color={d.color} />
+              </mesh>
+            ))}
+
+            <OrbitControls enablePan={false} enableZoom={false} enableRotate />
+          </Canvas>
+        </div>
+
+        {/* Designer Options */}
+        <div className="designer-options">
+          {designers.map((d) => (
+            <div
+              key={d}
+              className={`designer-card ${designer === d ? "selected" : ""}`}
+              onClick={() => setDesigner(d)}
+            >
+              {d}
+            </div>
+          ))}
+
+          <button className="checkout-btn" onClick={handleNext}>
+            Next: Checkout
+          </button>
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }

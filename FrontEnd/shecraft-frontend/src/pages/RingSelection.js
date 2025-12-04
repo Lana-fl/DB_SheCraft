@@ -189,6 +189,10 @@ export default function RingSelection() {
           </div>
         ))}
       </div>
+      
+
+  
+
       <Footer />
     </div>
   );

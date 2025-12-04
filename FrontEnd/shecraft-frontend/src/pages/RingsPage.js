@@ -2395,6 +2395,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { useLocation, useNavigate } from "react-router-dom";
+import StepsBar from "./StepsBar";
+
 
 import "../styles/ring.css";
 import Footer from "./Footer";
@@ -2417,16 +2419,41 @@ const REAL_GEMS = [
 ];
 
 
+// const RING_MESHES = {
+//   ring: {
+//     base: ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"],
+//     diamonds: ["ThinRing_ThinRing_0"],     // Middle only
+//     sides: ["ThinRing1_ThinRing1_0", "ThinRing2_ThinRing2_0"],
+//   },
+
+//   ring1: {
+//     base: ["Object_2", "Object_3"],
+//     diamonds: ["Diamond_Round"],           // Middle only
+//     sides: [
+//       "Diamond_Round_2",
+//       "Diamond_Round_3",
+//       "Diamond_Round_4",
+//       "Diamond_Round_5",
+//       "Diamond_Round_6",
+//       "Diamond_Round_7",
+//       "Diamond_Round_8",
+//       "Diamond_Round_9",
+//     ],
+//   },
+// };
 const RING_MESHES = {
   ring: {
     base: ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"],
-    diamonds: ["ThinRing_ThinRing_0"],     // Middle only
-    sides: ["ThinRing1_ThinRing1_0", "ThinRing2_ThinRing2_0"],
+    diamonds: ["ThinRing_ThinRing_0"], // ✅ middle
+    sides: [
+      "ThinRing1_ThinRing1_0", // ✅ left side
+      "ThinRing2_ThinRing2_0", // ✅ right side
+    ],
   },
 
   ring1: {
     base: ["Object_2", "Object_3"],
-    diamonds: ["Diamond_Round"],           // Middle only
+    diamonds: ["Diamond_Round"], // ✅ middle ONLY
     sides: [
       "Diamond_Round_2",
       "Diamond_Round_3",
@@ -2435,12 +2462,398 @@ const RING_MESHES = {
       "Diamond_Round_6",
       "Diamond_Round_7",
       "Diamond_Round_8",
-      "Diamond_Round_9",
+      "Diamond_Round_9", // ✅ ALL THESE = ONE SIDE GROUP
     ],
   },
 };
 
 
+
+// function RingModel({
+//   ringType,
+//   baseColor,
+//   diamondColors,
+//   showDiamonds,
+//   thickness = 1,
+//   selectedDiamond,
+//   diamondCount,
+// }) {
+//   const { scene } = useGLTF(ringType === "ring" ? ringGLB : ring1GLB);
+//   const [scale, setScale] = useState(1);
+//   const [position, setPosition] = useState([0, 0, 0]);
+
+//   /* ================= PERFECT CENTERING ================= */
+//   useEffect(() => {
+//     if (!scene) return;
+
+//     const bbox = new THREE.Box3().setFromObject(scene);
+//     const size = bbox.getSize(new THREE.Vector3());
+//     const center = bbox.getCenter(new THREE.Vector3());
+//     const maxDim = Math.max(size.x, size.y, size.z);
+
+//     const scaleFactor = 2 / maxDim;
+//     setScale(scaleFactor);
+//     setPosition([
+//       -center.x * scaleFactor,
+//       -center.y * scaleFactor,
+//       -center.z * scaleFactor,
+//     ]);
+//   }, [scene]);
+ 
+
+//   /* ================= ALL MATERIAL + VISIBILITY ================= */
+//   useEffect(() => {
+//     if (!scene) return;
+
+//     /* ========== BASE METAL ========== */
+//     RING_MESHES[ringType].base.forEach((name) => {
+//       const mesh = scene.getObjectByName(name);
+//       if (!mesh) return;
+
+//       if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+//         mesh.material = new THREE.MeshPhysicalMaterial();
+//       }
+
+//       mesh.material.color.set(baseColor);
+//       mesh.material.roughness = 0.3;
+//       mesh.material.metalness = 1;
+//       mesh.material.clearcoat = 1;
+
+//       mesh.scale.y = thickness;
+//     });
+
+//     /* ========== MIDDLE DIAMOND ========== */
+//     const middleMesh =
+//       scene.getObjectByName(RING_MESHES[ringType].diamonds[0]);
+
+//     if (middleMesh) {
+//       middleMesh.visible = showDiamonds && diamondCount >= 1;
+
+//       if (
+//         !middleMesh.material ||
+//         !middleMesh.material.isMeshPhysicalMaterial
+//       ) {
+//         middleMesh.material = new THREE.MeshPhysicalMaterial();
+//       }
+
+//       middleMesh.material.color.set(
+//         diamondColors[0]?.color || "#ffffff"
+//       );
+//       middleMesh.material.roughness = 0;
+//       middleMesh.material.metalness = 0;
+//       middleMesh.material.transmission = 1;
+//       middleMesh.material.ior = 2.4;
+//       middleMesh.material.transparent = true;
+
+//       middleMesh.material.emissive.set(
+//         selectedDiamond === 0 ? "#ffff00" : "#000000"
+//       );
+//       middleMesh.material.emissiveIntensity =
+//         selectedDiamond === 0 ? 0.5 : 0;
+//     }
+
+//     /* ========== SIDE DIAMONDS (FINAL FIX) ========== */
+// // const sideMeshes = RING_MESHES[ringType].sides || [];
+
+// // if (ringType === "ring") {
+// //   // ✅ ring logic: 1 or 2 side diamonds MAX
+// //   sideMeshes.forEach((name, index) => {
+// //     const mesh = scene.getObjectByName(name);
+// //     if (!mesh) return;
+
+// //     let visible = false;
+
+// //     if (diamondCount === 2 && index === 0) visible = true; // ✅ ONLY ONE
+// //     if (diamondCount >= 3 && index < 2) visible = true;   // ✅ TWO SIDES
+
+// //     mesh.visible = showDiamonds && visible;
+
+// //     if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+// //       mesh.material = new THREE.MeshPhysicalMaterial();
+// //     }
+
+// //     mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+// //     mesh.material.roughness = 0;
+// //     mesh.material.metalness = 0;
+// //     mesh.material.transmission = 1;
+// //     mesh.material.ior = 2.4;
+// //     mesh.material.transparent = true;
+
+// //     mesh.material.emissive.set(
+// //       selectedDiamond === 1 ? "#ffff00" : "#000000"
+// //     );
+// //     mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+// //   });
+
+// // } else {
+// //   // ✅ ring1 logic: ALL side diamonds together as ONE group
+// //   sideMeshes.forEach((name) => {
+// //     const mesh = scene.getObjectByName(name);
+// //     if (!mesh) return;
+
+// //     mesh.visible = showDiamonds && diamondCount === 2;
+
+// //     if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+// //       mesh.material = new THREE.MeshPhysicalMaterial();
+// //     }
+
+// //     mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+// //     mesh.material.roughness = 0;
+// //     mesh.material.metalness = 0;
+// //     mesh.material.transmission = 1;
+// //     mesh.material.ior = 2.4;
+// //     mesh.material.transparent = true;
+
+// //     mesh.material.emissive.set(
+// //       selectedDiamond === 1 ? "#ffff00" : "#000000"
+// //     );
+// //     mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+// //   });
+// /* ================= SIDE DIAMONDS - FINAL FIX ================= */
+// const sideMeshes = RING_MESHES[ringType].sides || [];
+
+// if (ringType === "ring") {
+
+//   // ✅ ring = 2 independent side diamonds
+//   sideMeshes.forEach((name, index) => {
+//     const mesh = scene.getObjectByName(name);
+//     if (!mesh) return;
+
+//     let visible = false;
+//     if (diamondCount === 2 && index === 0) visible = true;     
+//     if (diamondCount >= 3 && index <= 1) visible = true;     
+
+//     mesh.visible = showDiamonds && visible;
+
+//     if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+//       mesh.material = new THREE.MeshPhysicalMaterial();
+//     }
+
+//     mesh.material.color.set(diamondColors[index + 1]?.color || "#ffffff");
+//     mesh.material.roughness = 0;
+//     mesh.material.metalness = 0;
+//     mesh.material.transmission = 1;
+//     mesh.material.ior = 2.4;
+//     mesh.material.transparent = true;
+
+//     mesh.material.emissive.set(
+//       selectedDiamond === index + 1 ? "#ffff00" : "#000000"
+//     );
+//     mesh.material.emissiveIntensity =
+//       selectedDiamond === index + 1 ? 0.5 : 0;
+//   });
+
+// } else {
+
+//   // ✅ ring1 = ALL side diamonds as ONE ENTITY
+//   sideMeshes.forEach((name) => {
+//     const mesh = scene.getObjectByName(name);
+//     if (!mesh) return;
+
+//     mesh.visible = showDiamonds && diamondCount === 2;
+
+//     if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
+//       mesh.material = new THREE.MeshPhysicalMaterial();
+//     }
+
+//     mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+//     mesh.material.roughness = 0;
+//     mesh.material.metalness = 0;
+//     mesh.material.transmission = 1;
+//     mesh.material.ior = 2.4;
+//     mesh.material.transparent = true;
+
+//     mesh.material.emissive.set(
+//       selectedDiamond === 1 ? "#ffff00" : "#000000"
+//     );
+//     mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+//   });
+// }
+
+
+
+//   }, [
+//     scene,
+//     baseColor,
+//     diamondColors,
+//     showDiamonds,
+//     thickness,
+//     selectedDiamond,
+//     ringType,
+//     diamondCount,
+//   ]);
+
+//   useFrame(() => {
+//     if (scene) scene.rotation.y += 0.005;
+//   });
+
+//   if (!scene) return null;
+
+//   return (
+//     <primitive
+//       object={scene}
+//       scale={[scale, scale, scale]}
+//       position={position}
+//     />
+//   );
+  
+// }
+// function RingModel({
+//   ringType,
+//   baseColor,
+//   diamondColors,
+//   showDiamonds,
+//   thickness = 1,
+//   selectedDiamond,
+//   diamondCount,
+// }) {
+//   const { scene } = useGLTF(ringType === "ring" ? ringGLB : ring1GLB);
+//   const [scale, setScale] = useState(1);
+//   const [position, setPosition] = useState([0, 0, 0]);
+
+//   /* ================= PERFECT CENTERING ================= */
+//   useEffect(() => {
+//     if (!scene) return;
+
+//     const bbox = new THREE.Box3().setFromObject(scene);
+//     const size = bbox.getSize(new THREE.Vector3());
+//     const center = bbox.getCenter(new THREE.Vector3());
+//     const maxDim = Math.max(size.x, size.y, size.z);
+
+//     const scaleFactor = 2 / maxDim;
+//     setScale(scaleFactor);
+//     setPosition([
+//       -center.x * scaleFactor,
+//       -center.y * scaleFactor,
+//       -center.z * scaleFactor,
+//     ]);
+//   }, [scene]);
+
+//   /* ================= ALL MATERIAL + VISIBILITY ================= */
+//   useEffect(() => {
+//     if (!scene) return;
+
+//     /* ========== BASE METAL (CLONED ✅) ========== */
+//     RING_MESHES[ringType].base.forEach((name) => {
+//       const mesh = scene.getObjectByName(name);
+//       if (!mesh) return;
+
+//       mesh.material = mesh.material.clone(); // ✅ FIX MATERIAL SHARING
+
+//       mesh.material.color.set(baseColor);
+//       mesh.material.roughness = 0.3;
+//       mesh.material.metalness = 1;
+//       mesh.material.clearcoat = 1;
+
+//       mesh.scale.y = thickness;
+//     });
+
+//     /* ========== MIDDLE DIAMOND (CLONED ✅) ========== */
+//     const middleMesh =
+//       scene.getObjectByName(RING_MESHES[ringType].diamonds[0]);
+
+//     if (middleMesh) {
+//       middleMesh.visible = showDiamonds && diamondCount >= 1;
+
+//       middleMesh.material = middleMesh.material.clone(); // ✅ FIX
+
+//       middleMesh.material.color.set(
+//         diamondColors[0]?.color || "#ffffff"
+//       );
+//       middleMesh.material.roughness = 0;
+//       middleMesh.material.metalness = 0;
+//       middleMesh.material.transmission = 1;
+//       middleMesh.material.ior = 2.4;
+//       middleMesh.material.transparent = true;
+
+//       middleMesh.material.emissive.set(
+//         selectedDiamond === 0 ? "#ffff00" : "#000000"
+//       );
+//       middleMesh.material.emissiveIntensity =
+//         selectedDiamond === 0 ? 0.5 : 0;
+//     }
+
+//     /* ================= SIDE DIAMONDS (FINAL CORRECT LOGIC ✅) ================= */
+//     const sideMeshes = RING_MESHES[ringType].sides || [];
+
+//     if (ringType === "ring") {
+//       // ✅ ring = 2 INDEPENDENT side diamonds
+//       sideMeshes.forEach((name, index) => {
+//         const mesh = scene.getObjectByName(name);
+//         if (!mesh) return;
+
+//         let visible = false;
+
+//         if (diamondCount === 2 && index === 0) visible = true; // first side
+//         if (diamondCount >= 3 && index <= 1) visible = true;  // both sides
+
+//         mesh.visible = showDiamonds && visible;
+
+//         mesh.material = mesh.material.clone(); // ✅ FIX MATERIAL SHARING
+
+//         mesh.material.color.set(
+//           diamondColors[index + 1]?.color || "#ffffff"
+//         );
+//         mesh.material.roughness = 0;
+//         mesh.material.metalness = 0;
+//         mesh.material.transmission = 1;
+//         mesh.material.ior = 2.4;
+//         mesh.material.transparent = true;
+
+//         mesh.material.emissive.set(
+//           selectedDiamond === index + 1 ? "#ffff00" : "#000000"
+//         );
+//         mesh.material.emissiveIntensity =
+//           selectedDiamond === index + 1 ? 0.5 : 0;
+//       });
+//     } else {
+//       // ✅ ring1 = ALL SIDE DIAMONDS AS ONE SINGLE GROUP
+//       sideMeshes.forEach((name) => {
+//         const mesh = scene.getObjectByName(name);
+//         if (!mesh) return;
+
+//         mesh.visible = showDiamonds && diamondCount === 2;
+
+//         mesh.material = mesh.material.clone(); // ✅ FIX MATERIAL SHARING
+
+//         mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+//         mesh.material.roughness = 0;
+//         mesh.material.metalness = 0;
+//         mesh.material.transmission = 1;
+//         mesh.material.ior = 2.4;
+//         mesh.material.transparent = true;
+
+//         mesh.material.emissive.set(
+//           selectedDiamond === 1 ? "#ffff00" : "#000000"
+//         );
+//         mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
+//       });
+//     }
+//   }, [
+//     scene,
+//     baseColor,
+//     diamondColors,
+//     showDiamonds,
+//     thickness,
+//     selectedDiamond,
+//     ringType,
+//     diamondCount,
+//   ]);
+
+//   useFrame(() => {
+//     if (scene) scene.rotation.y += 0.005;
+//   });
+
+//   if (!scene) return null;
+
+//   return (
+//     <primitive
+//       object={scene}
+//       scale={[scale, scale, scale]}
+//       position={position}
+//     />
+//   );
+// }
 function RingModel({
   ringType,
   baseColor,
@@ -2451,6 +2864,7 @@ function RingModel({
   diamondCount,
 }) {
   const { scene } = useGLTF(ringType === "ring" ? ringGLB : ring1GLB);
+
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState([0, 0, 0]);
 
@@ -2471,7 +2885,6 @@ function RingModel({
       -center.z * scaleFactor,
     ]);
   }, [scene]);
- 
 
   /* ================= ALL MATERIAL + VISIBILITY ================= */
   useEffect(() => {
@@ -2482,10 +2895,7 @@ function RingModel({
       const mesh = scene.getObjectByName(name);
       if (!mesh) return;
 
-      if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
-        mesh.material = new THREE.MeshPhysicalMaterial();
-      }
-
+      mesh.material = new THREE.MeshPhysicalMaterial();
       mesh.material.color.set(baseColor);
       mesh.material.roughness = 0.3;
       mesh.material.metalness = 1;
@@ -2501,13 +2911,7 @@ function RingModel({
     if (middleMesh) {
       middleMesh.visible = showDiamonds && diamondCount >= 1;
 
-      if (
-        !middleMesh.material ||
-        !middleMesh.material.isMeshPhysicalMaterial
-      ) {
-        middleMesh.material = new THREE.MeshPhysicalMaterial();
-      }
-
+      middleMesh.material = new THREE.MeshPhysicalMaterial();
       middleMesh.material.color.set(
         diamondColors[0]?.color || "#ffffff"
       );
@@ -2524,65 +2928,62 @@ function RingModel({
         selectedDiamond === 0 ? 0.5 : 0;
     }
 
-    /* ========== SIDE DIAMONDS (FINAL FIX) ========== */
-const sideMeshes = RING_MESHES[ringType].sides || [];
+    /* ================= SIDE DIAMONDS ================= */
+    const sideMeshes = RING_MESHES[ringType].sides || [];
 
-if (ringType === "ring") {
-  // ✅ ring logic: 1 or 2 side diamonds MAX
-  sideMeshes.forEach((name, index) => {
-    const mesh = scene.getObjectByName(name);
-    if (!mesh) return;
+    /* ----------- NORMAL RING (3 SEPARATE DIAMONDS) ----------- */
+    if (ringType === "ring") {
+      sideMeshes.forEach((name, index) => {
+        const mesh = scene.getObjectByName(name);
+        if (!mesh) return;
 
-    let visible = false;
+        let visible = false;
+        if (diamondCount === 2 && index === 0) visible = true;
+        if (diamondCount >= 3 && index <= 1) visible = true;
 
-    if (diamondCount === 2 && index === 0) visible = true; // ✅ ONLY ONE
-    if (diamondCount >= 3 && index < 2) visible = true;   // ✅ TWO SIDES
+        mesh.visible = showDiamonds && visible;
 
-    mesh.visible = showDiamonds && visible;
+        mesh.material = new THREE.MeshPhysicalMaterial();
+        mesh.material.color.set(
+          diamondColors[index + 1]?.color || "#ffffff"
+        );
+        mesh.material.roughness = 0;
+        mesh.material.metalness = 0;
+        mesh.material.transmission = 1;
+        mesh.material.ior = 2.4;
+        mesh.material.transparent = true;
 
-    if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
-      mesh.material = new THREE.MeshPhysicalMaterial();
+        mesh.material.emissive.set(
+          selectedDiamond === index + 1 ? "#ffff00" : "#000000"
+        );
+        mesh.material.emissiveIntensity =
+          selectedDiamond === index + 1 ? 0.5 : 0;
+      });
     }
 
-    mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
-    mesh.material.roughness = 0;
-    mesh.material.metalness = 0;
-    mesh.material.transmission = 1;
-    mesh.material.ior = 2.4;
-    mesh.material.transparent = true;
+    /* ----------- RING1 (ALL SIDES AS ONE GROUP) ----------- */
+    if (ringType === "ring1") {
+      sideMeshes.forEach((name) => {
+        const mesh = scene.getObjectByName(name);
+        if (!mesh) return;
 
-    mesh.material.emissive.set(
-      selectedDiamond === 1 ? "#ffff00" : "#000000"
-    );
-    mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
-  });
+        mesh.visible = showDiamonds && diamondCount === 2;
 
-} else {
-  // ✅ ring1 logic: ALL side diamonds together as ONE group
-  sideMeshes.forEach((name) => {
-    const mesh = scene.getObjectByName(name);
-    if (!mesh) return;
+        mesh.material = new THREE.MeshPhysicalMaterial();
+        mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
+        mesh.material.roughness = 0;
+        mesh.material.metalness = 0;
+        mesh.material.transmission = 1;
+        mesh.material.ior = 2.4;
+        mesh.material.transparent = true;
 
-    mesh.visible = showDiamonds && diamondCount === 2;
-
-    if (!mesh.material || !mesh.material.isMeshPhysicalMaterial) {
-      mesh.material = new THREE.MeshPhysicalMaterial();
+        mesh.material.emissive.set(
+          selectedDiamond === 1 ? "#ffff00" : "#000000"
+        );
+        mesh.material.emissiveIntensity =
+          selectedDiamond === 1 ? 0.5 : 0;
+      });
     }
-
-    mesh.material.color.set(diamondColors[1]?.color || "#ffffff");
-    mesh.material.roughness = 0;
-    mesh.material.metalness = 0;
-    mesh.material.transmission = 1;
-    mesh.material.ior = 2.4;
-    mesh.material.transparent = true;
-
-    mesh.material.emissive.set(
-      selectedDiamond === 1 ? "#ffff00" : "#000000"
-    );
-    mesh.material.emissiveIntensity = selectedDiamond === 1 ? 0.5 : 0;
-  });
-}
-
   }, [
     scene,
     baseColor,
@@ -2607,8 +3008,9 @@ if (ringType === "ring") {
       position={position}
     />
   );
-  
 }
+
+
 
 
 
@@ -2625,23 +3027,42 @@ export default function RingsPage() {
 
   const [baseColor, setBaseColor] = useState(baseOptions[0].color);
   const [diamondCount, setDiamondCount] = useState(0);
+  // const [diamondColors, setDiamondColors] = useState(
+  //   ringType === "ring1" ? Array(2).fill({ color: "#FFFFFF" }) : Array(3).fill({ color: "#FFFFFF" })
+  // );
   const [diamondColors, setDiamondColors] = useState(
-    ringType === "ring1" ? Array(2).fill({ color: "#FFFFFF" }) : Array(3).fill({ color: "#FFFFFF" })
-  );
-  useEffect(() => {
+  ringType === "ring1"
+    ? [{ color: "#FFFFFF" }, { color: "#FFFFFF" }]   // ✅ Middle + ONE Side Group
+    : [
+        { color: "#FFFFFF" }, // Middle
+        { color: "#FFFFFF" }, // Side 1
+        { color: "#FFFFFF" }, // Side 2
+      ]
+);
+
+//   useEffect(() => {
+//   setDiamondColors((prev) => {
+//     const newArr = [...prev];
+
+//     if (diamondCount > newArr.length) {
+//       return [
+//         ...newArr,
+//         ...Array(diamondCount - newArr.length).fill({ color: "#FFFFFF" }),
+//       ];
+//     }
+
+//     return newArr.slice(0, diamondCount);
+//   });
+// }, [diamondCount]);
+useEffect(() => {
   setDiamondColors((prev) => {
-    const newArr = [...prev];
-
-    if (diamondCount > newArr.length) {
-      return [
-        ...newArr,
-        ...Array(diamondCount - newArr.length).fill({ color: "#FFFFFF" }),
-      ];
+    if (ringType === "ring1") {
+      return prev.slice(0, 2); // ✅ middle + one side group
     }
-
-    return newArr.slice(0, diamondCount);
+    return prev.slice(0, 3); // ✅ middle + 2 independent sides
   });
-}, [diamondCount]);
+}, [ringType]);
+
 
   const [diamondType, setDiamondType] = useState("lab");
   const [selectedDiamond, setSelectedDiamond] = useState(null);
@@ -2771,13 +3192,14 @@ export default function RingsPage() {
           </div>
 
           <button
-            className="checkout-btn"
-            onClick={() =>
-              navigate("/checkout", { state: { ringType, baseColor, diamondColors, engraving, thickness } })
-            }
-          >
-            Proceed to Checkout
-          </button>
+  className="next-btn"
+  onClick={() =>
+    navigate("/designer", { state: { ringType, baseColor, diamondColors, engraving, thickness, diamondCount, selectedDiamond } })
+  }
+>
+  Next
+</button>
+
         </div>
       </div>
 
