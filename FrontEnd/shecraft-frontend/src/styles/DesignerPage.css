@@ -187,3 +187,68 @@
   color: #0d753a;
 }
 
+.ring-customizer {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto 50px auto;
+  align-items: flex-start;
+}
+
+.viewer {
+  flex: 2;
+  min-width: 600px;
+  height: 700px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Designer options sidebar */
+.tabs-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  /* ✅ Center the cards */
+  justify-content: center;   /* vertical centering */
+  align-items: center;       /* horizontal centering */
+}
+
+/* Designer card */
+.designer-card {
+  width: 200px;
+  padding: 20px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+  background: #fff;
+
+  /* ✅ Optional: margin between cards */
+  margin-bottom: 10px;
+}
+
+.designer-card:hover {
+  border-color: #0d753a;
+  transform: translateY(-3px);
+}
+
+.designer-card.selected {
+  border-color: #0d753a;
+  background-color: #e6f2e6;
+}
+
+

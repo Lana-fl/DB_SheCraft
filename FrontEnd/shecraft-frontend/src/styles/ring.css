@@ -1,237 +1,32 @@
-/* General */
+/* General Page */
 .full-page {
   width: 100%;
   min-height: 100vh;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
-  background: #f9f9f9;
+  font-family: 'Poppins', sans-serif;
+  background: #f5f5f5;
+  color: #034d29;
 }
 
 /* Page Title */
 .ring-page h2 {
   text-align: center;
   color: #034d29;
-  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  letter-spacing: 0.5px;
 }
 
 /* Horizontal Steps */
 .steps-horizontal {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 40px;
-  margin: 20px 0;
+  align-items: center;
+  gap: 25px;
+  margin: 0 auto 35px;
   flex-wrap: wrap;
-}
-
-.step-box {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  border: 2px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-}
-
-.step-box.active {
-  background-color: #0d753a;
-  color: white;
-  border-color: #0d753a;
-}
-
-.steps-horizontal .step-box:not(:last-child)::after {
-  content: "→";
-  position: absolute;
-  right: -35px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 22px;
-  color: #ccc;
-}
-
-.step-box.active + .step-box::after {
-  color: #0d753a;
-}
-
-.step-labels {
-  display: flex;
-  justify-content: center;
-  gap: 85px;
-  margin-bottom: 20px;
-  font-weight: bold;
-  color: #034d29;
-}
-
-/* Ring Customizer */
-.ring-customizer {
-  display: flex;
-  flex-direction: row;
-  gap: 30px;
-  width: 100%;
-  max-width: 1500px;
-  margin: 0 auto 50px auto;
-  align-items: flex-start;
-}
-
-/* 3D Viewer */
-.viewer {
-  flex: 2;
-  min-width: 600px;
-  height: 700px;
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Tabs Sidebar */
-.tabs-sidebar {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Tab Header */
-.tab-header {
-  padding: 12px 20px;
-  border-radius: 15px;
-  border: 2px solid #0d753a;
-  background: #0d753a;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tab-header:hover {
-  background: #09592c;
-}
-
-.tab-header.active {
-  background: #09592c;
-  box-shadow: 0 4px 12px rgba(13, 117, 58, 0.4);
-}
-
-/* Tab Body */
-.tab-body {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 10px;
-}
-
-/* Options Grid */
-.options-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-/* Option Card */
-.option-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 12px;
-  border: 2px solid transparent;
-  background: #f5f5f5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s, border-color 0.2s;
-  width: 100px;
-}
-
-.option-card:hover {
-  transform: scale(1.05);
-}
-
-.option-card.selected {
-  border-color: #0d753a;
-  transform: scale(1.05);
-}
-
-/* Color Swatch */
-.color-swatch {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  margin-bottom: 5px;
-}
-
-/* Inputs */
-input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
-  width: 100%;
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
-/* Diamond Color Option */
-.diamond-color-option p {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.diamond-color-option input,
-.diamond-color-option select {
-  margin-bottom: 10px;
-}
-
-/* Checkout Button */
-.checkout-btn {
-  background: #0d753a;
-  color: white;
-  font-weight: bold;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.3s ease;
-}
-
-.checkout-btn:hover {
-  background: #09592c;
-  transform: translateY(-1px);
-}
-
-/* Footer */
-footer {
-  width: 100%;
-  background: #f8f8f8;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-  position: relative;
-  bottom: 0;
-}
-.steps-horizontal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin: 0 auto 25px auto;
-  flex-wrap: wrap;
-  max-width: 700px; /* keep it compact */
+  max-width: 750px;
 }
 
 .step-box {
@@ -241,21 +36,26 @@ footer {
   cursor: pointer;
   position: relative;
   flex: 1;
-  min-width: 80px;
+  min-width: 90px;
+  transition: transform 0.3s;
+}
+
+.step-box:hover {
+  transform: translateY(-3px);
 }
 
 .step-number {
-  width: 28px;       /* smaller circle */
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background-color: #ddd;
   color: #333;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   font-weight: bold;
-  font-size: 14px;    /* smaller font */
+  font-size: 15px;
   transition: all 0.3s;
 }
 
@@ -266,11 +66,11 @@ footer {
 }
 
 .step-labels {
-  font-size: 12px;   /* smaller text */
+  font-size: 13px;
   text-align: center;
   font-weight: 600;
   color: #034d29;
-  max-width: 90px;
+  max-width: 100px;
 }
 
 .step-box:not(:last-child)::after {
@@ -286,4 +86,185 @@ footer {
 
 .step-box.active + .step-box::after {
   color: #0d753a;
+}
+
+/* Ring Customizer Container */
+.ring-customizer {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto 50px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* 3D Viewer */
+.viewer {
+  flex: 2;
+  min-width: 600px;
+  height: 700px;
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.viewer:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Sidebar Tabs */
+.tabs-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 25px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tabs-sidebar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab Section Titles */
+.tab-section label {
+  font-weight: 600;
+  color: #0d753a;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Options Grid */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* Option Card */
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  background: #f9f9f9;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  width: 100px;
+  box-sizing: border-box;
+}
+
+.option-card:hover {
+  transform: scale(1.06);
+}
+
+.option-card.selected {
+  border-color: #0d753a;
+  box-shadow: 0 5px 15px rgba(13, 117, 58, 0.25);
+}
+
+/* Color Swatch */
+.color-swatch {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  transition: all 0.2s;
+}
+
+/* Input Fields */
+input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="range"]:hover,
+input[type="text"]:hover,
+select:hover,
+input[type="number"]:hover,
+input[type="color"]:hover {
+  border-color: #0d753a;
+  box-shadow: 0 2px 5px rgba(13, 117, 58, 0.2);
+}
+
+/* Diamond Color Options */
+.diamond-color-option p {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #034d29;
+}
+
+.diamond-color-option input,
+.diamond-color-option select {
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+/* Action Button */
+.next-btn {
+  background: #0d753a;
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 15px;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.next-btn:hover {
+  background: #09592c;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .ring-customizer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .viewer,
+  .tabs-sidebar {
+    min-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-horizontal {
+    gap: 15px;
+  }
+
+  .step-labels {
+    font-size: 11px;
+    max-width: 70px;
+  }
+
+  .option-card {
+    width: 90px;
+  }
 }

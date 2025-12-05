@@ -128,11 +128,15 @@ import Footer from "./Footer";
 
 import ringGLB from "../assets/ring/ring.glb";
 import ring1GLB from "../assets/ring/ring1.glb";
+import ring2GLB from "../assets/ring/ring2.glb";
 
+// Add Ring 2 here
 const rings = [
-  { id: 1, type: "ring", model: ringGLB, label: "Ring" },
-  { id: 2, type: "ring1", model: ring1GLB, label: "Ring 1" },
+  { id: 1, type: "ring", model: ringGLB, label: "Aurora Band" },
+  { id: 2, type: "ring1", model: ring1GLB, label: "Celeste Solitaire" },
+  { id: 3, type: "ring2", model: ring2GLB, label: "Luxe Horizon" },
 ];
+
 
 function RingThumbnail({ modelPath }) {
   const { scene } = useGLTF(modelPath);
@@ -165,6 +169,7 @@ export default function RingSelection() {
   const navigate = useNavigate();
 
   const handleSelectRing = (ringType) => {
+    // Pass ringType to RingsPage
     navigate("/ringspage", { state: { ringType } });
   };
 
@@ -173,7 +178,11 @@ export default function RingSelection() {
       <h1 className="ring-title">Choose Your Ring</h1>
       <div className="rings-grid">
         {rings.map((ring) => (
-          <div key={ring.id} className="ring-card" onClick={() => handleSelectRing(ring.type)}>
+          <div
+            key={ring.id}
+            className="ring-card"
+            onClick={() => handleSelectRing(ring.type)}
+          >
             <div className="ring-canvas-container" style={{ width: "100%", height: "50vh" }}>
               <Canvas camera={{ position: [0, 1.5, 4], fov: 50 }}>
                 <ambientLight intensity={0.6} />
@@ -189,10 +198,6 @@ export default function RingSelection() {
           </div>
         ))}
       </div>
-      
-
-  
-
       <Footer />
     </div>
   );
