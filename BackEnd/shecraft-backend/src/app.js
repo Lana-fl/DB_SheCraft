@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const path = require("path");
+
 const customerRoutes = require("./routes/customerRoute");
 const { requestLogger } = require("./middleware"); // optional but nice
 
@@ -12,6 +14,8 @@ const authRoutes = require("./routes/authRoutes");
 const orderRoute = require("./routes/OrderRoute");   // <-- ADDED
 
 const app = express();
+
+app.use("/images", express.static(path.join(__dirname, "../public/images")));
 
 // Global middleware
 app.use(cors());
