@@ -78,6 +78,19 @@ html, body {
   font-size: 1.3rem;
   color: #f0e1b0;
 }
-.footer {
-  flex-shrink: 0; 
+/* FULL PAGE WRAPPER */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport */
 }
+
+
+
+/* FOOTER ALWAYS AT BOTTOM */
+footer {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+

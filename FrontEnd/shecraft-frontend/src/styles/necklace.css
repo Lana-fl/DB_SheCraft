@@ -1,0 +1,319 @@
+/* Main Image Viewer */
+.viewer-left {
+  flex: 2;
+  width: 100%;
+  max-width: 700px;       /* optional: limit max width */
+  aspect-ratio: 1 / 1;    /* keeps the container square */
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;       /* prevents image overflow */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.viewer-left:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Main Necklace Image */
+.main-necklace-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* maintains aspect ratio, fits container */
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.main-necklace-img:hover {
+  transform: scale(1.05);
+}
+
+/* Click Hint */
+.click-hint {
+  font-size: 12px;
+  color: #777;
+  position: absolute;
+  bottom: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+
+/* Page Title */
+.necklace-page h2 {
+  text-align: center;
+  color: #034d29;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  letter-spacing: 0.5px;
+}
+
+/* Horizontal Steps */
+.steps-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin: 0 auto 35px;
+  flex-wrap: wrap;
+  max-width: 750px;
+}
+
+.step-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  flex: 1;
+  min-width: 90px;
+  transition: transform 0.3s;
+}
+
+.step-box:hover {
+  transform: translateY(-3px);
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.step-box.active .step-number {
+  background-color: #0d753a;
+  color: #fff;
+  border: 2px solid #0d753a;
+}
+
+.step-labels {
+  font-size: 13px;
+  text-align: center;
+  font-weight: 600;
+  color: #034d29;
+  max-width: 100px;
+}
+
+.step-box:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #ccc;
+  z-index: 0;
+}
+
+.step-box.active + .step-box::after {
+  color: #0d753a;
+}
+
+/* Necklace Customizer Container (Like Ring Customizer) */
+.necklace-customizer {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto 50px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* Main Image Viewer (Left) */
+.viewer-left {
+  flex: 2;
+  min-width: 600px;
+  height: 700px;
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.viewer-left:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.main-necklace-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.main-necklace-img:hover {
+  transform: scale(1.05);
+}
+
+.click-hint {
+  font-size: 12px;
+  color: #777;
+  position: absolute;
+  bottom: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Sidebar Tabs (Right) */
+.tabs-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 25px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tabs-sidebar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab Section Titles */
+.tab-section label {
+  font-weight: 600;
+  color: #0d753a;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Options Grid */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+/* Option Card */
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  background: #f9f9f9;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+  width: 100px;
+  box-sizing: border-box;
+}
+
+.option-card:hover {
+  transform: scale(1.06);
+}
+
+.option-card.selected {
+  border-color: #0d753a;
+  box-shadow: 0 5px 15px rgba(13, 117, 58, 0.25);
+}
+
+/* Color Swatch */
+.color-swatch {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  transition: all 0.2s;
+}
+
+/* Input Fields */
+input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="range"]:hover,
+input[type="text"]:hover,
+select:hover,
+input[type="number"]:hover,
+input[type="color"]:hover {
+  border-color: #0d753a;
+  box-shadow: 0 2px 5px rgba(13, 117, 58, 0.2);
+}
+
+/* Action Button */
+.next-btn {
+  background: #0d753a;
+  color: white;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 15px;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.next-btn:hover {
+  background: #09592c;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .necklace-customizer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .viewer-left,
+  .tabs-sidebar {
+    min-width: 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .steps-horizontal {
+    gap: 15px;
+  }
+
+  .step-labels {
+    font-size: 11px;
+    max-width: 70px;
+  }
+
+  .option-card {
+    width: 90px;
+  }
+}
+
+

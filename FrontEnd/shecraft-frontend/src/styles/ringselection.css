@@ -5,11 +5,19 @@ body, html {
   padding: 0;
 }
 
+/* WRAPPER AROUND EVERYTHING */
 .page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* full viewport height */
 }
+
+/* FOOTER ALWAYS AT BOTTOM */
+footer {
+  flex-shrink: 0;
+  width: 100%;
+}
+
 
 /* ========== FULL PAGE LAYOUT (FORCES FOOTER DOWN) ========== */
 .ring-selection-page {

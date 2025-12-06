@@ -128,6 +128,7 @@
 //     </div>
 //   );
 // }
+// 
 import React, { Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
@@ -138,94 +139,101 @@ import RingModel from "./RingModel";
 
 export default function CheckoutPage() {
   const { state } = useLocation();
-  const {
-    ringType,
-    baseColor,
-    diamondColors,
-    diamondType,
-    engraving,
-    thickness,
-    designer,
-    diamondCount,
-    selectedDiamond
-  } = state || {};
+  const itemType = state?.itemType || "ring";
 
- return (
-  <div className="checkout-page full-page">
-    <h1>Checkout</h1>
+  // Ring props
+  const { ringType, baseColor, diamondColors, diamondType, engraving, thickness, diamondCount, selectedDiamond } = state || {};
 
-    {/* Steps */}
-    <div className="steps-horizontal">
-      {["Customize Your Ring", "Choose Your Designer", "Checkout"].map((label, index) => (
-        <div key={index} className={`step-box ${index + 1 === 3 ? "active" : ""}`}>
-          <div className="step-number">{index + 1}</div>
-          <div className="step-labels">{label}</div>
-        </div>
-      ))}
-    </div>
+  // Necklace/Earring/Bracelet props
+  const { image, nameText, metal, necklaceLength, chainType, fontType, designer } = state || {};
 
-    <div className="checkout-container">
-      {/* Ring Preview */}
-      <div className="checkout-ring-preview">
-        <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }} className="checkout-canvas">
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={1.5} />
-          <directionalLight position={[-5, 5, -5]} intensity={1} />
-          <Suspense fallback={null}>
-            <RingModel
-              ringType={ringType}
-              baseColor={baseColor}
-              diamondColors={diamondColors}
-              showDiamonds={diamondCount > 0}
-              thickness={thickness}
-              selectedDiamond={selectedDiamond}
-              diamondCount={diamondCount}
-               
-            />
-            <Environment preset="city" background={false} />
-          </Suspense>
-          <OrbitControls enablePan={false} enableZoom={false} enableRotate />
-        </Canvas>
+  return (
+    <div className="checkout-page full-page">
+      <h1>Checkout</h1>
+
+      {/* Steps */}
+      <div className="steps-horizontal">
+        {["Customize Your Item", "Choose Your Designer", "Checkout"].map((label, index) => (
+          <div key={index} className={`step-box ${index + 1 === 3 ? "active" : ""}`}>
+            <div className="step-number">{index + 1}</div>
+            <div className="step-labels">{label}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Order Details */}
-      <div className="checkout-details">
-        <h3>Order Summary</h3>
-        <p><strong>Ring Type:</strong> {ringType || "N/A"}</p>
-        <p><strong>Base Color:</strong> {baseColor || "N/A"}</p>
-        <p><strong>Diamonds:</strong></p>
-        <div style={{ display: "flex", flexWrap: "wrap", marginTop: "5px" }}>
-          {diamondColors && diamondColors.length > 0 ? (
-            diamondColors.map((d, i) =>
-              diamondType === "lab" ? (
-                <div
-                  key={i}
-                  className="color-box"
-                  style={{ backgroundColor: d.color }}
-                ></div>
-              ) : (
-                <div key={i} className="color-label">{d.name || d.color}</div>
-              )
-            )
+      <div className="checkout-container">
+        {/* Preview */}
+        <div className="checkout-preview">
+          {itemType === "ring" ? (
+            <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }} className="checkout-canvas">
+              <ambientLight intensity={0.6} />
+              <directionalLight position={[5, 5, 5]} intensity={1.5} />
+              <directionalLight position={[-5, 5, -5]} intensity={1} />
+              <Suspense fallback={null}>
+                <RingModel
+                  ringType={ringType}
+                  baseColor={baseColor}
+                  diamondColors={diamondColors}
+                  showDiamonds={diamondCount > 0}
+                  thickness={thickness}
+                  selectedDiamond={selectedDiamond}
+                  diamondCount={diamondCount}
+                />
+                <Environment preset="city" background={false} />
+              </Suspense>
+              <OrbitControls enablePan={false} enableZoom={false} enableRotate />
+            </Canvas>
           ) : (
-            <span>N/A</span>
+            <div className="image-viewer">
+              <img src={image} alt={nameText} className="main-item-img" />
+            </div>
           )}
         </div>
-        <p><strong>Diamond Type:</strong> {diamondType === "lab" ? "Lab Grown" : "Real Gem"}</p>
-        <p><strong>Engraving:</strong> {engraving || "None"}</p>
-        <p><strong>Thickness:</strong> {thickness || "N/A"}</p>
-       
 
-        <p><strong>Designer:</strong> {designer || "N/A"}</p>
+        {/* Order Details */}
+        <div className="checkout-details">
+          <h3>Order Summary</h3>
+          {itemType === "ring" ? (
+            <>
+              <p><strong>Ring Type:</strong> {ringType || "N/A"}</p>
+              <p><strong>Base Color:</strong> {baseColor || "N/A"}</p>
+              <p><strong>Diamonds:</strong></p>
+              <div style={{ display: "flex", flexWrap: "wrap", marginTop: "5px" }}>
+                {diamondColors && diamondColors.length > 0 ? (
+                  diamondColors.map((d, i) =>
+                    diamondType === "lab" ? (
+                      <div key={i} className="color-box" style={{ backgroundColor: d.color }}></div>
+                    ) : (
+                      <div key={i} className="color-label">{d.name || d.color}</div>
+                    )
+                  )
+                ) : (
+                  <span>N/A</span>
+                )}
+              </div>
+              <p><strong>Diamond Type:</strong> {diamondType === "lab" ? "Lab Grown" : "Real Gem"}</p>
+              <p><strong>Engraving:</strong> {engraving || "None"}</p>
+              <p><strong>Thickness:</strong> {thickness || "N/A"}</p>
+            </>
+          ) : (
+            <>
+              <p><strong>Name:</strong> {nameText || "N/A"}</p>
+              <p><strong>Metal:</strong> {metal || "N/A"}</p>
+              {itemType === "necklace" && <p><strong>Length:</strong> {necklaceLength || "N/A"} inches</p>}
+              {itemType === "necklace" && <p><strong>Chain Type:</strong> {chainType || "N/A"}</p>}
+              {fontType && <p><strong>Font:</strong> {fontType}</p>}
+            </>
+          )}
+          <p><strong>Designer:</strong> {designer || "N/A"}</p>
 
-        <div className="checkout-actions">
-          <button className="primary">Confirm & Pay</button>
-          <Link to="/" className="secondary">Edit Design</Link>
+          <div className="checkout-actions">
+            <button className="primary">Confirm & Pay</button>
+            <Link to="/" className="secondary">Edit Design</Link>
+          </div>
         </div>
       </div>
-    </div>
 
-    <Footer />
-  </div>
-);
+      <Footer />
+    </div>
+  );
 }

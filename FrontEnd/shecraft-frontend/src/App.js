@@ -13,7 +13,7 @@ import Checkout from "./pages/CheckOut";
 import RingSelection from "./pages/RingSelection";
 import DesignerPage from "./pages/DesignerPage";
 import StepsBar from "./pages/StepsBar";
-
+import NecklaceSelection from "./pages/NecklaceSelection";
 
 
 function App() {
@@ -25,8 +25,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signin" element={<SigninPage />} />
         <Route path="/orderpage" element={<OrderPage />} />
-        <Route path="/necklaces" element={<NecklacesPage />} />
-          
+        <Route path="/necklacespage" element={<NecklacesPage />} />
+          <Route path="/necklaces" element={<NecklaceSelection />} /> 
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/rings" element={<RingSelection />} />
         <Route path="/ringspage" element={<RingsPage />} />

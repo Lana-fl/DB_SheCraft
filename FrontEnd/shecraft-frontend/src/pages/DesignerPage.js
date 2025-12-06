@@ -225,7 +225,113 @@
 // </div>
 // );
 // }
-import React, { useState, Suspense } from "react"; // ✅ Added Suspense
+// import React, { useState, Suspense } from "react"; // ✅ Added Suspense
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { Canvas } from "@react-three/fiber";
+// import { OrbitControls, Environment } from "@react-three/drei";
+// import "../styles/DesignerPage.css";
+// import Footer from "./Footer";
+// import RingModel from "./RingModel";
+
+// export default function DesignerPage() {
+//   const { state } = useLocation();
+//   const navigate = useNavigate();
+//   const {
+//     ringType,
+//     baseColor,
+//     diamondColors,
+//     engraving,
+//     thickness,
+//     diamondCount,
+//     selectedDiamond,
+//   } = state || {};
+
+//   const [designer, setDesigner] = useState("");
+//   const designers = ["Alice", "Bob", "Charlie"];
+//   const [currentStep, setCurrentStep] = useState(2);
+
+//   const handleNext = () => {
+//     if (!designer) return alert("Please choose a designer.");
+//     navigate("/checkout", {
+//       state: {
+//         ringType,
+//         baseColor,
+//         diamondColors,
+//         engraving,
+//         thickness,
+//         designer,
+//         diamondCount,
+//         selectedDiamond,
+//       },
+//     });
+//   };
+
+//   return (
+//     <div className="ring-page full-page">
+//       <h2>Choose Your Designer</h2>
+
+//       {/* Steps */}
+//       <div className="steps-horizontal">
+//         {["Customize Your Ring", "Choose Your Designer", "Checkout"].map(
+//           (label, index) => (
+//             <div
+//               key={index}
+//               className={`step-box ${currentStep === index + 1 ? "active" : ""}`}
+//               onClick={() => setCurrentStep(index + 1)}
+//             >
+//               <div className="step-number">{index + 1}</div>
+//               <div className="step-labels">{label}</div>
+//             </div>
+//           )
+//         )}
+//       </div>
+
+//       {/* Main content */}
+//       <div className="ring-customizer">
+//         {/* 3D Viewer */}
+//         <div className="viewer">
+//           <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
+//             <ambientLight intensity={0.6} />
+//             <directionalLight position={[5, 5, 5]} intensity={1.5} />
+//             <directionalLight position={[-5, 5, -5]} intensity={1} />
+//             <Suspense fallback={null}>
+//               <RingModel
+//                 ringType={ringType}
+//                 baseColor={baseColor}
+//                 diamondColors={diamondColors}
+//                 showDiamonds={diamondCount > 0}
+//                 thickness={thickness}
+//                 selectedDiamond={selectedDiamond}
+//                 diamondCount={diamondCount}
+//               />
+//               <Environment preset="city" background={false} />
+//             </Suspense>
+//             <OrbitControls enablePan={false} enableZoom={false} enableRotate />
+//           </Canvas>
+//         </div>
+
+//         {/* Designer Options */}
+//         <div className="tabs-sidebar">
+//           {designers.map((d) => (
+//             <div
+//               key={d}
+//               className={`designer-card ${designer === d ? "selected" : ""}`}
+//               onClick={() => setDesigner(d)}
+//             >
+//               {d}
+//             </div>
+//           ))}
+//           <button className="checkout-btn" onClick={handleNext}>
+//             Next: Checkout
+//           </button>
+//         </div>
+//       </div>
+
+//       <Footer />
+//     </div>
+//   );
+// }
+import React, { useState, Suspense } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
@@ -236,15 +342,14 @@ import RingModel from "./RingModel";
 export default function DesignerPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const {
-    ringType,
-    baseColor,
-    diamondColors,
-    engraving,
-    thickness,
-    diamondCount,
-    selectedDiamond,
-  } = state || {};
+
+  const itemType = state?.itemType || "ring";
+
+  // Ring props
+  const { ringType, baseColor, diamondColors, engraving, thickness, diamondCount, selectedDiamond } = state || {};
+
+  // Necklace/Earring/Bracelet props
+  const { image, nameText, metal, necklaceLength, chainType, fontType } = state || {};
 
   const [designer, setDesigner] = useState("");
   const designers = ["Alice", "Bob", "Charlie"];
@@ -252,65 +357,67 @@ export default function DesignerPage() {
 
   const handleNext = () => {
     if (!designer) return alert("Please choose a designer.");
+
     navigate("/checkout", {
       state: {
-        ringType,
-        baseColor,
-        diamondColors,
-        engraving,
-        thickness,
+        itemType,
         designer,
-        diamondCount,
-        selectedDiamond,
+        ...(itemType === "ring"
+          ? { ringType, baseColor, diamondColors, engraving, thickness, diamondCount, selectedDiamond }
+          : { image, nameText, metal, necklaceLength, chainType, fontType }),
       },
     });
   };
 
   return (
-    <div className="ring-page full-page">
-      <h2>Choose Your Designer</h2>
+    <div className="designer-page">
+      <h2 className="designer-title">Choose Your Designer</h2>
 
-      {/* Steps */}
+      {/* Horizontal Steps */}
       <div className="steps-horizontal">
-        {["Customize Your Ring", "Choose Your Designer", "Checkout"].map(
-          (label, index) => (
-            <div
-              key={index}
-              className={`step-box ${currentStep === index + 1 ? "active" : ""}`}
-              onClick={() => setCurrentStep(index + 1)}
-            >
-              <div className="step-number">{index + 1}</div>
-              <div className="step-labels">{label}</div>
-            </div>
-          )
-        )}
+        {["Customize Your Item", "Choose Your Designer", "Checkout"].map((label, index) => (
+          <div
+            key={index}
+            className={`step-box ${currentStep === index + 1 ? "active" : ""}`}
+            onClick={() => setCurrentStep(index + 1)}
+          >
+            <div className="step-number">{index + 1}</div>
+            <div className="step-labels">{label}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Main content */}
-      <div className="ring-customizer">
-        {/* 3D Viewer */}
-        <div className="viewer">
-          <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[5, 5, 5]} intensity={1.5} />
-            <directionalLight position={[-5, 5, -5]} intensity={1} />
-            <Suspense fallback={null}>
-              <RingModel
-                ringType={ringType}
-                baseColor={baseColor}
-                diamondColors={diamondColors}
-                showDiamonds={diamondCount > 0}
-                thickness={thickness}
-                selectedDiamond={selectedDiamond}
-                diamondCount={diamondCount}
-              />
-              <Environment preset="city" background={false} />
-            </Suspense>
-            <OrbitControls enablePan={false} enableZoom={false} enableRotate />
-          </Canvas>
+      {/* Main Content */}
+      <div className="designer-content">
+        {/* Viewer */}
+        <div className="designer-viewer">
+          {itemType === "ring" ? (
+            <Canvas shadows camera={{ position: [0, 1.5, 4], fov: 50 }}>
+              <ambientLight intensity={0.6} />
+              <directionalLight position={[5, 5, 5]} intensity={1.5} />
+              <directionalLight position={[-5, 5, -5]} intensity={1} />
+              <Suspense fallback={null}>
+                <RingModel
+                  ringType={ringType}
+                  baseColor={baseColor}
+                  diamondColors={diamondColors}
+                  showDiamonds={diamondCount > 0}
+                  thickness={thickness}
+                  selectedDiamond={selectedDiamond}
+                  diamondCount={diamondCount}
+                />
+                <Environment preset="city" background={false} />
+              </Suspense>
+              <OrbitControls enablePan={false} enableZoom={false} enableRotate />
+            </Canvas>
+          ) : (
+            <div className="image-viewer">
+              <img src={image} alt={nameText} className="main-item-img" />
+            </div>
+          )}
         </div>
 
-        {/* Designer Options */}
+        {/* Designer Sidebar */}
         <div className="tabs-sidebar">
           {designers.map((d) => (
             <div

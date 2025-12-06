@@ -173,31 +173,36 @@ export default function RingSelection() {
     navigate("/ringspage", { state: { ringType } });
   };
 
-  return (
-    <div className="ring-selection-page full-page">
-      <h1 className="ring-title">Choose Your Ring</h1>
-      <div className="rings-grid">
-        {rings.map((ring) => (
-          <div
-            key={ring.id}
-            className="ring-card"
-            onClick={() => handleSelectRing(ring.type)}
-          >
-            <div className="ring-canvas-container" style={{ width: "100%", height: "50vh" }}>
-              <Canvas camera={{ position: [0, 1.5, 4], fov: 50 }}>
-                <ambientLight intensity={0.6} />
-                <directionalLight position={[0, 5, 5]} intensity={1} />
-                <Suspense fallback={null}>
-                  <RingThumbnail modelPath={ring.model} />
-                  <Environment preset="city" background={false} />
-                </Suspense>
-                <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
-              </Canvas>
+   return (
+    <div className="page-wrapper">
+      <div className="ring-selection-page full-page">
+        <h1 className="ring-title">Choose Your Ring</h1>
+        <p className="ring-subtitle">
+          Personalize your ring with the style and stones you like.
+        </p>
+
+        <div className="rings-grid">
+          {rings.map((ring) => (
+            <div
+              key={ring.id}
+              className="ring-card"
+              onClick={() => handleSelectRing(ring.type)}
+            >
+              <div className="ring-canvas-container">
+                <Canvas camera={{ position: [0, 1.5, 4], fov: 50 }}>
+                  <ambientLight intensity={0.6} />
+                  <directionalLight position={[0, 5, 5]} intensity={1} />
+                  <Suspense fallback={null}>
+                    <RingThumbnail modelPath={ring.model} />
+                  </Suspense>
+                </Canvas>
+              </div>
+              <p className="ring-label">{ring.label}</p>
             </div>
-            <p className="ring-label">{ring.label}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
       <Footer />
     </div>
   );
