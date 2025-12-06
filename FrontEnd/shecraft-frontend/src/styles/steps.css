@@ -1,0 +1,54 @@
+.steps-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.step-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.step-number {
+  width: 25px;  /* smaller */
+  height: 25px;
+  border-radius: 50%;
+  background-color: #ddd;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.step-label {
+  font-size: 12px;
+  text-align: center;
+  color: #034d29;
+}
+
+.step-box.active .step-number {
+  background-color: #0d753a;
+  color: white;
+}
+
+.step-box:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  top: 12px;
+  right: -30px;
+  font-size: 18px;
+  color: #ccc;
+}
+
+.step-box.active + .step-box::after {
+  color: #0d753a;
+}

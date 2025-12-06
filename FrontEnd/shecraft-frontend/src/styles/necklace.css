@@ -1,15 +1,52 @@
-/* General Page */
-.full-page {
+/* Main Image Viewer */
+.viewer-left {
+  flex: 2;
   width: 100%;
-  min-height: 100vh;
-  padding: 20px;
-  font-family: 'Poppins', sans-serif;
-  background: #f5f5f5;
-  color: #034d29;
+  max-width: 700px;       /* optional: limit max width */
+  aspect-ratio: 1 / 1;    /* keeps the container square */
+  background: #ffffff;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;       /* prevents image overflow */
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
+.viewer-left:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Main Necklace Image */
+.main-necklace-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* maintains aspect ratio, fits container */
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.main-necklace-img:hover {
+  transform: scale(1.05);
+}
+
+/* Click Hint */
+.click-hint {
+  font-size: 12px;
+  color: #777;
+  position: absolute;
+  bottom: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+
 /* Page Title */
-.ring-page h2 {
+.necklace-page h2 {
   text-align: center;
   color: #034d29;
   font-size: 32px;
@@ -88,8 +125,8 @@
   color: #0d753a;
 }
 
-/* Ring Customizer Container */
-.ring-customizer {
+/* Necklace Customizer Container (Like Ring Customizer) */
+.necklace-customizer {
   display: flex;
   gap: 30px;
   width: 100%;
@@ -99,8 +136,8 @@
   flex-wrap: wrap;
 }
 
-/* 3D Viewer */
-.viewer {
+/* Main Image Viewer (Left) */
+.viewer-left {
   flex: 2;
   min-width: 600px;
   height: 700px;
@@ -111,14 +148,37 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
 }
 
-.viewer:hover {
+.viewer-left:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
 }
 
-/* Sidebar Tabs */
+.main-necklace-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.main-necklace-img:hover {
+  transform: scale(1.05);
+}
+
+.click-hint {
+  font-size: 12px;
+  color: #777;
+  position: absolute;
+  bottom: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Sidebar Tabs (Right) */
 .tabs-sidebar {
   flex: 1;
   display: flex;
@@ -209,19 +269,6 @@ input[type="color"]:hover {
   box-shadow: 0 2px 5px rgba(13, 117, 58, 0.2);
 }
 
-/* Diamond Color Options */
-.diamond-color-option p {
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #034d29;
-}
-
-.diamond-color-option input,
-.diamond-color-option select {
-  margin-bottom: 10px;
-  border-radius: 10px;
-}
-
 /* Action Button */
 .next-btn {
   background: #0d753a;
@@ -243,12 +290,12 @@ input[type="color"]:hover {
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .ring-customizer {
+  .necklace-customizer {
     flex-direction: column;
     align-items: center;
   }
 
-  .viewer,
+  .viewer-left,
   .tabs-sidebar {
     min-width: 90%;
   }
@@ -269,26 +316,4 @@ input[type="color"]:hover {
   }
 }
 
-
-.cuts-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.cut-card {
-  padding: 6px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #f9f9f9;
-  font-size: 0.85rem;
-}
-
-.cut-card.selected {
-  border-color: #034d29;
-  background: #d4f0e0;
-}
 
