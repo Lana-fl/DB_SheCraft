@@ -417,6 +417,7 @@ import * as THREE from "three";
 import ringGLB from "../assets/ring/ring.glb";
 import ring1GLB from "../assets/ring/ring1.glb";
 import ring2GLB from "../assets/ring/ring2.glb";
+import cutGLB from "../assets/ring/cuts.glb";
 
 const RING_MESHES = {
   ring: {
@@ -453,6 +454,7 @@ export default function RingModel({
   thickness = 1,
   selectedDiamond = -1,
   diamondCount = 2,
+  diamondCut = "Brilliant", 
 }) {
   const { scene } = useGLTF(
     ringType === "ring"
@@ -526,6 +528,9 @@ export default function RingModel({
         middleMesh.material.emissiveIntensity = selectedDiamond === 0 ? 0.5 : 0;
       }
     }
+    
+
+
 
     // Side Diamonds
     const sideMeshes = RING_MESHES[ringType].sides || [];

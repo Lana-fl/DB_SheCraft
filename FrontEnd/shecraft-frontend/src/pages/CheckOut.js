@@ -180,6 +180,7 @@ export default function CheckoutPage() {
               thickness={thickness}
               selectedDiamond={selectedDiamond}
               diamondCount={diamondCount}
+               
             />
             <Environment preset="city" background={false} />
           </Suspense>
@@ -213,6 +214,8 @@ export default function CheckoutPage() {
         <p><strong>Diamond Type:</strong> {diamondType === "lab" ? "Lab Grown" : "Real Gem"}</p>
         <p><strong>Engraving:</strong> {engraving || "None"}</p>
         <p><strong>Thickness:</strong> {thickness || "N/A"}</p>
+       
+
         <p><strong>Designer:</strong> {designer || "N/A"}</p>
 
         <div className="checkout-actions">

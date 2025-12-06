@@ -268,3 +268,27 @@ input[type="color"]:hover {
     width: 90px;
   }
 }
+
+
+.cuts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cut-card {
+  padding: 6px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f9f9f9;
+  font-size: 0.85rem;
+}
+
+.cut-card.selected {
+  border-color: #034d29;
+  background: #d4f0e0;
+}
+

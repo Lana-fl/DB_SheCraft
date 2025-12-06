@@ -3461,6 +3461,12 @@ const REAL_GEMS = [
   { name: "Emerald", color: "#50C878" },
   { name: "Sapphire", color: "#0F52BA" },
 ];
+const GEM_CUTS = [
+  "Baguette", "Brilliant", "Coffin", "Cushion", "Emerald", "Flanders", "Heart",
+  "Hexagonal", "Marquise", "Octagonal", "Oval", "Pear", "Princess", "Radiant",
+  "Triangle", "Trillion"
+];
+
 
 // Map thickness values to labels for the user
 const getThicknessLabel = (t) => {
@@ -3490,7 +3496,7 @@ export default function RingsPage() {
   const [engraving, setEngraving] = useState("");
   const [price, setPrice] = useState(0);
   const [currentStep, setCurrentStep] = useState(1);
-
+  ;
   const toggleDiamond = (index) =>
     setSelectedDiamond(prev => prev === index ? null : index);
 
@@ -3501,7 +3507,7 @@ export default function RingsPage() {
       return newArr;
     });
   };
-
+const [diamondCut, setDiamondCut] = useState(GEM_CUTS[0])
   const calculatePrice = () => {
     let total = baseOptions.find(b => b.color === baseColor)?.price || 100;
     if (diamondCount > 0) total += 300;
@@ -3547,6 +3553,7 @@ export default function RingsPage() {
                 thickness={thickness}
                 selectedDiamond={selectedDiamond}
                 diamondCount={diamondCount}
+                diamondCut={diamondCut} 
               />
               <Environment preset="city" background={false} />
             </Suspense>
@@ -3642,6 +3649,21 @@ export default function RingsPage() {
                 <div key={i} className="diamond-color-option">
                   <p onClick={() => toggleDiamond(i)} style={{ cursor: "pointer" }}>
                     {i === 0 ? "Middle Diamond" : "Side Diamond"} {selectedDiamond === i ? "(Selected)" : ""}
+                    {/* <div className="diamond-cut-option">
+  <label>Middle Diamond Cut</label>
+  <div className="cuts-grid">
+    {GEM_CUTS.map((cut) => (
+      <div
+        key={cut}
+        className={`cut-card ${diamondCut === cut ? "selected" : ""}`}
+        onClick={() => setDiamondCut(cut)}
+      >
+        <p>{cut}</p>
+      </div>
+    ))}
+  </div>
+</div> */}
+
                   </p>
                   {selectedDiamond === i && (
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
