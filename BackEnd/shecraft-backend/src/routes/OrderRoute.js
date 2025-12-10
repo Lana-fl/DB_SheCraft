@@ -1,15 +1,22 @@
-// src/routes/orderRoute.js
-const express = require('express');
+// src/routes/OrderRoute.js
+const express = require("express");
 const router = express.Router();
-const orderController = require('../controllers/orderController');
+const orderController = require("../controllers/orderController");
 
-// IMPORTANT: customer route FIRST
-router.get('/customer/:customerID', orderController.getOrdersByCustomer);
+// Customer order history
+// GET /api/orders/customer/:customerID
+router.get("/customer/:customerID", orderController.getOrdersByCustomer);
 
-// Get one order + items + total
-router.get('/:orderID', orderController.getOrderDetails);
+// Designer order log
+// GET /api/orders/designer/:designerID
+router.get("/designer/:designerID", orderController.getOrdersByDesigner);
+
+// Single order + items + total
+// GET /api/orders/:orderID
+router.get("/:orderID", orderController.getOrderDetails);
 
 // Create an order from a cart (checkout)
-router.post('/', orderController.createOrderFromCart);
+// POST /api/orders
+router.post("/", orderController.createOrderFromCart);
 
 module.exports = router;

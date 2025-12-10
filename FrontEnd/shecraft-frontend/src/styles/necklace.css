@@ -1,49 +1,13 @@
-/* Main Image Viewer */
-.viewer-left {
-  flex: 2;
+/* General Page */
+.page-wrapper {
   width: 100%;
-  max-width: 700px;       /* optional: limit max width */
-  aspect-ratio: 1 / 1;    /* keeps the container square */
-  background: #ffffff;
-  border-radius: 25px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  background: #f5f5f5;
+  color: #034d29;
   position: relative;
-  overflow: hidden;       /* prevents image overflow */
-  transition: transform 0.3s, box-shadow 0.3s;
 }
-
-.viewer-left:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
-}
-
-/* Main Necklace Image */
-.main-necklace-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;  /* maintains aspect ratio, fits container */
-  border-radius: 12px;
-  transition: transform 0.3s ease;
-}
-
-.main-necklace-img:hover {
-  transform: scale(1.05);
-}
-
-/* Click Hint */
-.click-hint {
-  font-size: 12px;
-  color: #777;
-  position: absolute;
-  bottom: 15px;
-  text-align: center;
-  width: 100%;
-}
-
 
 /* Page Title */
 .necklace-page h2 {
@@ -55,145 +19,63 @@
   letter-spacing: 0.5px;
 }
 
-/* Horizontal Steps */
-.steps-horizontal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 25px;
-  margin: 0 auto 35px;
-  flex-wrap: wrap;
-  max-width: 750px;
-}
-
-.step-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  flex: 1;
-  min-width: 90px;
-  transition: transform 0.3s;
-}
-
-.step-box:hover {
-  transform: translateY(-3px);
-}
-
-.step-number {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #ddd;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 6px;
-  font-weight: bold;
-  font-size: 15px;
-  transition: all 0.3s;
-}
-
-.step-box.active .step-number {
-  background-color: #0d753a;
-  color: #fff;
-  border: 2px solid #0d753a;
-}
-
-.step-labels {
-  font-size: 13px;
-  text-align: center;
-  font-weight: 600;
-  color: #034d29;
-  max-width: 100px;
-}
-
-.step-box:not(:last-child)::after {
-  content: "→";
-  position: absolute;
-  top: 50%;
-  right: -20px;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #ccc;
-  z-index: 0;
-}
-
-.step-box.active + .step-box::after {
-  color: #0d753a;
-}
-
-/* Necklace Customizer Container (Like Ring Customizer) */
+/* Necklace Customizer Container */
 .necklace-customizer {
   display: flex;
-  gap: 30px;
-  width: 100%;
+  gap: 40px;
   max-width: 1500px;
   margin: 0 auto 50px;
   align-items: flex-start;
   flex-wrap: wrap;
 }
 
-/* Main Image Viewer (Left) */
-.viewer-left {
-  flex: 2;
-  min-width: 600px;
-  height: 700px;
-  background: #ffffff;
-  border-radius: 25px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+/* LEFT PREVIEW */
+.preview-left {
+  flex: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-  position: relative;
+  align-items: flex-start;
 }
 
-.viewer-left:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+.preview-box {
+  background: #fff;
+  border-radius: 25px;
+  padding: 30px;
+  text-align: center;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.preview-box:hover {
+  transform: translateY(-5px);
 }
 
 .main-necklace-img {
   width: 100%;
-  height: auto;
+  max-width: 400px;
   object-fit: contain;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
+  margin-bottom: 20px;
+  transition: transform 0.3s;
 }
 
 .main-necklace-img:hover {
   transform: scale(1.05);
 }
 
-.click-hint {
-  font-size: 12px;
-  color: #777;
-  position: absolute;
-  bottom: 15px;
-  text-align: center;
-  width: 100%;
+.name-preview {
+  font-size: 22px;
+  font-weight: 700;
+  color: #034d29;
 }
 
-/* Sidebar Tabs (Right) */
-.tabs-sidebar {
+/* RIGHT FORM */
+.form-left {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 25px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.tabs-sidebar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  gap: 25px;
 }
 
 /* Tab Section Titles */
@@ -205,71 +87,152 @@
   display: block;
 }
 
-/* Options Grid */
-.options-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-/* Option Card */
-.option-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  padding: 12px;
-  border-radius: 15px;
-  border: 2px solid transparent;
-  background: #f9f9f9;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s;
-  width: 100px;
-  box-sizing: border-box;
-}
-
-.option-card:hover {
-  transform: scale(1.06);
-}
-
-.option-card.selected {
-  border-color: #0d753a;
-  box-shadow: 0 5px 15px rgba(13, 117, 58, 0.25);
-}
-
-/* Color Swatch */
-.color-swatch {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  margin-bottom: 5px;
-  transition: all 0.2s;
-}
-
 /* Input Fields */
-input[type="range"], input[type="text"], select, input[type="number"], input[type="color"] {
+.tab-section input[type="text"] {
   width: 100%;
-  margin: 5px 0;
-  padding: 8px 10px;
-  border-radius: 12px;
+  padding: 10px 14px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 16px;
   box-sizing: border-box;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input[type="range"]:hover,
-input[type="text"]:hover,
-select:hover,
-input[type="number"]:hover,
-input[type="color"]:hover {
+.tab-section input[type="text"]:hover {
   border-color: #0d753a;
   box-shadow: 0 2px 5px rgba(13, 117, 58, 0.2);
 }
 
-/* Action Button */
+/* Metal Options */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.option-card {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border 0.2s;
+}
+
+.option-card.selected {
+  border-color: #0d753a;
+  transform: scale(1.15);
+}
+
+.color-swatch {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 420px;
+  height: 100%;
+  background: #fff;
+  padding: 30px 25px;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  transition: right 0.3s;
+  z-index: 100;
+}
+
+.right-panel.open {
+  right: 0;
+}
+
+.panel-img,
+.chain-option img,
+.length-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border-radius: 12px;
+}
+
+.panel-img:hover,
+.chain-option img:hover,
+.length-img:hover {
+  transform: scale(1.1);
+}
+
+.chain-length-selection h3 {
+  margin: 15px 0 12px;
+  color: #034d29;
+}
+
+.chains-grid,
+.length-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.panel-option {
+  padding: 10px 14px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.panel-option:hover {
+  background: #ddd;
+  transform: scale(1.05);
+}
+
+.panel-option.selected {
+  background: #0d753a;
+  color: #fff;
+}
+
+.confirm-btn {
+  margin-top: 25px;
+  padding: 14px;
+  width: 100%;
+  background: #0d753a;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirm-btn:hover {
+  background: #09592c;
+}
+
+/* Length Image Preview */
+.length-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.length-img {
+  width: 200px;
+  height: auto;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  transition: transform 0.2s, border 0.2s;
+}
+
+.length-img:hover {
+  transform: scale(1.05);
+  border-color: #0d753a;
+}
+
+/* Next Button */
 .next-btn {
   background: #0d753a;
   color: white;
@@ -288,6 +251,18 @@ input[type="color"]:hover {
   transform: translateY(-2px);
 }
 
+/* Blur Overlay */
+.overlay-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 50;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .necklace-customizer {
@@ -295,25 +270,17 @@ input[type="color"]:hover {
     align-items: center;
   }
 
-  .viewer-left,
-  .tabs-sidebar {
-    min-width: 90%;
+  .preview-box,
+  .form-left {
+    width: 90%;
   }
 }
 
 @media (max-width: 768px) {
-  .steps-horizontal {
-    gap: 15px;
-  }
-
-  .step-labels {
-    font-size: 11px;
-    max-width: 70px;
-  }
-
-  .option-card {
-    width: 90px;
+  .panel-img,
+  .chain-option img,
+  .length-img {
+    width: 100px;
+    height: 100px;
   }
 }
-
-

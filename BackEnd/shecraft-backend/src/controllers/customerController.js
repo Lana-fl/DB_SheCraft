@@ -1,11 +1,11 @@
 // src/controllers/customerController.js
-const customerModel = require("../models/customerModel");
+const pool = require("../config/db");
 
 // GET /api/customers
 async function getCustomers(req, res) {
   try {
-    const customers = await customerModel.getAllCustomers();
-    res.json(customers);
+    const [rows] = await pool.query("SELECT * FROM CUSTOMER");
+    res.json(rows); // 🔥 VERY IMPORTANT: always send a response
   } catch (err) {
     console.error("Error in getCustomers:", err);
     res.status(500).json({ message: "Failed to fetch customers" });
@@ -16,65 +16,83 @@ async function getCustomers(req, res) {
 async function getCustomer(req, res) {
   try {
     const { id } = req.params;
-    const customer = await customerModel.getCustomerById(id);
+    const [rows] = await pool.query(
+      "SELECT * FROM CUSTOMER WHERE customerID = ?",
+      [id]
+    );
 
-    if (!customer) {
+    if (rows.length === 0) {
       return res.status(404).json({ message: "Customer not found" });
     }
 
-    res.json(customer);
+    res.json(rows[0]);
   } catch (err) {
     console.error("Error in getCustomer:", err);
     res.status(500).json({ message: "Failed to fetch customer" });
   }
 }
 
-// POST /api/customers
+// (Optional) we won’t use these in the app, but I’ll leave them working:
 async function createCustomer(req, res) {
   try {
-    const newCustomer = await customerModel.createCustomer(req.body);
-    res.status(201).json(newCustomer);
+    const {
+      customerID,
+      firstName,
+      lastName,
+      countryCode,
+      phoneNb,
+      email,
+      cardNb,
+      passwordHash, // only for debugging; real signup uses authController
+    } = req.body;
+
+    await pool.query(
+      `INSERT INTO CUSTOMER
+       (customerID, firstName, lastName, countryCode, phoneNb, email, cardNb, passwordHash)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        customerID,
+        firstName || null,
+        lastName || null,
+        countryCode || null,
+        phoneNb || null,
+        email,
+        cardNb || null,
+        passwordHash || null,
+      ]
+    );
+
+    res.status(201).json({ message: "Customer created (raw CRUD)" });
   } catch (err) {
     console.error("Error in createCustomer:", err);
-
-    // Optional: simple duplicate email handling
-    if (err.code === "ER_DUP_ENTRY") {
-      return res.status(409).json({ message: "Email or ID already exists" });
-    }
-
     res.status(500).json({ message: "Failed to create customer" });
   }
 }
 
-// PUT /api/customers/:id
 async function updateCustomer(req, res) {
   try {
     const { id } = req.params;
+    const { firstName, lastName, countryCode, phoneNb } = req.body;
 
-    const existing = await customerModel.getCustomerById(id);
-    if (!existing) {
-      return res.status(404).json({ message: "Customer not found" });
-    }
+    await pool.query(
+      `UPDATE CUSTOMER
+       SET firstName = ?, lastName = ?, countryCode = ?, phoneNb = ?
+       WHERE customerID = ?`,
+      [firstName || null, lastName || null, countryCode || null, phoneNb || null, id]
+    );
 
-    const updated = await customerModel.updateCustomer(id, req.body);
-    res.json(updated);
+    res.json({ message: "Customer updated" });
   } catch (err) {
     console.error("Error in updateCustomer:", err);
     res.status(500).json({ message: "Failed to update customer" });
   }
 }
 
-// DELETE /api/customers/:id
 async function deleteCustomer(req, res) {
   try {
     const { id } = req.params;
-
-    const deleted = await customerModel.deleteCustomer(id);
-    if (!deleted) {
-      return res.status(404).json({ message: "Customer not found" });
-    }
-
-    res.status(204).send();
+    await pool.query("DELETE FROM CUSTOMER WHERE customerID = ?", [id]);
+    res.json({ message: "Customer deleted" });
   } catch (err) {
     console.error("Error in deleteCustomer:", err);
     res.status(500).json({ message: "Failed to delete customer" });

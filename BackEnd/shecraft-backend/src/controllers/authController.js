@@ -92,21 +92,26 @@ async function signupCustomer(req, res) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      `INSERT INTO CUSTOMER
-        (customerID, firstName, lastName, countryCode, phoneNb, email, cardNb, passwordHash)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        customerID,
-        firstName || null,
-        lastName || null,
-        countryCode || null,
-        phoneNb || null,
-        email,
-        cardNb || null,
-        passwordHash,
-      ]
-    );
+let cardHash = null;
+if (cardNb) {
+  cardHash = await bcrypt.hash(cardNb, 10);
+}
+
+await pool.query(
+  `INSERT INTO CUSTOMER
+    (customerID, firstName, lastName, countryCode, phoneNb, email, cardNb, passwordHash)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    customerID,
+    firstName || null,
+    lastName || null,
+    countryCode || null,
+    phoneNb || null,
+    email,
+    cardHash,        // 🔐 store the hash, not the raw card
+    passwordHash,
+  ]
+);
 
     // Auto-login after signup (optional but nice)
     const token = generateToken({ id: customerID, role: "customer" });
@@ -141,16 +146,16 @@ async function signupDesigner(req, res) {
       name,
       branch,
       email,
-      countryCode,
+      countryCode, 
       phoneNb,
-      supplierID,
       password,
     } = req.body;
 
-    if (!designerID || !name || !branch || !email || !supplierID || !password) {
+    // supplierID removed from required fields
+    if (!designerID || !name || !branch || !email || !password) {
       return res.status(400).json({
         message:
-          "designerID, name, branch, email, supplierID and password are required",
+          "designerID, name, branch, email and password are required",
       });
     }
 
@@ -166,16 +171,15 @@ async function signupDesigner(req, res) {
 
     await pool.query(
       `INSERT INTO DESIGNER
-        (designerID, name, branch, email, countryCode, phoneNb, supplierID, passwordHash)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        (designerID, name, branch, email, countryCode, phoneNb, passwordHash)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         designerID,
         name,
         branch,
         email,
-        countryID || countryCode || null, // if you decide to use 'countryCode' only, remove countryID
+        countryCode || null,
         phoneNb || null,
-        supplierID,
         passwordHash,
       ]
     );
