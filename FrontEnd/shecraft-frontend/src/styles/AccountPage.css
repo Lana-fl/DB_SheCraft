@@ -1,0 +1,175 @@
+/* GENERAL PAGE STYLE (matching WelcomePage) */
+.account-container {
+  min-height: 100vh;
+  background-color: #050505;
+  color: #f5f0e6;
+  font-family: "Playfair Display", "Cinzel", serif;
+  padding-top: 90px; /* space for navbar */
+}
+
+/* ---------------- NO USER FOUND (CENTERED) ---------------- */
+
+.no-user-container {
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-user-title {
+  font-size: 2.4rem;
+  font-weight: bold;
+  color: #e4c67b; /* gold */
+  margin-bottom: 12px;
+}
+
+.no-user-text {
+  color: #c7c2b8;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+
+.no-user-button {
+  padding: 12px 26px;
+  background-color: #e4c67b; /* gold */
+  color: #050505;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  letter-spacing: 1px;
+  transition: 0.25s ease-in-out;
+}
+
+.no-user-button:hover {
+  background-color: #f5f0e6;
+}
+
+/* ---------------- ACCOUNT HEADER BANNER ---------------- */
+
+.account-banner {
+  width: 100%;
+  padding: 60px 0;
+  text-align: center;
+  background-color: #080808;
+  border-bottom: 1px solid #222;
+}
+
+.banner-title {
+  font-size: 3rem;
+  color: #e4c67b; /* gold */
+  margin-bottom: 8px;
+}
+
+.banner-subtitle {
+  font-size: 1.2rem;
+  color: #c7c2b8;
+  letter-spacing: 2px;
+}
+
+/* ---------------- ACCOUNT CARD ---------------- */
+
+.account-card {
+  background-color: #111111;
+  width: 60%;
+  margin: 40px auto;
+  padding: 35px 45px;
+  border-radius: 14px;
+  border: 1px solid #2c2c2c;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.section-title {
+  font-size: 1.8rem;
+  color: #e4c67b;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2c2c2c;
+}
+
+/* INFO ROWS */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #2c2c2c;
+}
+
+.info-label {
+  font-size: 1.05rem;
+  color: #c7c2b8;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  color: #f5f0e6;
+}
+
+/* EDIT BUTTON */
+.edit-btn {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.1rem;
+  color: #050505;
+  background-color: #e4c67b;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: 0.25s;
+}
+
+.edit-btn:hover {
+  background-color: #f5f0e6;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 800px) {
+  .account-card {
+    width: 85%;
+    padding: 25px;
+  }
+
+  .banner-title {
+    font-size: 2.3rem;
+  }
+}
+ 
+.edit-input {
+  background: transparent;
+  border: 1px solid #2c2c2c;
+  padding: 5px 10px;
+  color: #f5f0e6;
+  width: 60%;
+  border-radius: 6px;
+}
+
+.edit-input:focus {
+  border-color: #e4c67b;
+  outline: none;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 60%;
+}
+
+.toggle-btn {
+  background: none;
+  border: 1px solid #2c2c2c;
+  padding: 5px 10px;
+  color: #e4c67b;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-size: 0.9rem;
+}
+
+.toggle-btn:hover {
+  border-color: #e4c67b;
+  color: #f5f0e6;
+}
