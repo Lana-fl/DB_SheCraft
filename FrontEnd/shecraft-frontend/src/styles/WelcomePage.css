@@ -224,3 +224,34 @@
     text-align: center;
   }
 }
+/* blur main content when modal open */
+.main-content.blurred {
+  filter: blur(6px);
+  transition: filter 180ms ease;
+  pointer-events: none; /* prevent interacting with blurred content */
+  user-select: none;
+}
+
+/* Overlay that dims the page */
+.login-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  backdrop-filter: blur(2px); /* slight blur on overlay layer (optional) */
+}
+
+/* Modal box wrapper */
+.login-modal {
+  width: 420px;
+  max-width: calc(100% - 32px);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  padding: 18px;
+  position: relative;
+  z-index: 1210;
+}

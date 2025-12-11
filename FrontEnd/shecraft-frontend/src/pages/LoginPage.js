@@ -77,26 +77,31 @@
 //     </div>
 //   );
 // }
- import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
-import Header from "./Header";
-import Footer from "./Footer";
-
-export default function LoginPage() {
-  const [activeTab, setActiveTab] = useState("login");     // "login" | "signup"
-  const [role, setRole] = useState("customer");            // "customer" | "designer"
+export default function LoginPage({ closePopup }) {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("login"); // "login" | "signup"
+  const [role, setRole] = useState("customer"); // "customer" | "designer"
   const [errorMessage, setErrorMessage] = useState("");
 
-  const navigate = useNavigate();
+  // Close modal on Escape key
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") closePopup?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [closePopup]);
 
   const handleSubmit = (e, type) => {
     e.preventDefault();
 
-    const username = e.target.username?.value.trim();
-    const email = e.target.email.value.trim();
-    const password = e.target.password.value.trim();
+    const username = e.target.username?.value?.trim();
+    const email = e.target.email?.value?.trim();
+    const password = e.target.password?.value?.trim();
 
     if (type === "signup" && !username) {
       setErrorMessage("Please enter your name.");
@@ -116,114 +121,79 @@ export default function LoginPage() {
 
     setErrorMessage("");
 
-    alert(
-      `${type === "login" ? "Login" : "Sign Up"} successful as ${
-        role === "designer" ? "Designer" : "Customer"
-      }!`
-    );
-
-    // Route can be adjusted as needed
-    if (role === "designer") {
-      navigate("/designer-dashboard");
-    } else {
-      navigate("/orderpage");
-    }
+    // Close popup and navigate to order page
+    closePopup?.();
+    navigate("/orderpage");
   };
 
   return (
-    <div className="page-container">
-      
+    <div className="login-overlay">
+      <div className="login-modal">
+        {/* Close icon */}
+        <span className="close-icon" onClick={closePopup} aria-label="Close">×</span>
 
-      <main className="main-content">
-        <div className="login-page">
-          <div className="login-container">
-            {/* Top tabs: Login / Sign Up */}
-            <div className="tab-header">
-              <button
-                type="button"
-                className={`tab ${activeTab === "login" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveTab("login");
-                  setErrorMessage("");
-                }}
-              >
-                Login
-              </button>
-              <button
-                type="button"
-                className={`tab ${activeTab === "signup" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveTab("signup");
-                  setErrorMessage("");
-                }}
-              >
-                Sign Up
-              </button>
-            </div>
+        {/* Tabs */}
+        <div className="tab-header">
+          <button
+            type="button"
+            className={`tab ${activeTab === "login" ? "active" : ""}`}
+            onClick={() => { setActiveTab("login"); setErrorMessage(""); }}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            className={`tab ${activeTab === "signup" ? "active" : ""}`}
+            onClick={() => { setActiveTab("signup"); setErrorMessage(""); }}
+          >
+            Sign Up
+          </button>
+        </div>
 
-            <div className="login-layout">
-              {/* LEFT SIDE: vertical role toggle */}
-              <div className="role-column">
-                <h3 className="role-title">Continue as</h3>
-                <button
-                  type="button"
-                  className={`role-pill ${role === "customer" ? "active" : ""}`}
-                  onClick={() => setRole("customer")}
-                >
-                  Customer
-                </button>
-                <button
-                  type="button"
-                  className={`role-pill ${role === "designer" ? "active" : ""}`}
-                  onClick={() => setRole("designer")}
-                >
-                  Designer
-                </button>
-              </div>
+        <div className="login-layout">
+          {/* LEFT SIDE: role toggle */}
+          <div className="role-column">
+            <h3 className="role-title">Continue as</h3>
+            <button
+              type="button"
+              className={`role-pill ${role === "customer" ? "active" : ""}`}
+              onClick={() => setRole("customer")}
+            >
+              Customer
+            </button>
+            <button
+              type="button"
+              className={`role-pill ${role === "designer" ? "active" : ""}`}
+              onClick={() => setRole("designer")}
+            >
+              Designer
+            </button>
+          </div>
 
-              {/* RIGHT SIDE: form fields */}
-              <div className="form-column">
-                {activeTab === "login" && (
-                  <form onSubmit={(e) => handleSubmit(e, "login")}>
-                    <input type="email" name="email" placeholder="Email" />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Password"
-                    />
-                    <button type="submit" className="primary-btn">
-                      Login
-                    </button>
-                  </form>
-                )}
+          {/* RIGHT SIDE: form */}
+          <div className="form-column">
+            {activeTab === "login" && (
+              <form onSubmit={(e) => handleSubmit(e, "login")}>
+                <input type="email" name="email" placeholder="Email" className="form-input" />
+                <input type="password" name="password" placeholder="Password" className="form-input" />
+                <button type="submit" className="primary-btn">Login</button>
+              </form>
+            )}
 
-                {activeTab === "signup" && (
-                  <form onSubmit={(e) => handleSubmit(e, "signup")}>
-                    <input type="text" name="username" placeholder="Name" />
-                    <input type="email" name="email" placeholder="Email" />
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Password"
-                    />
-                    <button type="submit" className="primary-btn">
-                      Sign Up
-                    </button>
-                  </form>
-                )}
+            {activeTab === "signup" && (
+              <form onSubmit={(e) => handleSubmit(e, "signup")}>
+                <input type="text" name="username" placeholder="Name" className="form-input" />
+                <input type="email" name="email" placeholder="Email" className="form-input" />
+                <input type="password" name="password" placeholder="Password" className="form-input" />
+                <button type="submit" className="primary-btn">Sign Up</button>
+              </form>
+            )}
 
-                {errorMessage && (
-                  <p id="error-message" className="error-message">
-                    {errorMessage}
-                  </p>
-                )}
-              </div>
-            </div>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
           </div>
         </div>
-      </main>
-
-     
+      </div>
     </div>
   );
 }
+

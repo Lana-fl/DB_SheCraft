@@ -136,21 +136,116 @@
 // }
 
 // src/pages/WelcomePage.jsx (adjust path if needed)
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/WelcomePage.css";
-
-import Header from "./Header";
-import Footer from "./Footer";
 
 import bannerImg from "../assets/welcomeBanner.png";
 import necklacesImg from "../assets/necklaces.jpg";
 import ringsImg from "../assets/rings.jpg";
 import braceletsImg from "../assets/bracelets.jpg";
 import earringsImg from "../assets/earrings.jpg";
+import LoginPage from "./LoginPage"; 
 
+// export default function WelcomePage() {
+//   const navigate = useNavigate();
+//   const [showLogin, setShowLogin] = useState(false);   
+
+//   const categories = [
+//     { name: "Rings", route: "/rings", image: ringsImg },
+//     { name: "Necklaces", route: "/necklaces", image: necklacesImg },
+//     { name: "Bracelets", route: "/bracelets", image: braceletsImg },
+//     { name: "Earrings", route: "/earrings", image: earringsImg },
+//   ];
+
+//   return (
+//     <div className="page-container">
+      
+//      {showLogin && (
+//         <div className="login-modal-overlay" onClick={() => setShowLogin(false)}>
+//           <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+//             <LoginPage closePopup={() => setShowLogin(false)} />
+//           </div>
+//         </div>
+//       )}
+//       <main className="main-content">
+//         <div className="welcome-page">
+//           {/* ---------- QUOTE SECTION ---------- */}
+//           <section className="quote-section">
+//             <p className="quote-text">
+//               “Jewelry is how you whisper your story without saying a word.”
+//             </p>
+//             <p className="quote-sub">
+//               Log in to start crafting pieces that are as unique as you are.
+//             </p>
+//           </section>
+
+//           {/* ---------- HERO BANNER ---------- */}
+//           <section
+//             className="hero"
+//             style={{ backgroundImage: `url(${bannerImg})` }}
+//           >
+//             <div className="hero-overlay">
+//               <h1 className="hero-title">SheCraft Studio</h1>
+//               <p className="hero-subtitle">
+//                 Customize. Layer. Make every detail yours.
+//               </p>
+//             </div>
+//           </section>
+
+//           {/* ---------- COLLECTION ROWS  ---------- */}
+//           <section className="collections-section">
+//             <h2 className="section-title">Explore Our Collections</h2>
+//             <p className="section-subtitle">
+//               Choose a category to discover handcrafted favorites and best
+//               sellers.
+//             </p>
+
+//             {categories.map((cat, index) => (
+//               <div
+//                 key={cat.name}
+//                 className={`collection-row ${
+//                   index % 2 === 1 ? "reverse" : ""
+//                 }`}
+//               >
+//                 <div
+//                   className="collection-image-wrapper"
+//                   onClick={() => navigate(cat.route)}
+//                 >
+//                   <img
+//                     src={cat.image}
+//                     alt={cat.name}
+//                     className="collection-image"
+//                   />
+//                 </div>
+
+//                 <div className="collection-info">
+//                   <h3 className="collection-name">{cat.name}</h3>
+//                   <p className="collection-text">
+//                     Discover {cat.name.toLowerCase()} designed to stack, mix,
+//                     and match with every mood. Curate your own SheCraft story
+//                     with timeless pieces and modern details.
+//                   </p>
+//                   <button
+//                     className="collection-cta"
+//                     onClick={() => navigate(cat.route)}
+//                   >
+//                     Explore {cat.name}
+//                   </button>
+//                 </div>
+//               </div>
+//             ))}
+//           </section>
+//         </div>
+//       </main>
+
+     
+//     </div>
+//   );
+// }
 export default function WelcomePage() {
   const navigate = useNavigate();
+  const [showLogin, setShowLogin] = useState(false);
 
   const categories = [
     { name: "Rings", route: "/rings", image: ringsImg },
@@ -159,21 +254,19 @@ export default function WelcomePage() {
     { name: "Earrings", route: "/earrings", image: earringsImg },
   ];
 
-  return (
+ return (
     <div className="page-container">
-      
-
       <main className="main-content">
         <div className="welcome-page">
           {/* ---------- QUOTE SECTION ---------- */}
           <section className="quote-section">
-            <p className="quote-text">
-              “Jewelry is how you whisper your story without saying a word.”
-            </p>
-            <p className="quote-sub">
-              Log in to start crafting pieces that are as unique as you are.
-            </p>
-          </section>
+  <p className="quote-text">
+    “Jewelry is how you whisper your story without saying a word.”
+  </p>
+  <p className="quote-sub">
+    Log in to start crafting pieces that are as unique as you are.
+  </p>
+</section>
 
           {/* ---------- HERO BANNER ---------- */}
           <section
@@ -188,43 +281,32 @@ export default function WelcomePage() {
             </div>
           </section>
 
-          {/* ---------- COLLECTION ROWS (PANDORA STYLE) ---------- */}
+          {/* ---------- COLLECTION ROWS  ---------- */}
           <section className="collections-section">
             <h2 className="section-title">Explore Our Collections</h2>
             <p className="section-subtitle">
-              Choose a category to discover handcrafted favorites and best
-              sellers.
+              Choose a category to discover handcrafted favorites and best sellers.
             </p>
 
             {categories.map((cat, index) => (
               <div
                 key={cat.name}
-                className={`collection-row ${
-                  index % 2 === 1 ? "reverse" : ""
-                }`}
+                className={`collection-row ${index % 2 === 1 ? "reverse" : ""}`}
               >
                 <div
                   className="collection-image-wrapper"
                   onClick={() => navigate(cat.route)}
                 >
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="collection-image"
-                  />
+                  <img src={cat.image} alt={cat.name} className="collection-image" />
                 </div>
 
                 <div className="collection-info">
                   <h3 className="collection-name">{cat.name}</h3>
                   <p className="collection-text">
                     Discover {cat.name.toLowerCase()} designed to stack, mix,
-                    and match with every mood. Curate your own SheCraft story
-                    with timeless pieces and modern details.
+                    and match with every mood.
                   </p>
-                  <button
-                    className="collection-cta"
-                    onClick={() => navigate(cat.route)}
-                  >
+                  <button className="collection-cta" onClick={() => navigate(cat.route)}>
                     Explore {cat.name}
                   </button>
                 </div>
@@ -233,8 +315,6 @@ export default function WelcomePage() {
           </section>
         </div>
       </main>
-
-     
     </div>
   );
 }

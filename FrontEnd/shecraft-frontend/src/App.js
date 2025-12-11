@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import WelcomePage from "./pages/WelcomePage";
 import AboutPage from "./pages/AboutPage";
@@ -19,11 +19,32 @@ import Footer from "./pages/Footer";
 
 
 function App() {
+  
+  const [showLogin, setShowLogin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const openLogin = () => setShowLogin(true);
+  const closeLogin = () => setShowLogin(false);
   return (
     <Router>
        <div className="page-container">
         {/* ✅ One shared header for ALL pages */}
-        <Header />
+        <Header openLogin={openLogin} isLoggedIn={isLoggedIn} />
+        {/* ---------- GLOBAL LOGIN MODAL ---------- */}
+      {showLogin && (
+        <div
+          className="login-modal-overlay"
+          onClick={closeLogin}
+          role="presentation"
+        >
+          <div
+            className="login-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <LoginPage closePopup={closeLogin} />
+          </div>
+        </div>
+      )}
 
         {/* ✅ Routed content */}
         <main className="main-content">
@@ -31,7 +52,7 @@ function App() {
             <Route path="/" element={<WelcomePage />} />
             <Route path="/about" element={<AboutPage />} />
 
-            <Route path="/login" element={<LoginPage />} />
+        
             <Route path="/orderpage" element={<OrderPage />} />
 
             <Route path="/necklacespage" element={<NecklacesPage />} />

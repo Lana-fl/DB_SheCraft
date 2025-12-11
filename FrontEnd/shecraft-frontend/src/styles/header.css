@@ -110,3 +110,31 @@
 .sc-nav-links a:hover {
   color: #f6d9ff;  /* light lilac text on hover */
 }
+.login-header-link {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.15rem;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+.login-header-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: #f6d9ff; /* same underline as links */
+  transition: width 0.25s ease;
+}
+
+.login-header-link:hover::after {
+  width: 100%;
+}
+
+.login-header-link:hover {
+  color: #f6d9ff;
+}
