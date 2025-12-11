@@ -134,7 +134,7 @@ import ring2GLB from "../assets/ring/ring2.glb";
 const rings = [
   { id: 1, type: "ring", model: ringGLB, label: "Aurora Band" },
   { id: 2, type: "ring1", model: ring1GLB, label: "Celeste Solitaire" },
-  { id: 3, type: "ring2", model: ring2GLB, label: "Luxe Horizon" },
+  { id: 3, type: "ring2", model: ring2GLB, label: "Tennis Horizon" },
 ];
 
 
@@ -203,7 +203,7 @@ export default function RingSelection() {
         </div>
       </div>
 
-      <Footer />
+     
     </div>
   );
 }

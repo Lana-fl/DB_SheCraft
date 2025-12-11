@@ -14,31 +14,43 @@ import RingSelection from "./pages/RingSelection";
 import DesignerPage from "./pages/DesignerPage";
 import StepsBar from "./pages/StepsBar";
 import NecklaceSelection from "./pages/NecklaceSelection";
+import Header from "./pages/Header";
+import Footer from "./pages/Footer";
 
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<WelcomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signin" element={<SigninPage />} />
-        <Route path="/orderpage" element={<OrderPage />} />
-        <Route path="/necklacespage" element={<NecklacesPage />} />
-          <Route path="/necklaces" element={<NecklaceSelection />} /> 
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/rings" element={<RingSelection />} />
-        <Route path="/ringspage" element={<RingsPage />} />
-        <Route path="/steps" element={<StepsBar />} />
+       <div className="page-container">
+        {/* ✅ One shared header for ALL pages */}
+        <Header />
 
-    
-<Route path="/designer" element={<DesignerPage />} />
+        {/* ✅ Routed content */}
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<WelcomePage />} />
+            <Route path="/about" element={<AboutPage />} />
 
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/orderpage" element={<OrderPage />} />
 
-        <Route path="/bracelets" element={<BraceletsPage />} />
-        <Route path="/earrings" element={<EarringsPage />} />
-      </Routes>
+            <Route path="/necklacespage" element={<NecklacesPage />} />
+            <Route path="/necklaces" element={<NecklaceSelection />} />
+
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/rings" element={<RingSelection />} />
+            <Route path="/ringspage" element={<RingsPage />} />
+            <Route path="/steps" element={<StepsBar />} />
+
+            <Route path="/designer" element={<DesignerPage />} />
+            <Route path="/bracelets" element={<BraceletsPage />} />
+            <Route path="/earrings" element={<EarringsPage />} />
+          </Routes>
+        </main>
+
+        {/* ✅ One shared footer for ALL pages */}
+        <Footer />
+      </div>
     </Router>
   );
 }

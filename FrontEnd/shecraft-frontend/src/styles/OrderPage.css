@@ -1,13 +1,14 @@
-html, body {
-  height: 100%;
-  margin: 0;
-}
+/* ---------- ORDER PAGE WRAPPER ---------- */
+
 .order-page {
   min-height: 100vh;
-  padding: 90px 60px 60px;
-  background: radial-gradient(circle at top, #1b4a3a 0%, #0f2d25 50%, #050b0a 100%);
-  color: #f5f0e6;
+  padding: 70px 80px 80px; 
+  background: radial-gradient(circle at top, #f9f5ff 0%, #ffffff 55%, #fbe9ff 100%);
+  color: #3a2b4d;
+  font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
+
+/* ---------- HEADER TEXT ---------- */
 
 .order-header {
   max-width: 900px;
@@ -16,57 +17,67 @@ html, body {
 }
 
 .order-header h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2.3rem;
-  color: #f0e1b0;
+  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-size: 2.2rem;
+  color: #3a2b4d;          /* deep lilac-violet, not yellow */
   margin-bottom: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .order-header p {
   font-size: 0.98rem;
-  color: #c9c2b4;
+  color: #7a6b85;          /* soft mauve */
 }
+
+/* ---------- GRID OF CATEGORY CARDS ---------- */
 
 .order-grid {
   max-width: 900px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 per row */
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 per row on desktop */
   gap: 24px;
 }
 
+/* ---------- SINGLE CARD ---------- */
+
 .order-card {
-  background-color: #0f1e20;
-  border-radius: 20px;
+  background-color: #ffffff;
+  border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #26413b;
+  border: 1px solid #e4ddf7;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .order-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.7);
-  border-color: #e4c67b;
+  transform: translateY(-4px);
+  box-shadow: 0 14px 26px rgba(148, 119, 202, 0.35);
+  border-color: #a488d4;
 }
+
+/* IMAGE AREA */
 
 .order-image-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 70%; /* aspect ratio of tile */
+  padding-top: 70%; /* aspect ratio tile */
   overflow: hidden;
+  background-color: #f9f5ff;
 }
 
 .order-image {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
+/* CARD FOOTER TEXT */
 
 .order-card-footer {
   padding: 14px 18px 16px;
@@ -74,23 +85,21 @@ html, body {
 }
 
 .order-card-footer h2 {
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
   font-size: 1.3rem;
-  color: #f0e1b0;
-}
-/* FULL PAGE WRAPPER */
-.page-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* full viewport */
+  color: #3a2b4d;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
+/* ---------- RESPONSIVE ---------- */
 
+@media (max-width: 768px) {
+  .order-page {
+    padding: 50px 20px 60px;
+  }
 
-/* FOOTER ALWAYS AT BOTTOM */
-footer {
-  flex-shrink: 0;
-  width: 100%;
+  .order-grid {
+    grid-template-columns: 1fr; /* 1 card per row on mobile */
+  }
 }
-
-

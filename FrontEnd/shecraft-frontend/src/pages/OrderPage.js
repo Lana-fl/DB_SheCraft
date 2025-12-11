@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/OrderPage.css";
 import Footer from "./Footer";
-
+import Header from "./Header";
 import ringsImg from "../assets/rings2.png";
 import necklacesImg from "../assets/necklaces2.png";
 import braceletsImg from "../assets/bracelets2.png";
@@ -21,6 +21,7 @@ export default function OrderPage() {
   return (
     <div className="page-wrapper">
       <div className="order-page">
+         
         <div className="order-header">
           <h1>Design Your Jewelry</h1>
           <p>Select a category to start customizing your jewelry.</p>
@@ -43,7 +44,7 @@ export default function OrderPage() {
           ))}
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 }

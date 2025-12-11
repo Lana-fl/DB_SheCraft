@@ -10,15 +10,7 @@ import aboutValuesImg from "../assets/ourvalues.png";
 export default function AboutPage() {
   return (
     <div className="about-page">
-      {/* ---------- NAVBAR (same style as WelcomePage) ---------- */}
-      <header className="navbar">
-        <div className="logo">SheCraft</div>
-        <nav className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/about">About Us</Link>
-          <Link to="/login">Login</Link>
-        </nav>
-      </header>
+      
 
       <main className="about-main">
         {/* ---------- TOP TITLE ---------- */}
@@ -108,7 +100,7 @@ export default function AboutPage() {
 
      
   
-       <Footer />
+      
     </div>
   );
 }

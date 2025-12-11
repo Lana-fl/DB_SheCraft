@@ -32,11 +32,11 @@
 .step-label {
   font-size: 12px;
   text-align: center;
-  color: #034d29;
+  color: #42023f;
 }
 
 .step-box.active .step-number {
-  background-color: #0d753a;
+  background-color: #2d0258;
   color: white;
 }
 
@@ -50,5 +50,5 @@
 }
 
 .step-box.active + .step-box::after {
-  color: #0d753a;
+  color: #3c0546;
 }

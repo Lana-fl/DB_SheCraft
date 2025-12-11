@@ -1,0 +1,112 @@
+.sc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 80px; /* same horizontal padding as footer */
+
+  background: rgba(167, 114, 193, 0.35); /* transparent purple */
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+
+
+/* ---------- LEFT SECTION: LOGO + ICONS ---------- */
+
+.sc-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* logo button */
+.logo-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.logo-img {
+  height: 55px;        /* bigger logo */
+  width: auto;
+  object-fit: contain;
+}
+
+
+/* ICON BUTTONS (cart + account) */
+
+.icon-button {
+  border: none;
+  background: rgba(255, 255, 255, 0.45);    /* soft translucent */
+  border-radius: 999px;
+  padding: 0.5rem 0.75rem;
+
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+.icon-img {
+  width: 26px;       /* larger icons */
+  height: 26px;
+  object-fit: contain;
+}
+
+
+/* ---------- RIGHT SECTION: NAV LINKS ---------- */
+
+.sc-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+}
+
+.sc-nav-links a {
+  text-decoration: none;
+  
+  font-family: "Cormorant Garamond", serif;  /* luxury serif */
+  font-size: 1.15rem;
+  color: white;
+  font-weight: 500;
+
+  letter-spacing: 0.06em;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+/* underline hover */
+.sc-nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: #f6d9ff; /* soft lilac underline */
+  transition: width 0.25s ease;
+}
+
+.sc-nav-links a:hover::after {
+  width: 100%;
+}
+
+.sc-nav-links a:hover {
+  color: #f6d9ff;  /* light lilac text on hover */
+}

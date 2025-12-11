@@ -669,7 +669,7 @@ const handleSubmit = () => {
           <button className="next-btn" onClick={handleSubmit}>
                Next to Designer
              </button>
-    <Footer />
+    
   </div>
 );
 }
