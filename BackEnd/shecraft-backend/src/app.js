@@ -14,6 +14,10 @@ const authRoutes = require("./routes/authRoutes");
 const accessoryRoutes = require("./routes/accessoryRoutes");
 const designerRoutes = require("./routes/designerRoutes");
 const charmRoutes = require("./routes/charmRoutes");
+const materialRoutes = require("./routes/materialRoutes");
+const stoneRoutes = require("./routes/stoneRoutes");
+
+
 
 
 
@@ -33,6 +37,10 @@ app.use("/api/accessories", accessoryRoutes);
 app.use("/api/orders", orderRoute);   
 app.use("/api/designers", designerRoutes);
 app.use("/api/charms", charmRoutes);
+app.use("/api/materials", materialRoutes);
+app.use("/api/stones", stoneRoutes);
+
+
 
 
 
