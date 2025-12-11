@@ -1,0 +1,129 @@
+/* ---------- COLOR PALETTE ---------- */
+:root {
+  --sc-bg: #ffffff;
+  --sc-bg-soft: #f6e9ff;
+  --sc-bg-blush: #fdeef7;
+  --sc-text-main: #5a3d7a;
+  --sc-text-muted: #7a6b85;
+  --sc-accent: #bfadd7;
+  --sc-border: #efdef8;
+  --gold: #e4c67b;
+}
+
+/* ---------- PAGE LAYOUT ---------- */
+.cart-page,
+.designer-page {
+  min-height: 100vh;
+  padding: 60px 40px;
+  background: var(--sc-bg);
+  font-family: "Playfair Display", serif;
+}
+
+.cart-title {
+  font-size: 2.6rem;
+  text-align: center;
+  color: var(--sc-text-main);
+  margin-bottom: 12px;
+}
+
+.designer-sub {
+  text-align: center;
+  color: var(--sc-text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+/* ---------- ORDER LIST ---------- */
+.cart-items {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ---------- ORDER CARD ---------- */
+.cart-card {
+  padding: 26px 30px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid var(--sc-border);
+  box-shadow: 0 10px 28px rgba(180, 123, 255, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(180, 123, 255, 0.28);
+}
+
+.cart-info h3 {
+  margin: 0;
+  font-size: 1.55rem;
+  color: var(--sc-text-main);
+}
+
+.cart-info p {
+  margin: 10px 0 0;
+  font-size: 1.1rem;
+  color: var(--sc-text-muted);
+}
+
+/* ---------- STATUS TAGS (FIXED) ---------- */
+.status {
+  padding: 5px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #ffffff;
+  margin-left: 8px;
+  display: inline-block;
+}
+
+.status.pending {
+  background: #e4b24c;
+}
+
+.status.in-progress {
+  background: var(--sc-accent);
+}
+
+.status.completed {
+  background: #6bbf73;
+}
+
+/* ---------- COMPLETE ORDER BUTTON ---------- */
+.complete-btn {
+  margin-top: 16px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 10px;
+  background: var(--sc-accent);
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.complete-btn:hover {
+  background: #9d8cb7;
+  transform: translateY(-2px);
+}
+
+.complete-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* ---------- NOT LOGGED IN MESSAGE ---------- */
+.cart-not-logged {
+  text-align: center;
+  padding: 140px 20px;
+  font-size: 1.5rem;
+  color: var(--sc-text-main);
+}
+
+/* ---------- NO IMAGE MODE (SIMPLIFY CARD) ---------- */
+.no-image {
+  padding-left: 30px;
+}

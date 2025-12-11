@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+/* PAGES */
 import WelcomePage from "./pages/WelcomePage";
 import AboutPage from "./pages/AboutPage";
 import NecklacesPage from "./pages/NecklacesPage";
@@ -8,7 +9,6 @@ import RingsPage from "./pages/RingsPage";
 import BraceletsPage from "./pages/BraceletsPage";
 import EarringsPage from "./pages/EarringsPage";
 import LoginPage from "./pages/LoginPage";
-import SigninPage from "./pages/LoginPage";
 import OrderPage from "./pages/OrderPage";
 import Checkout from "./pages/CheckOut";
 import RingSelection from "./pages/RingSelection";
@@ -18,13 +18,17 @@ import NecklaceSelection from "./pages/NecklaceSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
 
-// Account system pages
+/* ACCOUNT SYSTEM */
 import AccountPage from "./pages/AccountPage";
 import EditAccountPage from "./pages/EditAccountPage";
+
+/* CART PAGE */
+import CartPage from "./pages/CartPage";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("customer"); // "customer" | "designer"
 
   const openLogin = () => setShowLogin(true);
   const closeLogin = () => setShowLogin(false);
@@ -32,11 +36,11 @@ function App() {
   return (
     <Router>
       <div className="page-container">
-        
-        {/* Global shared header */}
+
+        {/* GLOBAL HEADER */}
         <Header openLogin={openLogin} isLoggedIn={isLoggedIn} />
 
-        {/* LOGIN POPUP MODAL */}
+        {/* LOGIN POPUP */}
         {showLogin && (
           <div
             className="login-modal-overlay"
@@ -44,28 +48,32 @@ function App() {
             role="presentation"
           >
             <div className="login-modal" onClick={(e) => e.stopPropagation()}>
-              <LoginPage closePopup={closeLogin} />
+              <LoginPage
+                closePopup={closeLogin}
+                setIsLoggedIn={setIsLoggedIn}
+                setUserRole={setUserRole}
+              />
             </div>
           </div>
         )}
 
-        {/* Routed content */}
+        {/* MAIN ROUTES */}
         <main className="main-content">
           <Routes>
-
-            {/* MAIN PAGES */}
             <Route path="/" element={<WelcomePage />} />
             <Route path="/about" element={<AboutPage />} />
 
-            {/* AUTH PAGES */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signin" element={<SigninPage />} />
-
-            {/* ACCOUNT PAGES */}
+            {/* ACCOUNT */}
             <Route path="/account" element={<AccountPage />} />
             <Route path="/account/edit" element={<EditAccountPage />} />
 
-            {/* SHOPPING / PRODUCT PAGES */}
+            {/* CART */}
+            <Route
+              path="/cart"
+              element={<CartPage isLoggedIn={isLoggedIn} userRole={userRole} />}
+            />
+
+            {/* SHOPPING */}
             <Route path="/orderpage" element={<OrderPage />} />
             <Route path="/necklacespage" element={<NecklacesPage />} />
             <Route path="/necklaces" element={<NecklaceSelection />} />
@@ -74,15 +82,13 @@ function App() {
             <Route path="/bracelets" element={<BraceletsPage />} />
             <Route path="/earrings" element={<EarringsPage />} />
 
-            {/* OTHER FEATURES */}
+            {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/designer" element={<DesignerPage />} />
             <Route path="/steps" element={<StepsBar />} />
-          
           </Routes>
         </main>
 
-        {/* Global shared footer */}
         <Footer />
       </div>
     </Router>
@@ -90,4 +96,3 @@ function App() {
 }
 
 export default App;
-

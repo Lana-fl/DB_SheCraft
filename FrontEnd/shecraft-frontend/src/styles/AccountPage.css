@@ -1,48 +1,70 @@
-/* GENERAL PAGE STYLE (matching WelcomePage) */
-.account-container {
-  min-height: 100vh;
-  background-color: #050505;
-  color: #f5f0e6;
-  font-family: "Playfair Display", "Cinzel", serif;
-  padding-top: 90px; /* space for navbar */
+/* ---------- COLOR PALETTE (from WelcomePage) ---------- */
+:root {
+  --sc-bg: #ffffff;
+  --sc-bg-soft: #f6e9ff;
+  --sc-bg-blush: #fdeef7;
+  --sc-text-main: #5a3d7a;
+  --sc-text-muted: #7a6b85;
+  --sc-accent: #bfadd7;
+  --sc-border: #efdef8; /* soft lilac border */
 }
 
-/* ---------------- NO USER FOUND (CENTERED) ---------------- */
+/* ---------------- GLOBAL ACCOUNT PAGE ---------------- */
+
+.account-container {
+  min-height: 100vh;
+  background-color: var(--sc-bg-soft); /* pastel lilac — NO WHITE SCROLL */
+  color: var(--sc-text-main);
+  font-family: "Nunito", sans-serif;
+  padding-top: 90px;
+  border: none !important;
+}
+
+/* REMOVE ALL UNWANTED LINES */
+.account-container,
+.account-banner,
+header,
+footer {
+  border: none !important;
+}
+
+/* ---------------- NO USER FOUND ---------------- */
 
 .no-user-container {
   height: 70vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .no-user-title {
-  font-size: 2.4rem;
-  font-weight: bold;
-  color: #e4c67b; /* gold */
-  margin-bottom: 12px;
+  font-size: 2.2rem;
+  font-family: "Cormorant Garamond", serif;
+  color: var(--sc-text-main);
+  margin-bottom: 10px;
 }
 
 .no-user-text {
-  color: #c7c2b8;
-  font-size: 1.1rem;
-  margin-bottom: 25px;
+  font-size: 1.05rem;
+  color: var(--sc-text-muted);
+  margin-bottom: 22px;
 }
 
 .no-user-button {
   padding: 12px 26px;
-  background-color: #e4c67b; /* gold */
-  color: #050505;
+  background-color: var(--sc-accent);
+  color: white;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
-  border-radius: 6px;
   letter-spacing: 1px;
-  transition: 0.25s ease-in-out;
+  transition: 0.25s ease;
 }
 
 .no-user-button:hover {
-  background-color: #f5f0e6;
+  background-color: #9d8cb7;
 }
 
 /* ---------------- ACCOUNT HEADER BANNER ---------------- */
@@ -50,78 +72,133 @@
 .account-banner {
   width: 100%;
   padding: 60px 0;
+  background-color: var(--sc-bg-soft);
   text-align: center;
-  background-color: #080808;
-  border-bottom: 1px solid #222;
+
+  /* REMOVE PURPLE LINE */
+  border-bottom: none !important;
 }
 
 .banner-title {
-  font-size: 3rem;
-  color: #e4c67b; /* gold */
-  margin-bottom: 8px;
+  font-size: 2.8rem;
+  font-family: "Cormorant Garamond", serif;
+  color: var(--sc-text-main);
+  letter-spacing: 0.05em;
 }
 
 .banner-subtitle {
-  font-size: 1.2rem;
-  color: #c7c2b8;
-  letter-spacing: 2px;
+  font-size: 1.1rem;
+  color: var(--sc-text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
 /* ---------------- ACCOUNT CARD ---------------- */
 
 .account-card {
-  background-color: #111111;
   width: 60%;
   margin: 40px auto;
   padding: 35px 45px;
-  border-radius: 14px;
-  border: 1px solid #2c2c2c;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+  background-color: var(--sc-bg-blush);
+  border-radius: 18px;
+
+  /* SOFT BORDER ONLY */
+  border: 1px solid var(--sc-border);
+
+  box-shadow: 0 10px 25px rgba(180, 123, 255, 0.18);
 }
 
 .section-title {
-  font-size: 1.8rem;
-  color: #e4c67b;
-  margin-bottom: 20px;
+  font-size: 1.7rem;
+  color: var(--sc-text-main);
+  margin-bottom: 18px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid var(--sc-border);
+  font-family: "Cormorant Garamond", serif;
 }
 
-/* INFO ROWS */
+/* ---------------- INFO ROWS ---------------- */
+
 .info-item {
   display: flex;
   justify-content: space-between;
   padding: 12px 0;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid var(--sc-border);
 }
 
 .info-label {
-  font-size: 1.05rem;
-  color: #c7c2b8;
+  font-size: 1rem;
+  color: var(--sc-text-muted);
 }
 
 .info-value {
-  font-size: 1.05rem;
-  color: #f5f0e6;
+  font-size: 1rem;
+  color: var(--sc-text-main);
 }
 
-/* EDIT BUTTON */
+/* ---------------- EDIT BUTTON ---------------- */
+
 .edit-btn {
   margin-top: 25px;
   width: 100%;
   padding: 12px;
-  font-size: 1.1rem;
-  color: #050505;
-  background-color: #e4c67b;
+  font-size: 1rem;
+  background-color: var(--sc-accent);
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 40px;
   cursor: pointer;
-  letter-spacing: 1px;
-  transition: 0.25s;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: 0.25s ease;
 }
 
 .edit-btn:hover {
-  background-color: #f5f0e6;
+  background-color: #9d8cb7;
+}
+
+/* ---------------- INPUT FIELDS ---------------- */
+
+.edit-input {
+  background: #ffffff;
+  border: 1px solid var(--sc-border);
+  padding: 10px;
+  color: var(--sc-text-main);
+  width: 60%;
+  border-radius: 8px;
+}
+
+.edit-input:focus {
+  border-color: var(--sc-accent);
+  outline: none;
+  box-shadow: 0 0 6px rgba(191, 173, 215, 0.4);
+}
+
+/* ---------------- PASSWORD FIELD ---------------- */
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 60%;
+}
+
+.toggle-btn {
+  background: white;
+  border: 1px solid var(--sc-border);
+  padding: 8px 12px;
+  color: var(--sc-text-main);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.toggle-btn:hover {
+  border-color: var(--sc-accent);
+  color: var(--sc-accent);
 }
 
 /* ---------------- RESPONSIVE ---------------- */
@@ -133,43 +210,6 @@
   }
 
   .banner-title {
-    font-size: 2.3rem;
+    font-size: 2.2rem;
   }
-}
- 
-.edit-input {
-  background: transparent;
-  border: 1px solid #2c2c2c;
-  padding: 5px 10px;
-  color: #f5f0e6;
-  width: 60%;
-  border-radius: 6px;
-}
-
-.edit-input:focus {
-  border-color: #e4c67b;
-  outline: none;
-}
-
-.password-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 60%;
-}
-
-.toggle-btn {
-  background: none;
-  border: 1px solid #2c2c2c;
-  padding: 5px 10px;
-  color: #e4c67b;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.25s ease;
-  font-size: 0.9rem;
-}
-
-.toggle-btn:hover {
-  border-color: #e4c67b;
-  color: #f5f0e6;
 }
