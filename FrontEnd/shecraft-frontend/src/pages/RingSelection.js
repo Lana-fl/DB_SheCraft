@@ -118,13 +118,13 @@
 //     </div>
 //   );
 // }
-import React, { useRef, useEffect, useState, Suspense } from "react";
+import React, { useRef, useEffect, useState, Suspense,useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Environment } from "@react-three/drei";
+import {  useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useNavigate } from "react-router-dom";
 import "../styles/ringselection.css";
-import Footer from "./Footer";
+
 
 import ringGLB from "../assets/ring/ring.glb";
 import ring1GLB from "../assets/ring/ring1.glb";
@@ -132,37 +132,99 @@ import ring2GLB from "../assets/ring/ring2.glb";
 
 // Add Ring 2 here
 const rings = [
-  { id: 1, type: "ring", model: ringGLB, label: "Aurora Band" },
-  { id: 2, type: "ring1", model: ring1GLB, label: "Celeste Solitaire" },
-  { id: 3, type: "ring2", model: ring2GLB, label: "Tennis Horizon" },
+  { id: 1, type: "ring",  model: ringGLB,  label: "Aurora Band",       metalColor: "#FFD700" }, // was too big
+  { id: 2, type: "ring1", model: ring1GLB, label: "Celeste Solitaire", metalColor: "#ec9cc3ff"}, // was too small
+  { id: 3, type: "ring2", model: ring2GLB, label: "Tennis Horizon",    metalColor: "#e0dcc6ff" },
 ];
 
 
-function RingThumbnail({ modelPath }) {
+// function RingThumbnail({ modelPath }) {
+//   const { scene } = useGLTF(modelPath);
+//   const meshRef = useRef();
+//   const [scale, setScale] = useState(1);
+//   const [position, setPosition] = useState([0, 0, 0]);
+
+//   // Fit model in canvas dynamically
+//   useEffect(() => {
+//     if (!scene) return;
+//     const bbox = new THREE.Box3().setFromObject(scene);
+//     const size = bbox.getSize(new THREE.Vector3());
+//     const center = bbox.getCenter(new THREE.Vector3());
+//     const maxDim = Math.max(size.x, size.y, size.z);
+
+//     const scaleFactor = 2.0 / maxDim;
+//     setScale(scaleFactor);
+
+//     setPosition([-center.x * scaleFactor, -center.y * scaleFactor, -center.z * scaleFactor]);
+//   }, [scene]);
+
+//   useFrame(() => {
+//     if (meshRef.current) meshRef.current.rotation.y += 0.005;
+//   });
+
+//   return <primitive ref={meshRef} object={scene} scale={[scale, scale, scale]} position={position} />;
+// }
+function RingThumbnail({ modelPath, metalColor }) {
   const { scene } = useGLTF(modelPath);
   const meshRef = useRef();
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState([0, 0, 0]);
 
-  // Fit model in canvas dynamically
+  // 1) Re-color the ring once the scene + metalColor are ready
   useEffect(() => {
     if (!scene) return;
+
+    scene.traverse((child) => {
+      if (child.isMesh && child.material) {
+        // clone material so we don't mutate shared cache
+        child.material = child.material.clone();
+
+        if (child.material.color) {
+          child.material.color.set(metalColor);
+        }
+
+        if ("metalness" in child.material) {
+          child.material.metalness = 0.9;
+        }
+        if ("roughness" in child.material) {
+          child.material.roughness = 0.25;
+        }
+      }
+    });
+  }, [scene, metalColor]);
+
+  // 2) Fit model in the canvas (same as your old working code)
+  useEffect(() => {
+    if (!scene) return;
+
     const bbox = new THREE.Box3().setFromObject(scene);
     const size = bbox.getSize(new THREE.Vector3());
     const center = bbox.getCenter(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
 
     const scaleFactor = 2.0 / maxDim;
     setScale(scaleFactor);
 
-    setPosition([-center.x * scaleFactor, -center.y * scaleFactor, -center.z * scaleFactor]);
+    setPosition([
+      -center.x * scaleFactor,
+      -center.y * scaleFactor,
+      -center.z * scaleFactor,
+    ]);
   }, [scene]);
 
+  // 3) Slow rotation
   useFrame(() => {
     if (meshRef.current) meshRef.current.rotation.y += 0.005;
   });
 
-  return <primitive ref={meshRef} object={scene} scale={[scale, scale, scale]} position={position} />;
+  return (
+    <primitive
+      ref={meshRef}
+      object={scene}
+      scale={[scale, scale, scale]}
+      position={position}
+    />
+  );
 }
 
 export default function RingSelection() {
@@ -182,7 +244,7 @@ export default function RingSelection() {
         </p>
 
         <div className="rings-grid">
-          {rings.map((ring) => (
+          {/* {rings.map((ring) => (
             <div
               key={ring.id}
               className="ring-card"
@@ -193,13 +255,37 @@ export default function RingSelection() {
                   <ambientLight intensity={0.6} />
                   <directionalLight position={[0, 5, 5]} intensity={1} />
                   <Suspense fallback={null}>
-                    <RingThumbnail modelPath={ring.model} />
+                    <RingThumbnail modelPath={ring.model} metalColor={ring.metalColor} />
                   </Suspense>
                 </Canvas>
               </div>
               <p className="ring-label">{ring.label}</p>
             </div>
-          ))}
+          ))} */}
+        <div className="rings-grid">
+  {rings.map((ring) => (
+    <div
+      key={ring.id}
+      className="ring-card"
+      onClick={() => handleSelectRing(ring.type)}
+    >
+      <div className="ring-canvas-container">
+        <Canvas camera={{ position: [0, 1.5, 4], fov: 50 }}>
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[0, 5, 5]} intensity={1} />
+          <Suspense fallback={null}>
+            <RingThumbnail
+              modelPath={ring.model}
+              metalColor={ring.metalColor}
+            />
+          </Suspense>
+        </Canvas>
+      </div>
+      <p className="ring-label">{ring.label}</p>
+    </div>
+  ))}
+</div>
+
         </div>
       </div>
 
@@ -207,3 +293,7 @@ export default function RingSelection() {
     </div>
   );
 }
+// Optional: preload models so they appear faster
+useGLTF.preload(ringGLB);
+useGLTF.preload(ring1GLB);
+useGLTF.preload(ring2GLB);
