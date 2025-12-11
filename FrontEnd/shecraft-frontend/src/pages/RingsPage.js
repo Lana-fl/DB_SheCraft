@@ -3721,7 +3721,7 @@ const [diamondCut, setDiamondCut] = useState(GEM_CUTS[0]);
         </div>
       </div>
 
-      <Footer />
+      
     </div>
   );
 }

@@ -5,13 +5,13 @@
   padding: 20px;
   font-family: 'Poppins', sans-serif;
   background: #f5f5f5;
-  color: #034d29;
+  color: #46034d9a;
 }
 
 /* Page Title */
 .ring-page h2 {
   text-align: center;
-  color: #034d29;
+  color: #e5c0e7d0;
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 40px;
@@ -49,7 +49,7 @@
   height: 32px;
   border-radius: 50%;
   background-color: #ddd;
-  color: #333;
+  color: #39054ac8;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,16 +60,16 @@
 }
 
 .step-box.active .step-number {
-  background-color: #0d753a;
+  background-color: #a431c757;
   color: #fff;
-  border: 2px solid #0d753a;
+  border: 2px solid #590d75d3;
 }
 
 .step-labels {
   font-size: 13px;
   text-align: center;
   font-weight: 600;
-  color: #034d29;
+  color: #bd84f084;
   max-width: 100px;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .step-box.active + .step-box::after {
-  color: #0d753a;
+  color: #d68fd1;
 }
 
 /* Ring Customizer Container */
@@ -139,7 +139,7 @@
 /* Tab Section Titles */
 .tab-section label {
   font-weight: 600;
-  color: #0d753a;
+  color: #440547;
   font-size: 14px;
   margin-bottom: 8px;
   display: block;
@@ -174,8 +174,8 @@
 }
 
 .option-card.selected {
-  border-color: #0d753a;
-  box-shadow: 0 5px 15px rgba(13, 117, 58, 0.25);
+  border-color: #440553;
+  box-shadow: 0 5px 15px rgba(114, 1, 97, 0.25);
 }
 
 /* Color Swatch */
@@ -205,7 +205,7 @@ input[type="text"]:hover,
 select:hover,
 input[type="number"]:hover,
 input[type="color"]:hover {
-  border-color: #0d753a;
+  border-color: #d7bcd6;
   box-shadow: 0 2px 5px rgba(13, 117, 58, 0.2);
 }
 
@@ -213,7 +213,7 @@ input[type="color"]:hover {
 .diamond-color-option p {
   margin-bottom: 6px;
   font-weight: 600;
-  color: #034d29;
+  color: #37034d;
 }
 
 .diamond-color-option input,
@@ -224,7 +224,7 @@ input[type="color"]:hover {
 
 /* Action Button */
 .next-btn {
-  background: #0d753a;
+  background: #4a0262;
   color: white;
   font-weight: 600;
   padding: 14px;
@@ -237,7 +237,7 @@ input[type="color"]:hover {
 }
 
 .next-btn:hover {
-  background: #09592c;
+  background: #41217d;
   transform: translateY(-2px);
 }
 
@@ -288,7 +288,25 @@ input[type="color"]:hover {
 }
 
 .cut-card.selected {
-  border-color: #034d29;
-  background: #d4f0e0;
+  border-color: #eab9f4b8;
+  background: #510258;
 }
 
+/* FORCE override any green styles Bootstrap applies */
+.step-number,
+.step-labels {
+  color: #4f0a57 !important;      /* purple text */
+}
+
+.step-number {
+  background-color: #ddd !important; /* default circle background */
+}
+
+.step-box.active .step-number {
+  background-color: #a431c757 !important; /* purple active */
+  color: white !important;
+}
+
+.steps-horizontal .step-box::after {
+  color: #cba7e6 !important; /* purple arrow */
+}

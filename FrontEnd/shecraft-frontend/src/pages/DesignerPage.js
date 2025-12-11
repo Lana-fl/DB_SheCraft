@@ -584,7 +584,7 @@ export default function DesignerPage() {
         </div>
       </div>
 
-      <Footer />
+     
     </div>
   );
 }
