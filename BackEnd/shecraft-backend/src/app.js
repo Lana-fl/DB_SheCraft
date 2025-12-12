@@ -19,8 +19,6 @@ const stoneRoutes = require("./routes/stoneRoutes");
 
 
 
-
-
 const app = express();
 
 app.use("/images", express.static(path.join(__dirname, "../public/images")));
@@ -39,11 +37,6 @@ app.use("/api/designers", designerRoutes);
 app.use("/api/charms", charmRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/stones", stoneRoutes);
-
-
-
-
-
 
 
 // Health check
