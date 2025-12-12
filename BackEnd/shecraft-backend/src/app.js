@@ -24,7 +24,16 @@ const app = express();
 app.use("/images", express.static(path.join(__dirname, "../public/images")));
 
 // Global middleware
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3001", // your React dev server
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true, // safe even if you don't use cookies yet
+  })
+);
+
 app.use(express.json());
 app.use(requestLogger); // logs every request
 
