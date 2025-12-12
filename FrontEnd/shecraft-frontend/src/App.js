@@ -18,6 +18,7 @@ import NecklaceSelection from "./pages/NecklaceSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
 
+
 /* ACCOUNT SYSTEM */
 import AccountPage from "./pages/AccountPage";
 import EditAccountPage from "./pages/EditAccountPage";
@@ -81,7 +82,6 @@ function App() {
             <Route path="/ringspage" element={<RingsPage />} />
             <Route path="/bracelets" element={<BraceletsPage />} />
             <Route path="/earrings" element={<EarringsPage />} />
-
             {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/designer" element={<DesignerPage />} />

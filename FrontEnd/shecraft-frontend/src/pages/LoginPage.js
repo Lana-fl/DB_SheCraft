@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
 
+
 export default function LoginPage({ closePopup, setIsLoggedIn, setUserRole }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("login"); // login | signup
   const [role, setRole] = useState("customer");        // customer | designer
   const [errorMessage, setErrorMessage] = useState("");
-
-  // ESC closes modal
+    const [loading, setLoading] = useState(false); 
+      // ESC closes modal
   useEffect(() => {
     const handler = (e) => e.key === "Escape" && closePopup?.();
     window.addEventListener("keydown", handler);
