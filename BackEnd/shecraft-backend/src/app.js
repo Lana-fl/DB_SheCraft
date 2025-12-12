@@ -6,7 +6,7 @@ require("dotenv").config();
 const path = require("path");
 
 const customerRoutes = require("./routes/customerRoutes"); 
-const orderRoute = require("./routes/orderRoute");         
+const orderRoutes = require("./routes/orderRoutes");         
 
 const { requestLogger } = require("./middleware"); // optional but nice
 
@@ -16,8 +16,6 @@ const designerRoutes = require("./routes/designerRoutes");
 const charmRoutes = require("./routes/charmRoutes");
 const materialRoutes = require("./routes/materialRoutes");
 const stoneRoutes = require("./routes/stoneRoutes");
-
-
 
 
 
@@ -34,16 +32,11 @@ app.use(requestLogger); // logs every request
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/accessories", accessoryRoutes);
-app.use("/api/orders", orderRoute);   
+app.use("/api/orders", orderRoutes);   
 app.use("/api/designers", designerRoutes);
 app.use("/api/charms", charmRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/stones", stoneRoutes);
-
-
-
-
-
 
 
 // Health check
