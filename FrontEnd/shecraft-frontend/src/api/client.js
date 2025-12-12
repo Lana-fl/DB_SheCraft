@@ -1,5 +1,6 @@
 // src/api/client.js
-const API_URL = "http://localhost:3000"; // ✅ your backend
+const API_URL = process.env.REACT_APP_API_URL;
+ // ✅ your backend
 
 async function request(path, { method = "GET", body } = {}) {
   const res = await fetch(`${API_URL}${path}`, {

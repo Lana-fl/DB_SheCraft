@@ -61,7 +61,7 @@ function App() {
         {/* MAIN ROUTES */}
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<WelcomePage />} />
+            <Route path="/" element={<WelcomePage openLogin={openLogin} />} />
             <Route path="/about" element={<AboutPage />} />
 
             {/* ACCOUNT */}

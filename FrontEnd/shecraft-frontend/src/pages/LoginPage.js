@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
+import { api } from "../api/client";
 
 
 export default function LoginPage({ closePopup, setIsLoggedIn, setUserRole }) {
@@ -16,36 +17,80 @@ export default function LoginPage({ closePopup, setIsLoggedIn, setUserRole }) {
     return () => window.removeEventListener("keydown", handler);
   }, [closePopup]);
 
-  const handleSubmit = (e, type) => {
-    e.preventDefault();
+ const handleSubmit = async (e, type) => {
+  e.preventDefault();
+  setErrorMessage("");
+  setLoading(true);
 
-    const username = e.target.username?.value?.trim();
-    const email = e.target.email?.value?.trim();
-    const password = e.target.password?.value?.trim();
+  const username = e.target.username?.value?.trim();
+  const email = e.target.email?.value?.trim();
+  const password = e.target.password?.value?.trim();
 
-    if (type === "signup" && !username) {
-      setErrorMessage("Please enter your name.");
-      return;
+  if (type === "signup" && !username) {
+    setErrorMessage("Please enter your name.");
+    setLoading(false);
+    return;
+  }
+
+  if (!email || !password) {
+    setErrorMessage("Please fill in all fields.");
+    setLoading(false);
+    return;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    setErrorMessage("Invalid email format.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    let data;
+
+    // 🔹 LOGIN (customer OR designer)
+    if (type === "login") {
+      data = await api.login({
+        role,      // "customer" or "designer"
+        email,
+        password,
+      });
     }
 
-    if (!email || !password) {
-      setErrorMessage("Please fill in all fields.");
-      return;
+    // 🔹 SIGNUP
+    else {
+      if (role === "customer") {
+        data = await api.signupCustomer({
+          username,
+          email,
+          password,
+        });
+      } else {
+        data = await api.signupDesigner({
+          username,
+          email,
+          password,
+        });
+      }
     }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      setErrorMessage("Invalid email format.");
-      return;
-    }
-
-    // SUCCESS → UPDATE GLOBAL STATE
+    // ✅ SUCCESS
     setIsLoggedIn(true);
-    setUserRole(role);  // <-- IMPORTANT
+    setUserRole(role);
+
+    // optional: store user
+    if (data?.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+
     closePopup?.();
     navigate("/orderpage");
-  };
-
+  } catch (err) {
+    setErrorMessage(err.message || "Authentication failed");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="login-overlay">
       <div className="login-modal">

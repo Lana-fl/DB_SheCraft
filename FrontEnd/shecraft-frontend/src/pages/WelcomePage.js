@@ -145,11 +145,11 @@ import necklacesImg from "../assets/necklaces.jpg";
 import ringsImg from "../assets/rings.jpg";
 import braceletsImg from "../assets/bracelets.jpg";
 import earringsImg from "../assets/earrings.jpg";
-import LoginPage from "./LoginPage"; 
+//import LoginPage from "./LoginPage"; 
 
 export default function WelcomePage() {
   const navigate = useNavigate();
-  const [showLogin, setShowLogin] = useState(false);
+  //const [showLogin, setShowLogin] = useState(false);
 
   const categories = [
     { name: "Rings", route: "/rings", image: ringsImg },
