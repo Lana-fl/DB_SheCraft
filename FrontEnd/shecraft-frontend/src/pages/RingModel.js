@@ -451,7 +451,7 @@ export default function RingModel({
   baseColor = "#ffffff",
   diamondColors = [],
   showDiamonds = true,
-  thickness = 1,
+  // thickness = 1,
   selectedDiamond = -1,
   diamondCount = 2,
   diamondCut = "Brilliant", 
