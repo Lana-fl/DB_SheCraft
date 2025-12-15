@@ -419,7 +419,7 @@ import ring1GLB from "../assets/ring/ring1.glb";
 import ring2GLB from "../assets/ring/ring2.glb";
 import cutGLB from "../assets/ring/cuts.glb";
 
-const RING_MESHES = {
+export const RING_MESHES = {
   ring: {
     base: ["ThinRing3_ThinRing3_0", "Prongs_Prongs_0"],
     diamonds: ["ThinRing_ThinRing_0"], // middle
