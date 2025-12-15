@@ -5,10 +5,10 @@ const materialModel = require("../models/materialModel");
 async function getMaterials(req, res) {
   try {
     const materials = await materialModel.getAllMaterials();
-    res.json(materials);
+    return res.json(materials);
   } catch (err) {
     console.error("Error in getMaterials:", err);
-    res.status(500).json({ message: "Failed to fetch materials" });
+    return res.status(500).json({ message: "Failed to fetch materials" });
   }
 }
 
@@ -22,10 +22,10 @@ async function getMaterial(req, res) {
       return res.status(404).json({ message: "Material not found" });
     }
 
-    res.json(material);
+    return res.json(material);
   } catch (err) {
     console.error("Error in getMaterial:", err);
-    res.status(500).json({ message: "Failed to fetch material" });
+    return res.status(500).json({ message: "Failed to fetch material" });
   }
 }
 
@@ -34,53 +34,33 @@ async function getMaterialsByMetal(req, res) {
   try {
     const { metal } = req.params;
     const materials = await materialModel.getMaterialsByMetal(metal);
-    res.json(materials);
+    return res.json(materials);
   } catch (err) {
     console.error("Error in getMaterialsByMetal:", err);
-    res.status(500).json({ message: "Failed to fetch materials by metal" });
+    return res.status(500).json({ message: "Failed to fetch materials by metal" });
   }
 }
 
-// GET /api/materials/available?minStock=1
-async function getAvailableMaterials(req, res) {
-  try {
-    const { minStock } = req.query;
-    const parsedMinStock =
-      typeof minStock === "string" && minStock.trim() !== ""
-        ? Number(minStock)
-        : 0;
-
-    const materials = await materialModel.getAvailableMaterials(parsedMinStock);
-    res.json(materials);
-  } catch (err) {
-    console.error("Error in getAvailableMaterials:", err);
-    res.status(500).json({ message: "Failed to fetch available materials" });
-  }
-}
-
-// PUT /api/materials/:materialID/stock
-async function updateMaterialStock(req, res) {
+// PUT /api/materials/:materialID/price
+async function updateMaterialPrice(req, res) {
   try {
     const { materialID } = req.params;
-    const { stock } = req.body;
+    const { price } = req.body;
 
-    if (stock == null || isNaN(Number(stock))) {
-      return res.status(400).json({ message: "Valid 'stock' is required" });
+    if (price == null || isNaN(Number(price))) {
+      return res.status(400).json({ message: "Valid 'price' is required" });
     }
 
-    const updated = await materialModel.updateMaterialStock(
-      materialID,
-      Number(stock)
-    );
+    const updated = await materialModel.updateMaterialPrice(materialID, Number(price));
 
     if (!updated) {
       return res.status(404).json({ message: "Material not found" });
     }
 
-    res.json({ message: "Material stock updated successfully" });
+    return res.json({ message: "Material price updated successfully" });
   } catch (err) {
-    console.error("Error in updateMaterialStock:", err);
-    res.status(500).json({ message: "Failed to update material stock" });
+    console.error("Error in updateMaterialPrice:", err);
+    return res.status(500).json({ message: "Failed to update material price" });
   }
 }
 
@@ -88,6 +68,5 @@ module.exports = {
   getMaterials,
   getMaterial,
   getMaterialsByMetal,
-  getAvailableMaterials,
-  updateMaterialStock,
+  updateMaterialPrice,
 };

@@ -2,7 +2,7 @@
 const router = require("express").Router();
 const orderController = require("../controllers/orderController");
 
-// Create order
+// Create order from reserved accessories
 router.post("/", orderController.createOrderFromCart);
 
 // Best sellers by type/style (must be before /:orderID)
@@ -16,5 +16,7 @@ router.get("/customer/:customerID", orderController.getOrdersByCustomer);
 
 // Order details
 router.get("/:orderID", orderController.getOrderDetails);
+
+router.patch("/:orderID/complete", orderController.completeOrder);
 
 module.exports = router;

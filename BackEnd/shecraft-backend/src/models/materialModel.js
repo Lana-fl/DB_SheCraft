@@ -4,8 +4,8 @@ const pool = require("../config/db");
 // Get all materials
 async function getAllMaterials() {
   const [rows] = await pool.query(
-    `SELECT materialID, metal, price, stock
-     FROM MATERIAL`
+    `SELECT materialID, metal, price
+     FROM material`
   );
   return rows;
 }
@@ -13,43 +13,32 @@ async function getAllMaterials() {
 // Get one material by ID
 async function getMaterialById(materialID) {
   const [rows] = await pool.query(
-    `SELECT materialID, metal, price, stock
-     FROM MATERIAL
+    `SELECT materialID, metal, price
+     FROM material
      WHERE materialID = ?`,
     [materialID]
   );
   return rows[0] || null;
 }
 
-// Get all materials by metal type (e.g. Gold, Silver, etc.)
+// Get materials by metal (e.g., "gold", "14K Gold", etc.)
 async function getMaterialsByMetal(metal) {
   const [rows] = await pool.query(
-    `SELECT materialID, metal, price, stock
-     FROM MATERIAL
+    `SELECT materialID, metal, price
+     FROM material
      WHERE metal = ?`,
     [metal]
   );
   return rows;
 }
 
-// Get materials that have stock > minStock (default 0)
-async function getAvailableMaterials(minStock = 0) {
-  const [rows] = await pool.query(
-    `SELECT materialID, metal, price, stock
-     FROM MATERIAL
-     WHERE stock > ?`,
-    [minStock]
-  );
-  return rows;
-}
-
-// Update stock for a material (useful when creating / updating orders)
-async function updateMaterialStock(materialID, newStock) {
+// Update price for a material
+async function updateMaterialPrice(materialID, newPrice) {
   const [result] = await pool.query(
-    `UPDATE MATERIAL
-     SET stock = ?
+    `UPDATE material
+     SET price = ?
      WHERE materialID = ?`,
-    [newStock, materialID]
+    [newPrice, materialID]
   );
   return result.affectedRows > 0;
 }
@@ -58,6 +47,5 @@ module.exports = {
   getAllMaterials,
   getMaterialById,
   getMaterialsByMetal,
-  getAvailableMaterials,
-  updateMaterialStock,
+  updateMaterialPrice,
 };
