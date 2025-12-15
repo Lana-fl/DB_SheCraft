@@ -19,6 +19,7 @@ export default function LoginPage({ closePopup, setIsLoggedIn, setUserRole }) {
 
  const handleSubmit = async (e, type) => {
   e.preventDefault();
+  console.log("SUBMIT FIRED:", type);
   setErrorMessage("");
   setLoading(true);
 
@@ -55,7 +56,17 @@ export default function LoginPage({ closePopup, setIsLoggedIn, setUserRole }) {
         email,
         password,
       });
+      localStorage.setItem(
+  "shecraft_user",
+  JSON.stringify({
+    role: data.role || role,
+    user: data.user
+  })
+);
+
     }
+    
+
 
     // 🔹 SIGNUP
     else {
