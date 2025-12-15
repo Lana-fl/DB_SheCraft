@@ -4,7 +4,7 @@
   margin: 0 auto;
   padding: 30px 20px;
   font-family: 'Poppins', sans-serif;
-  color: #034d29;
+  color: #98098caa;
   background: #fdfdfd;
 }
 
@@ -42,7 +42,7 @@
   height: 28px;
   border-radius: 50%;
   background-color: #ddd;
-  color: #333;
+  color: #64065b;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,16 +53,16 @@
 }
 
 .step-box.active .step-number {
-  background-color: #0d753a;
+  background-color: #96006bcc;
   color: #fff;
-  border: 2px solid #0d753a;
+  border: 2px solid #80055d;
 }
 
 .step-labels {
   font-size: 12px;
   text-align: center;
   font-weight: 600;
-  color: #034d29;
+  color: #930765;
   max-width: 90px;
 }
 
@@ -73,12 +73,12 @@
   right: -20px;
   transform: translateY(-50%);
   font-size: 16px;
-  color: #ccc;
+  color: #9c3d87;
   z-index: 0;
 }
 
 .step-box.active + .step-box::after {
-  color: #0d753a;
+  color: #6e0578b5;
 }
 
 /* Checkout Container */
@@ -125,7 +125,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 20px rgba(106, 3, 79, 0.432);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -139,7 +139,7 @@
   margin-bottom: 15px;
   font-size: 20px;
   font-weight: 600;
-  color: #0d753a;
+  color: #6c0d75c1;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 5px;
 }
@@ -162,7 +162,7 @@
 
 .color-label {
   font-size: 14px;
-  color: #0d753a;
+  color: #53043ee4;
   margin: 5px;
   font-weight: 600;
 }
@@ -176,7 +176,7 @@
 }
 
 button.primary {
-  background: #0d753a;
+  background: #97107eec;
   color: white;
   padding: 14px 22px;
   border: none;
@@ -188,7 +188,7 @@ button.primary {
 }
 
 button.primary:hover {
-  background: #09592c;
+  background: #5a055959;
   transform: translateY(-2px);
 }
 
@@ -196,9 +196,9 @@ a.secondary {
   display: inline-block;
   padding: 14px 22px;
   border-radius: 15px;
-  border: 2px solid #0d753a;
+  border: 2px solid #740e5c44;
   text-decoration: none;
-  color: #0d753a;
+  color: #6b0857;
   font-weight: 600;
   font-size: 16px;
   text-align: center;
@@ -206,7 +206,7 @@ a.secondary {
 }
 
 a.secondary:hover {
-  background: #0d753a;
+  background: #7f1e94b9;
   color: white;
 }
 
@@ -222,4 +222,21 @@ a.secondary:hover {
     min-width: 100%;
     max-width: 100%;
   }
+}
+.secondaryBtn {
+  padding: 14px 22px;
+  border-radius: 15px;
+  border: 2px solid #6b1b7c;
+  background: transparent;
+  color: #8610a1c3;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.secondaryBtn:hover {
+  background: #6b1b7c;
+  color: #fff;
+  transform: translateY(-2px);
 }

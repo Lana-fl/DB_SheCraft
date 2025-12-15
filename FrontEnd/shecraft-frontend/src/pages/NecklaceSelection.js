@@ -35,13 +35,21 @@ const necklaces = [
 export default function NecklaceSelection() {
   const navigate = useNavigate();
 
- const handleSelectNecklace = (necklaceType) => {
+const handleSelectNecklace = (necklaceType) => {
   if (necklaceType === "charm") {
-    navigate("/necklace/charm");
+    navigate("/necklaces/charm");
     return;
   }
+
+  if (necklaceType === "birthstone") {
+    navigate("/necklaces/birthstone");
+    return;
+  }
+
+  // name (default)
   navigate("/necklacespage", { state: { necklaceType } });
 };
+
 return (
   <div className="page-wrapper">
     <div className="necklace-selection-page">

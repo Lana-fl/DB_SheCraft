@@ -490,7 +490,7 @@ export default function DesignerPage() {
       <h2>Choose Your Designer</h2>
 
       {/* Steps */}
-      <div className="steps-horizontal">
+      {/* <div className="steps-horizontal">
         {["Customize", "Choose Designer", "Checkout"].map((label, index) => (
           <div
             key={index}
@@ -501,7 +501,7 @@ export default function DesignerPage() {
             <div className="step-labels">{label}</div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div className="ring-customizer">
         {/* LEFT SIDE VIEWER — changes depending on itemType */}

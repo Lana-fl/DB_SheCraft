@@ -1042,7 +1042,7 @@ export default function NecklacesPage() {
 
   const handleSubmit = () => {
     setCurrentStep(2);
-    navigate("/designer", {
+    navigate("/checkout", {
       state: {
         itemType: "necklace",
         selectedNameStyle,
@@ -1080,8 +1080,8 @@ export default function NecklacesPage() {
           <p className="nk-subtitle">Choose a style, chain, and finish then make it yours.</p>
         </header>
 
-        {/* ===== HORIZONTAL STEPS (LIKE RING) ===== */}
-        <div className="steps-horizontal">
+       
+        {/* <div className="steps-horizontal">
           {steps.map((label, index) => (
             <div
               key={label}
@@ -1094,7 +1094,7 @@ export default function NecklacesPage() {
               <div className="step-labels">{label}</div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         <div className="nk-customizer">
           {/* LEFT PREVIEW */}

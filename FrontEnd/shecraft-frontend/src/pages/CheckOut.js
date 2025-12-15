@@ -435,7 +435,7 @@ export default function CheckoutPage() {
       <h1>Checkout</h1>
 
       {/* STEPS */}
-      <div className="steps-horizontal">
+      {/* <div className="steps-horizontal">
         {["Customize", "Choose Designer", "Checkout"].map((label, index) => (
           <div
             key={index}
@@ -445,7 +445,7 @@ export default function CheckoutPage() {
             <div className="step-labels">{label}</div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div className="checkout-container">
         {/* LEFT — PREVIEW */}
@@ -538,7 +538,7 @@ export default function CheckoutPage() {
           <p><strong>Designer:</strong> {designer || "N/A"}</p>
 
           <div className="checkout-actions">
-            <button className="primary">Confirm & Pay</button>
+            <button className="primary">Confirm and Pay</button>
             <button className="secondary" onClick={handleEditDesign}>
               Edit Design
             </button>

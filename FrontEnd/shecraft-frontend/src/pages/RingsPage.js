@@ -5172,7 +5172,7 @@ export default function RingsPage() {
       <h2>{ringType === "ring1" ? "Customize Ring 1" : ringType === "ring2" ? "Customize Tennis Ring" : "Customize Your Ring"}</h2>
 
       {/* steps */}
-      <div className="steps-horizontal">
+      {/* <div className="steps-horizontal">
         {["Customize Your Ring", "Choose Your Designer", "Checkout"].map((label, index) => (
           <div
             key={label}
@@ -5183,7 +5183,7 @@ export default function RingsPage() {
             <div className="step-labels">{label}</div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       <div className="ring-customizer">
         {/* viewer */}
@@ -5473,7 +5473,7 @@ export default function RingsPage() {
             className="next-btn"
             disabled={!canNext}
             onClick={() =>
-              navigate("/designer", {
+              navigate("/checkout", {
                 state: {
                   ringType,
                   baseColor,
@@ -5488,7 +5488,7 @@ export default function RingsPage() {
               })
             }
           >
-            Next
+            Order Summary 
           </button>
 
           {!canNext && (
