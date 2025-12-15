@@ -444,17 +444,543 @@
 //     </div>
 //   );
 // }
-import React, { useState,useEffect } from "react";
+
+//WORKING
+
+// import React, { useState,useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import Footer from "./Footer";
+// import "../styles/necklace.css";
+
+// // Images
+// import Name1Img from "../assets/necklace/name1.png";
+// import Name2Img from "../assets/necklace/name2.png";
+// import Name3Img from "../assets/necklace/name3.png";
+// import Name4Img from "../assets/necklace/name4.png";
+// import LengthImg from "../assets/necklace/length.png"; // your single length image
+// import Cable from "../assets/chains/cable.png";
+// import Rope from "../assets/chains/rope.jpg";
+// import Box from "../assets/chains/box.jpg";
+// import Thin from "../assets/chains/thin.png";
+
+// const METALS = [
+//   { name: "Silver", color: "#C0C0C0" },
+//   { name: "Gold", color: "#FFD700" },
+//   { name: "Rose Gold", color: "#B76E79" },
+// ];
+
+// const NAME_STYLES = [
+//   { name: "Style 1", img: Name1Img },
+//   { name: "Style 2", img: Name2Img },
+//   { name: "Style 3", img: Name3Img },
+//   { name: "Style 4", img: Name4Img },
+// ];
+
+// const CHAINS = [
+//   { name: "Cable", img: Cable },
+//   { name: "Rope", img: Rope },
+//   { name: "Box", img: Box },
+//   { name: "Thin", img: Thin },
+// ];
+// const LENGTHS = [14, 15, 16, 18, 20];
+
+
+
+// export default function NecklacesPage() {
+//   const [activePanel, setActivePanel] = useState(null);
+//   const [selectedNameStyle, setSelectedNameStyle] = useState(NAME_STYLES[0]);
+//   const [hoverIndex, setHoverIndex] = useState(0);
+//   const [nameText, setNameText] = useState("");
+//   const [metal, setMetal] = useState(METALS[0].color);
+//   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
+//   const [selectedLength, setSelectedLength] = useState(16);
+
+//   // Cycle through name styles dynamically until one is fixed
+//   useEffect(() => {
+//     if (selectedNameStyle.fixed) return;
+//     const interval = setInterval(() => {
+//       setHoverIndex((prev) => (prev + 1) % NAME_STYLES.length);
+//     }, 1000);
+//     return () => clearInterval(interval);
+//   }, [selectedNameStyle]);
+
+//   const handleSelectStyle = (style) => {
+//     setSelectedNameStyle({ ...style, fixed: true });
+//     setActivePanel(null);
+//   };
+// const navigate = useNavigate();
+// const handleSubmit = () => {
+//   navigate("/designer", {
+//     state: {
+//       itemType: "necklace",
+//       selectedNameStyle,
+//       chainType: selectedChain,
+//       selectedLength,
+//       nameText,
+//       metal,
+//     },
+//   });
+// };
+
+
+//   return (
+//   <div className="page-wrapper">
+//     <div className="necklace-page">
+//       <h2>Customize Your Necklace</h2>
+
+//       <div className="necklace-customizer">
+//         {/* LEFT PREVIEW */}
+//         <div className="preview-left">
+//           <div className="preview-box">
+//             <img
+//               src={selectedNameStyle.fixed ? selectedNameStyle.img : NAME_STYLES[hoverIndex].img}
+//               alt="necklace"
+//               className="main-necklace-img"
+//             />
+//             {nameText && <p className="name-preview">{nameText}</p>}
+//           </div>
+//         </div>
+
+//         {/* RIGHT FORM */}
+//         <div className="form-left">
+//           {/* Name Input */}
+//           <div className="tab-section">
+//             <label>Engraved Name</label>
+//             <input
+//               type="text"
+//               maxLength="12"
+//               placeholder="Enter name"
+//               value={nameText}
+//               onChange={(e) => setNameText(e.target.value)}
+//             />
+//           </div>
+
+//           {/* Metal */}
+//           <div className="tab-section">
+//             <label>Metal</label>
+//             <div className="options-grid">
+//               {METALS.map((m) => (
+//                 <div
+//                   key={m.name}
+//                   className={`option-card ${metal === m.color ? "selected" : ""}`}
+//                   onClick={() => setMetal(m.color)}
+//                 >
+//                   <div className="color-swatch" style={{ backgroundColor: m.color }} />
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Name Style */}
+//           <div
+//             className="tab-section hover-arrow"
+//             onClick={() => setActivePanel(activePanel === "nameStyle" ? null : "nameStyle")}
+//           >
+//             <label>Name Style</label>
+//             <span className="arrow">▶</span>
+//           </div>
+
+//           {/* Chain Type & Length */}
+//           <div
+//             className="tab-section hover-arrow"
+//             onClick={() => setActivePanel(activePanel === "chainLength" ? null : "chainLength")}
+//           >
+//             <label>Chain Type & Length</label>
+//             <span className="arrow">▶</span>
+//             <p>
+//               {selectedChain.name} - {selectedLength}"
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* RIGHT PANEL */}
+//         <div className={`right-panel ${activePanel ? "open" : ""}`}>
+//           {/* Name Style Selection */}
+//           {activePanel === "nameStyle" && (
+//             <>
+//               <h3>Select Name Style</h3>
+//               <div className="chains-grid">
+//                 {NAME_STYLES.map((style) => (
+//                   <img
+//                     key={style.name}
+//                     src={style.img}
+//                     alt={style.name}
+//                     className={`panel-img ${selectedNameStyle.name === style.name ? "selected" : ""}`}
+//                     onClick={() => {
+//                       setSelectedNameStyle({ ...style, fixed: true });
+//                       setActivePanel(null);
+//                     }}
+//                   />
+//                 ))}
+//               </div>
+//               <button className="confirm-btn" onClick={() => setActivePanel(null)}>
+//                 Confirm Style
+//               </button>
+//             </>
+//           )}
+
+//           {/* Chain + Length Selection */}
+//           {activePanel === "chainLength" && (
+//             <div className="chain-length-selection">
+//               <h3>Select Chain Type</h3>
+//               <div className="chains-grid">
+//                 {CHAINS.map((c) => (
+//                   <div
+//                     key={c.name}
+//                     className={`chain-option ${selectedChain.name === c.name ? "selected" : ""}`}
+//                     onClick={() => setSelectedChain(c)}
+//                   >
+//                     <img src={c.img} alt={c.name} />
+//                     <p>{c.name}</p>
+//                   </div>
+//                 ))}
+//               </div>
+
+//               <h3>Select Length</h3>
+//               <div className="length-options">
+//                 {LENGTHS.map((len) => (
+//                   <div
+//                     key={len}
+//                     className={`panel-option ${selectedLength === len ? "selected" : ""}`}
+//                     onClick={() => setSelectedLength(len)}
+//                   >
+//                     {len}"
+//                   </div>
+//                 ))}
+//               </div>
+
+//               {/* Length Image */}
+//               <div className="length-preview">
+//                 <img
+//                   src={LengthImg}
+//                   alt={`Length ${selectedLength}"`}
+//                   className="length-img"
+//                 />
+//               </div>
+
+//               <button className="confirm-btn" onClick={() => setActivePanel(null)}>
+//                 Confirm Selection
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+
+//     {/* Overlay Blur */}
+//     {activePanel && <div className="overlay-blur" onClick={() => setActivePanel(null)} />}
+//           <button className="next-btn" onClick={handleSubmit}>
+//                Next to Designer
+//              </button>
+    
+//   </div>
+// );
+// }
+
+
+//working
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+
+// import "../styles/necklace.css";
+
+// // ===== Name style images (ONLY THESE) =====
+// import BubbleImg from "../assets/necklace/necklacestyle/bubble.jpg";
+// import CursiveImg from "../assets/necklace/necklacestyle/cursive.jpg";
+// import LetterSparkImg from "../assets/necklace/necklacestyle/letterspark.jpg";
+
+// // ===== Other images =====
+// import LengthImg from "../assets/necklace/length.png";
+// import Cable from "../assets/chains/cable.png";
+// import Rope from "../assets/chains/rope.jpg";
+// import Box from "../assets/chains/box.jpg";
+// import Thin from "../assets/chains/thin.png";
+
+// const METALS = [
+//   { name: "Silver", color: "#C0C0C0" },
+//   { name: "Gold", color: "#FFD700" },
+//   { name: "Rose Gold", color: "#B76E79" },
+// ];
+
+// const NAME_STYLES = [
+//   { name: "Bubble", img: BubbleImg },
+//   { name: "Cursive", img: CursiveImg },
+//   { name: "Letter Spark", img: LetterSparkImg },
+// ];
+
+// const CHAINS = [
+//   { name: "Cable", img: Cable },
+//   { name: "Rope", img: Rope },
+//   { name: "Box", img: Box },
+//   { name: "Thin", img: Thin },
+// ];
+
+// const LENGTHS = [14, 16, 18, 20];
+
+// export default function NecklacesPage() {
+//   const navigate = useNavigate();
+
+//   const [activePanel, setActivePanel] = useState(null); // "nameStyle" | "chainLength" | null
+//   const [selectedNameStyle, setSelectedNameStyle] = useState({ ...NAME_STYLES[0], fixed: false });
+//   const [hoverIndex, setHoverIndex] = useState(0);
+
+//   const [nameText, setNameText] = useState("");
+//   const [metal, setMetal] = useState(METALS[0].color);
+//   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
+//   const [selectedLength, setSelectedLength] = useState(16);
+
+//   // Cycle preview styles until user "fixes" a style
+//   useEffect(() => {
+//     if (selectedNameStyle.fixed) return;
+//     const interval = setInterval(() => {
+//       setHoverIndex((prev) => (prev + 1) % NAME_STYLES.length);
+//     }, 1100);
+//     return () => clearInterval(interval);
+//   }, [selectedNameStyle]);
+
+//   const handleSubmit = () => {
+//     navigate("/designer", {
+//       state: {
+//         itemType: "necklace",
+//         selectedNameStyle,
+//         chainType: selectedChain,
+//         selectedLength,
+//         nameText,
+//         metal,
+//       },
+//     });
+//   };
+
+//   const closePanel = () => setActivePanel(null);
+//   const togglePanel = (panel) => {
+//   setActivePanel((prev) => (prev === panel ? null : panel));
+// };
+
+
+
+//   return (
+//   <div className="nk-page">
+//     <div className="nk-container">
+//       <header className="nk-header">
+//         <h2>Customize Your Necklace</h2>
+//         <p className="nk-subtitle">Choose a style, chain, and finish then make it yours.</p>
+//       </header>
+      
+//       <div className="nk-customizer">
+//         {/* LEFT PREVIEW */}
+//         <section className="nk-preview">
+//           <div className="nk-previewCard">
+//             <div className="nk-previewTop">
+//               <span className="nk-badge">Live Preview</span>
+//               <span className="nk-chip">
+//                 {METALS.find((m) => m.color === metal)?.name || "Metal"}
+//               </span>
+//             </div>
+
+//             <div className="nk-imageWrap">
+//               <img
+//                 src={selectedNameStyle.fixed ? selectedNameStyle.img : NAME_STYLES[hoverIndex].img}
+//                 alt="Necklace Preview"
+//                 className="nk-mainImg"
+//               />
+
+//               {nameText && (
+//                 <div className="nk-nameOverlay">
+//                   <span className="nk-nameText">{nameText}</span>
+//                 </div>
+//               )}
+//             </div>
+
+//             <div className="nk-previewMeta">
+//               <div className="nk-metaRow">
+//                 <span>Style</span>
+//                 <strong>{selectedNameStyle.name}</strong>
+//               </div>
+//               <div className="nk-metaRow">
+//                 <span>Chain</span>
+//                 <strong>{selectedChain.name}</strong>
+//               </div>
+//               <div className="nk-metaRow">
+//                 <span>Length</span>
+//                 <strong>{selectedLength}"</strong>
+//               </div>
+//             </div>
+//           </div>
+//         </section>
+
+//         {/* RIGHT CONTROLS */}
+//         <section className="nk-controls">
+//           <div className="nk-section">
+//             <label className="nk-label">Engraved Name</label>
+//             <input
+//               className="nk-input"
+//               type="text"
+//               maxLength={12}
+//               placeholder="Enter name (max 12)"
+//               value={nameText}
+//               onChange={(e) => setNameText(e.target.value)}
+//             />
+//             <p className="nk-help">Tip: shorter names look more balanced.</p>
+//           </div>
+
+//           <div className="nk-section">
+//             <label className="nk-label">Metal</label>
+//             <div className="nk-metals">
+//               {METALS.map((m) => (
+//                 <button
+//                   key={m.name}
+//                   type="button"
+//                   className={`nk-metalBtn ${metal === m.color ? "isActive" : ""}`}
+//                   onClick={() => setMetal(m.color)}
+//                 >
+//                   <span className="nk-metalDot" style={{ backgroundColor: m.color }} />
+//                   <span className="nk-metalName">{m.name}</span>
+//                 </button>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Panel openers */}
+//           <button
+//             type="button"
+//             className={`nk-rowBtn ${activePanel === "nameStyle" ? "open" : ""}`}
+//             onClick={() => togglePanel("nameStyle")}
+//           >
+//             <div className="nk-rowLeft">
+//               <span className="nk-rowTitle">Name Style</span>
+//               <span className="nk-rowValue">{selectedNameStyle.name}</span>
+//             </div>
+//             <span className="nk-chevron" aria-hidden="true" />
+//           </button>
+
+//           <button
+//             type="button"
+//             className={`nk-rowBtn ${activePanel === "chainLength" ? "open" : ""}`}
+//             onClick={() => togglePanel("chainLength")}
+//           >
+//             <div className="nk-rowLeft">
+//               <span className="nk-rowTitle">Chain & Length</span>
+//               <span className="nk-rowValue">
+//                 {selectedChain.name} · {selectedLength}"
+//               </span>
+//             </div>
+//             <span className="nk-chevron" aria-hidden="true" />
+//           </button>
+
+//           <button className="nk-next" type="button" onClick={handleSubmit}>
+//             Next to Designer
+//           </button>
+//         </section>
+
+//         {/* RIGHT SLIDE PANEL */}
+//         <aside className={`nk-panel ${activePanel ? "open" : ""}`} aria-hidden={!activePanel}>
+//           <div className="nk-panelHeader">
+//             <div>
+//               <h3 className="nk-panelTitle">
+//                 {activePanel === "nameStyle" ? "Select Name Style" : "Chain & Length"}
+//               </h3>
+//               <p className="nk-panelSub">
+//                 {activePanel === "nameStyle"
+//                   ? "Pick the font look that matches your vibe."
+//                   : "Choose the chain type and length."}
+//               </p>
+//             </div>
+
+//             <button type="button" className="nk-close" onClick={closePanel}>
+//               Close
+//             </button>
+//           </div>
+
+//           {/* SCROLLABLE CONTENT */}
+//           <div className="nk-panelBody">
+//             {activePanel === "nameStyle" && (
+//               <div className="nk-grid">
+//                 {NAME_STYLES.map((style) => (
+//                   <button
+//                     key={style.name}
+//                     type="button"
+//                     className={`nk-cardPick ${
+//                       selectedNameStyle.name === style.name ? "isActive" : ""
+//                     }`}
+//                     onClick={() => setSelectedNameStyle({ ...style, fixed: true })}
+//                   >
+//                     <img src={style.img} alt={style.name} className="nk-cardImg" />
+//                     <div className="nk-cardText">
+//                       <strong>{style.name}</strong>
+//                       <span>Tap to select</span>
+//                     </div>
+//                   </button>
+//                 ))}
+//               </div>
+//             )}
+
+//             {activePanel === "chainLength" && (
+//               <>
+//                 <h4 className="nk-panelSectionTitle">Chain Type</h4>
+//                 <div className="nk-chainGrid">
+//                   {CHAINS.map((c) => (
+//                     <button
+//                       key={c.name}
+//                       type="button"
+//                       className={`nk-chainCard ${selectedChain.name === c.name ? "isActive" : ""}`}
+//                       onClick={() => setSelectedChain(c)}
+//                     >
+//                       <img src={c.img} alt={c.name} className="nk-chainImg" />
+//                       <strong>{c.name}</strong>
+//                     </button>
+//                   ))}
+//                 </div>
+
+//                 <h4 className="nk-panelSectionTitle">Length</h4>
+//                 <div className="nk-lengths">
+//                   {LENGTHS.map((len) => (
+//                     <button
+//                       key={len}
+//                       type="button"
+//                       className={`nk-lengthBtn ${selectedLength === len ? "isActive" : ""}`}
+//                       onClick={() => setSelectedLength(len)}
+//                     >
+//                       {len}"
+//                     </button>
+//                   ))}
+//                 </div>
+
+//                 <div className="nk-lengthPreview">
+//                   <img src={LengthImg} alt="Length Guide" className="nk-lengthImg" />
+//                 </div>
+//               </>
+//             )}
+//           </div>
+
+//           {/* FIXED FOOTER (ALWAYS BOTTOM OF PANEL) */}
+//           {activePanel && (
+//             <div className="nk-panelFooter">
+//               <button className="nk-confirm" type="button" onClick={closePanel}>
+//                 {activePanel === "nameStyle" ? "Confirm Style" : "Confirm Selection"}
+//               </button>
+//             </div>
+//           )}
+//         </aside>
+
+//         {/* OVERLAY */}
+//         {activePanel && <div className="nk-overlay" onClick={closePanel} />}
+//       </div>
+//     </div>
+//   </div>
+// );
+// }
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "./Footer";
 import "../styles/necklace.css";
 
-// Images
-import Name1Img from "../assets/necklace/name1.png";
-import Name2Img from "../assets/necklace/name2.png";
-import Name3Img from "../assets/necklace/name3.png";
-import Name4Img from "../assets/necklace/name4.png";
-import LengthImg from "../assets/necklace/length.png"; // your single length image
+// ===== Name style images (ONLY THESE) =====
+import BubbleImg from "../assets/necklace/necklacestyle/bubble.jpg";
+import CursiveImg from "../assets/necklace/necklacestyle/cursive.jpg";
+import LetterSparkImg from "../assets/necklace/necklacestyle/letterspark.jpg";
+
+// ===== Other images =====
+import LengthImg from "../assets/necklace/length.png";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
@@ -467,10 +993,9 @@ const METALS = [
 ];
 
 const NAME_STYLES = [
-  { name: "Style 1", img: Name1Img },
-  { name: "Style 2", img: Name2Img },
-  { name: "Style 3", img: Name3Img },
-  { name: "Style 4", img: Name4Img },
+  { name: "Bubble", img: BubbleImg },
+  { name: "Cursive", img: CursiveImg },
+  { name: "Letter Spark", img: LetterSparkImg },
 ];
 
 const CHAINS = [
@@ -479,197 +1004,297 @@ const CHAINS = [
   { name: "Box", img: Box },
   { name: "Thin", img: Thin },
 ];
-const LENGTHS = [14, 15, 16, 18, 20];
 
-
+const LENGTHS = [14, 16, 18, 20];
 
 export default function NecklacesPage() {
-  const [activePanel, setActivePanel] = useState(null);
-  const [selectedNameStyle, setSelectedNameStyle] = useState(NAME_STYLES[0]);
+  const navigate = useNavigate();
+
+  // Steps (for the horizontal tabs)
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // Panels
+  const [activePanel, setActivePanel] = useState(null); // "nameStyle" | "chainLength" | null
+
+  // Selection state
+  const [selectedNameStyle, setSelectedNameStyle] = useState({
+    ...NAME_STYLES[0],
+    fixed: false,
+  });
   const [hoverIndex, setHoverIndex] = useState(0);
+
   const [nameText, setNameText] = useState("");
   const [metal, setMetal] = useState(METALS[0].color);
   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
   const [selectedLength, setSelectedLength] = useState(16);
 
-  // Cycle through name styles dynamically until one is fixed
+  // Auto-cycle preview until style is fixed
   useEffect(() => {
     if (selectedNameStyle.fixed) return;
     const interval = setInterval(() => {
       setHoverIndex((prev) => (prev + 1) % NAME_STYLES.length);
-    }, 1000);
+    }, 1100);
     return () => clearInterval(interval);
-  }, [selectedNameStyle]);
+  }, [selectedNameStyle.fixed]);
 
-  const handleSelectStyle = (style) => {
-    setSelectedNameStyle({ ...style, fixed: true });
-    setActivePanel(null);
+  const closePanel = () => setActivePanel(null);
+  const togglePanel = (panel) => setActivePanel((prev) => (prev === panel ? null : panel));
+
+  const handleSubmit = () => {
+    setCurrentStep(2);
+    navigate("/designer", {
+      state: {
+        itemType: "necklace",
+        selectedNameStyle,
+        chainType: selectedChain,
+        selectedLength,
+        nameText,
+        metal,
+      },
+    });
   };
-const navigate = useNavigate();
-const handleSubmit = () => {
-  navigate("/designer", {
-    state: {
-      itemType: "necklace",
-      selectedNameStyle,
-      chainType: selectedChain,
-      selectedLength,
-      nameText,
-      metal,
-    },
-  });
-};
 
+  const onStepClick = (step) => {
+    setCurrentStep(step);
+
+    // Step navigation behavior (adjust routes if needed)
+    if (step === 1) return; // already here
+
+    if (step === 2) {
+      handleSubmit();
+      return;
+    }
+
+    if (step === 3) {
+      navigate("/checkout"); // change if your route name differs
+    }
+  };
+
+  const steps = ["Customize Your Necklace", "Choose Your Designer", "Checkout"];
 
   return (
-  <div className="page-wrapper">
-    <div className="necklace-page">
-      <h2>Customize Your Necklace</h2>
+    <div className="nk-page">
+      <div className="nk-container">
+        <header className="nk-header">
+          <h2>Customize Your Necklace</h2>
+          <p className="nk-subtitle">Choose a style, chain, and finish then make it yours.</p>
+        </header>
 
-      <div className="necklace-customizer">
-        {/* LEFT PREVIEW */}
-        <div className="preview-left">
-          <div className="preview-box">
-            <img
-              src={selectedNameStyle.fixed ? selectedNameStyle.img : NAME_STYLES[hoverIndex].img}
-              alt="necklace"
-              className="main-necklace-img"
-            />
-            {nameText && <p className="name-preview">{nameText}</p>}
-          </div>
-        </div>
-
-        {/* RIGHT FORM */}
-        <div className="form-left">
-          {/* Name Input */}
-          <div className="tab-section">
-            <label>Engraved Name</label>
-            <input
-              type="text"
-              maxLength="12"
-              placeholder="Enter name"
-              value={nameText}
-              onChange={(e) => setNameText(e.target.value)}
-            />
-          </div>
-
-          {/* Metal */}
-          <div className="tab-section">
-            <label>Metal</label>
-            <div className="options-grid">
-              {METALS.map((m) => (
-                <div
-                  key={m.name}
-                  className={`option-card ${metal === m.color ? "selected" : ""}`}
-                  onClick={() => setMetal(m.color)}
-                >
-                  <div className="color-swatch" style={{ backgroundColor: m.color }} />
-                </div>
-              ))}
+        {/* ===== HORIZONTAL STEPS (LIKE RING) ===== */}
+        <div className="steps-horizontal">
+          {steps.map((label, index) => (
+            <div
+              key={label}
+              className={`step-box ${currentStep === index + 1 ? "active" : ""}`}
+              onClick={() => onStepClick(index + 1)}
+              role="button"
+              tabIndex={0}
+            >
+              <div className="step-number">{index + 1}</div>
+              <div className="step-labels">{label}</div>
             </div>
-          </div>
-
-          {/* Name Style */}
-          <div
-            className="tab-section hover-arrow"
-            onClick={() => setActivePanel(activePanel === "nameStyle" ? null : "nameStyle")}
-          >
-            <label>Name Style</label>
-            <span className="arrow">▶</span>
-          </div>
-
-          {/* Chain Type & Length */}
-          <div
-            className="tab-section hover-arrow"
-            onClick={() => setActivePanel(activePanel === "chainLength" ? null : "chainLength")}
-          >
-            <label>Chain Type & Length</label>
-            <span className="arrow">▶</span>
-            <p>
-              {selectedChain.name} - {selectedLength}"
-            </p>
-          </div>
+          ))}
         </div>
 
-        {/* RIGHT PANEL */}
-        <div className={`right-panel ${activePanel ? "open" : ""}`}>
-          {/* Name Style Selection */}
-          {activePanel === "nameStyle" && (
-            <>
-              <h3>Select Name Style</h3>
-              <div className="chains-grid">
-                {NAME_STYLES.map((style) => (
-                  <img
-                    key={style.name}
-                    src={style.img}
-                    alt={style.name}
-                    className={`panel-img ${selectedNameStyle.name === style.name ? "selected" : ""}`}
-                    onClick={() => {
-                      setSelectedNameStyle({ ...style, fixed: true });
-                      setActivePanel(null);
-                    }}
-                  />
-                ))}
-              </div>
-              <button className="confirm-btn" onClick={() => setActivePanel(null)}>
-                Confirm Style
-              </button>
-            </>
-          )}
-
-          {/* Chain + Length Selection */}
-          {activePanel === "chainLength" && (
-            <div className="chain-length-selection">
-              <h3>Select Chain Type</h3>
-              <div className="chains-grid">
-                {CHAINS.map((c) => (
-                  <div
-                    key={c.name}
-                    className={`chain-option ${selectedChain.name === c.name ? "selected" : ""}`}
-                    onClick={() => setSelectedChain(c)}
-                  >
-                    <img src={c.img} alt={c.name} />
-                    <p>{c.name}</p>
-                  </div>
-                ))}
+        <div className="nk-customizer">
+          {/* LEFT PREVIEW */}
+          <section className="nk-preview">
+            <div className="nk-previewCard">
+              <div className="nk-previewTop">
+                <span className="nk-badge">Live Preview</span>
+                <span className="nk-chip">
+                  {METALS.find((m) => m.color === metal)?.name || "Metal"}
+                </span>
               </div>
 
-              <h3>Select Length</h3>
-              <div className="length-options">
-                {LENGTHS.map((len) => (
-                  <div
-                    key={len}
-                    className={`panel-option ${selectedLength === len ? "selected" : ""}`}
-                    onClick={() => setSelectedLength(len)}
-                  >
-                    {len}"
-                  </div>
-                ))}
-              </div>
-
-              {/* Length Image */}
-              <div className="length-preview">
+              <div className="nk-imageWrap">
                 <img
-                  src={LengthImg}
-                  alt={`Length ${selectedLength}"`}
-                  className="length-img"
+                  src={selectedNameStyle.fixed ? selectedNameStyle.img : NAME_STYLES[hoverIndex].img}
+                  alt="Necklace Preview"
+                  className="nk-mainImg"
                 />
+
+                {nameText && (
+                  <div className="nk-nameOverlay">
+                    <span className="nk-nameText">{nameText}</span>
+                  </div>
+                )}
               </div>
 
-              <button className="confirm-btn" onClick={() => setActivePanel(null)}>
-                Confirm Selection
+              <div className="nk-previewMeta">
+                <div className="nk-metaRow">
+                  <span>Style</span>
+                  <strong>{selectedNameStyle.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Chain</span>
+                  <strong>{selectedChain.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Length</span>
+                  <strong>{selectedLength}"</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* RIGHT CONTROLS */}
+          <section className="nk-controls">
+            <div className="nk-section">
+              <label className="nk-label">Engraved Name</label>
+              <input
+                className="nk-input"
+                type="text"
+                maxLength={12}
+                placeholder="Enter name (max 12)"
+                value={nameText}
+                onChange={(e) => setNameText(e.target.value)}
+              />
+              <p className="nk-help">Tip: shorter names look more balanced.</p>
+            </div>
+
+            <div className="nk-section">
+              <label className="nk-label">Metal</label>
+              <div className="nk-metals">
+                {METALS.map((m) => (
+                  <button
+                    key={m.name}
+                    type="button"
+                    className={`nk-metalBtn ${metal === m.color ? "isActive" : ""}`}
+                    onClick={() => setMetal(m.color)}
+                  >
+                    <span className="nk-metalDot" style={{ backgroundColor: m.color }} />
+                    <span className="nk-metalName">{m.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Panel openers */}
+            <button
+              type="button"
+              className={`nk-rowBtn ${activePanel === "nameStyle" ? "open" : ""}`}
+              onClick={() => togglePanel("nameStyle")}
+            >
+              <div className="nk-rowLeft">
+                <span className="nk-rowTitle">Name Style</span>
+                <span className="nk-rowValue">{selectedNameStyle.name}</span>
+              </div>
+              <span className="nk-chevron" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className={`nk-rowBtn ${activePanel === "chainLength" ? "open" : ""}`}
+              onClick={() => togglePanel("chainLength")}
+            >
+              <div className="nk-rowLeft">
+                <span className="nk-rowTitle">Chain & Length</span>
+                <span className="nk-rowValue">
+                  {selectedChain.name} · {selectedLength}"
+                </span>
+              </div>
+              <span className="nk-chevron" aria-hidden="true" />
+            </button>
+
+            <button className="nk-next" type="button" onClick={handleSubmit}>
+              Next to Designer
+            </button>
+          </section>
+
+          {/* RIGHT SLIDE PANEL */}
+          <aside className={`nk-panel ${activePanel ? "open" : ""}`} aria-hidden={!activePanel}>
+            <div className="nk-panelHeader">
+              <div>
+                <h3 className="nk-panelTitle">
+                  {activePanel === "nameStyle" ? "Select Name Style" : "Chain & Length"}
+                </h3>
+                <p className="nk-panelSub">
+                  {activePanel === "nameStyle"
+                    ? "Pick the font look that matches your vibe."
+                    : "Choose the chain type and length."}
+                </p>
+              </div>
+
+              <button type="button" className="nk-close" onClick={closePanel}>
+                Close
               </button>
             </div>
-          )}
+
+            <div className="nk-panelBody">
+              {activePanel === "nameStyle" && (
+                <div className="nk-grid">
+                  {NAME_STYLES.map((style) => (
+                    <button
+                      key={style.name}
+                      type="button"
+                      className={`nk-cardPick ${
+                        selectedNameStyle.name === style.name ? "isActive" : ""
+                      }`}
+                      onClick={() => setSelectedNameStyle({ ...style, fixed: true })}
+                    >
+                      <img src={style.img} alt={style.name} className="nk-cardImg" />
+                      <div className="nk-cardText">
+                        <strong>{style.name}</strong>
+                        <span>Tap to select</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {activePanel === "chainLength" && (
+                <>
+                  <h4 className="nk-panelSectionTitle">Chain Type</h4>
+                  <div className="nk-chainGrid">
+                    {CHAINS.map((c) => (
+                      <button
+                        key={c.name}
+                        type="button"
+                        className={`nk-chainCard ${selectedChain.name === c.name ? "isActive" : ""}`}
+                        onClick={() => setSelectedChain(c)}
+                      >
+                        <img src={c.img} alt={c.name} className="nk-chainImg" />
+                        <strong>{c.name}</strong>
+                      </button>
+                    ))}
+                  </div>
+
+                  <h4 className="nk-panelSectionTitle">Length</h4>
+                  <div className="nk-lengths">
+                    {LENGTHS.map((len) => (
+                      <button
+                        key={len}
+                        type="button"
+                        className={`nk-lengthBtn ${selectedLength === len ? "isActive" : ""}`}
+                        onClick={() => setSelectedLength(len)}
+                      >
+                        {len}"
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="nk-lengthPreview">
+                    <img src={LengthImg} alt="Length Guide" className="nk-lengthImg" />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* FIXED FOOTER */}
+            {activePanel && (
+              <div className="nk-panelFooter">
+                <button className="nk-confirm" type="button" onClick={closePanel}>
+                  {activePanel === "nameStyle" ? "Confirm Style" : "Confirm Selection"}
+                </button>
+              </div>
+            )}
+          </aside>
+
+          {/* OVERLAY */}
+          {activePanel && <div className="nk-overlay" onClick={closePanel} />}
         </div>
       </div>
     </div>
-
-    {/* Overlay Blur */}
-    {activePanel && <div className="overlay-blur" onClick={() => setActivePanel(null)} />}
-          <button className="next-btn" onClick={handleSubmit}>
-               Next to Designer
-             </button>
-    
-  </div>
-);
+  );
 }
