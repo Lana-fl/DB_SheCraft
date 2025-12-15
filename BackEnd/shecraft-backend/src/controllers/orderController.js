@@ -3,11 +3,8 @@ const orderModel = require("../models/orderModel");
 
 /**
  * POST /api/orders
- * Body:
- * {
- *   orderID, designerID, isPickup, orderDate, completionDate, address, paymentType, customerID,
- *   items: ["A001","A010", ...]
- * }
+ * Creates an order ONLY from reserved accessory instances.
+ * Body: { orderID, designerID, customerID, orderDate, items: ["X001","X002"], ...optional fields }
  */
 exports.createOrderFromCart = async (req, res) => {
   const {
@@ -26,8 +23,6 @@ exports.createOrderFromCart = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields or items" });
   }
 
-  // Your ORDERITEMS PK (orderID, accessoryID) forbids duplicates in one order.
-  // To avoid ER_DUP_ENTRY, we enforce uniqueness here.
   const uniqueItems = [...new Set(items)];
   const qty = uniqueItems.length;
 
@@ -35,20 +30,28 @@ exports.createOrderFromCart = async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    // 1) Validate accessories + compute total
-    const accRows = await orderModel.getAccessoryPricesByIds(conn, uniqueItems);
+    // 1) Lock + validate accessories
+    const accRows = await orderModel.getAccessoriesForOrder(conn, uniqueItems);
 
     if (accRows.length !== uniqueItems.length) {
       await conn.rollback();
       return res.status(400).json({ message: "One or more accessories do not exist" });
     }
 
-    const priceById = {};
-    for (const r of accRows) priceById[r.accessoryID] = Number(r.price);
+    // 2) Must be reserved to order
+    const invalid = accRows.filter(a => a.status !== "reserved");
+    if (invalid.length > 0) {
+      await conn.rollback();
+      return res.status(409).json({
+        message: "One or more items are not in reserved status",
+        items: invalid.map(x => ({ accessoryID: x.accessoryID, status: x.status })),
+      });
+    }
 
-    const totalPrice = uniqueItems.reduce((sum, id) => sum + (priceById[id] || 0), 0);
+    // 3) Compute total from stored accessory.price
+    const totalPrice = accRows.reduce((sum, r) => sum + Number(r.price || 0), 0);
 
-    // 2) Insert ORDERS
+    // 4) Insert order header
     await orderModel.insertOrder(conn, {
       orderID,
       qty,
@@ -62,15 +65,18 @@ exports.createOrderFromCart = async (req, res) => {
       customerID,
     });
 
-    // 3) Insert ORDERITEMS
+    // 5) Insert order items
     await orderModel.insertOrderItems(conn, orderID, uniqueItems);
+
+    // 6) Mark accessories ordered (prevents later cancel/release)
+    await orderModel.markAccessoriesOrdered(conn, uniqueItems);
 
     await conn.commit();
     return res.status(201).json({ message: "Order created", orderID, qty, totalPrice });
   } catch (err) {
     await conn.rollback();
     console.error("Error creating order:", err);
-    return res.status(500).json({ message: "Failed to create order" });
+    return res.status(500).json({ message: "Failed to create order", error: err.message });
   } finally {
     conn.release();
   }
@@ -78,7 +84,6 @@ exports.createOrderFromCart = async (req, res) => {
 
 /**
  * GET /api/orders/:orderID
- * Returns: { order, items, calculatedTotalPrice }
  */
 exports.getOrderDetails = async (req, res) => {
   const { orderID } = req.params;
@@ -89,7 +94,6 @@ exports.getOrderDetails = async (req, res) => {
 
     const order = header[0];
     const items = await orderModel.getOrderItemsDetailed(orderID);
-
     const calculatedTotalPrice = items.reduce((sum, it) => sum + Number(it.price || 0), 0);
 
     return res.json({ order, items, calculatedTotalPrice });
@@ -129,7 +133,6 @@ exports.getAllOrders = async (req, res) => {
 
 /**
  * GET /api/orders/best-sellers-by-type?from=YYYY-MM-DD&to=YYYY-MM-DD
- * Returns top style per type (ring/earring/necklace/bracelet)
  */
 exports.getBestSellersByType = async (req, res) => {
   const from = req.query.from || null;
@@ -139,7 +142,33 @@ exports.getBestSellersByType = async (req, res) => {
     const result = await orderModel.getBestSellersByType({ from, to });
     return res.json(result);
   } catch (err) {
-    console.error("Error fetching best sellers by type:", err);
+    console.error("Error fetching best sellers:", err);
     return res.status(500).json({ message: "Failed to fetch best sellers" });
+  }
+};
+
+// src/controllers/orderController.js
+
+exports.completeOrder = async (req, res) => {
+  try {
+    const { orderID } = req.params;
+    const designerID = req.body?.designerID;
+
+    if (!designerID) {
+      return res.status(400).json({ message: "Missing designerID in body" });
+    }
+
+    const ok = await orderModel.markOrderCompleted(orderID, designerID);
+
+    if (!ok) {
+      return res.status(404).json({
+        message: "Order not found, not owned by this designer, or already completed",
+      });
+    }
+
+    return res.json({ message: "Order completed", orderID });
+  } catch (err) {
+    console.error("completeOrder error:", err);
+    return res.status(500).json({ message: "Failed to complete order" });
   }
 };

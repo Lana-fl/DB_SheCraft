@@ -1,15 +1,37 @@
 // src/models/orderModel.js
 const pool = require("../config/db");
 
-async function getAccessoryPricesByIds(conn, accessoryIDs) {
+/**
+ * Lock and fetch accessory rows for ordering (prevents race conditions)
+ */
+async function getAccessoriesForOrder(conn, accessoryIDs) {
   const placeholders = accessoryIDs.map(() => "?").join(", ");
   const [rows] = await conn.query(
-    `SELECT accessoryID, price
-     FROM ACCESSORY
-     WHERE accessoryID IN (${placeholders})`,
+    `
+    SELECT accessoryID, price, status
+    FROM accessory
+    WHERE accessoryID IN (${placeholders})
+    FOR UPDATE
+    `,
     accessoryIDs
   );
   return rows;
+}
+
+/**
+ * Update accessory status to ordered
+ */
+async function markAccessoriesOrdered(conn, accessoryIDs) {
+  const placeholders = accessoryIDs.map(() => "?").join(", ");
+  const [result] = await conn.query(
+    `
+    UPDATE accessory
+    SET status = 'ordered'
+    WHERE accessoryID IN (${placeholders})
+    `,
+    accessoryIDs
+  );
+  return result.affectedRows;
 }
 
 async function insertOrder(conn, orderData) {
@@ -27,9 +49,11 @@ async function insertOrder(conn, orderData) {
   } = orderData;
 
   await conn.query(
-    `INSERT INTO ORDERS
+    `
+    INSERT INTO orders
       (orderID, qty, designerID, isPickup, price, orderDate, completionDate, address, paymentType, customerID)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
     [
       orderID,
       qty,
@@ -48,13 +72,18 @@ async function insertOrder(conn, orderData) {
 async function insertOrderItems(conn, orderID, accessoryIDs) {
   for (const accessoryID of accessoryIDs) {
     await conn.query(
-      `INSERT INTO ORDERITEMS (orderID, accessoryID)
-       VALUES (?, ?)`,
+      `
+      INSERT INTO orderitems (orderID, accessoryID)
+      VALUES (?, ?)
+      `,
       [orderID, accessoryID]
     );
   }
 }
 
+/**
+ * Read order header + customer/designer info
+ */
 async function getOrderHeader(orderID) {
   const [rows] = await pool.query(
     `
@@ -62,9 +91,9 @@ async function getOrderHeader(orderID) {
       o.orderID, o.qty, o.price, o.orderDate, o.completionDate, o.isPickup, o.address, o.paymentType,
       o.customerID, c.firstName, c.lastName, c.email AS customerEmail, c.phoneNb AS customerPhone,
       o.designerID, d.name AS designerName, d.branch AS designerBranch, d.email AS designerEmail
-    FROM ORDERS o
-    JOIN CUSTOMER c ON o.customerID = c.customerID
-    JOIN DESIGNER d ON o.designerID = d.designerID
+    FROM orders o
+    JOIN customer c ON o.customerID = c.customerID
+    JOIN designer d ON o.designerID = d.designerID
     WHERE o.orderID = ?
     `,
     [orderID]
@@ -72,15 +101,17 @@ async function getOrderHeader(orderID) {
   return rows;
 }
 
+/**
+ * Detailed order items. (No nbOfCharms/nbOfStones anymore.)
+ */
 async function getOrderItemsDetailed(orderID) {
   const [rows] = await pool.query(
     `
     SELECT
       a.accessoryID,
       a.price,
-      a.nbOfStones,
-      a.nbOfCharms,
       a.materialID,
+      a.status,
       m.metal,
 
       r.ringID, r.bandType, r.diameter,
@@ -99,13 +130,13 @@ async function getOrderItemsDetailed(orderID) {
       e.backing,
       e.size  AS earringSize,
       e.style AS earringStyle
-    FROM ORDERITEMS oi
-    JOIN ACCESSORY a ON oi.accessoryID = a.accessoryID
-    JOIN MATERIAL m ON a.materialID = m.materialID
-    LEFT JOIN RING r ON r.accessoryID = a.accessoryID
-    LEFT JOIN BRACELET b ON b.accessoryID = a.accessoryID
-    LEFT JOIN NECKLACE n ON n.accessoryID = a.accessoryID
-    LEFT JOIN EARRING e ON e.accessoryID = a.accessoryID
+    FROM orderitems oi
+    JOIN accessory a ON oi.accessoryID = a.accessoryID
+    JOIN material m ON a.materialID = m.materialID
+    LEFT JOIN ring r ON r.accessoryID = a.accessoryID
+    LEFT JOIN bracelet b ON b.accessoryID = a.accessoryID
+    LEFT JOIN necklace n ON n.accessoryID = a.accessoryID
+    LEFT JOIN earring e ON e.accessoryID = a.accessoryID
     WHERE oi.orderID = ?
     `,
     [orderID]
@@ -119,8 +150,8 @@ async function getOrdersByCustomer(customerID) {
     SELECT
       o.orderID, o.qty, o.price, o.orderDate, o.completionDate, o.isPickup, o.address, o.paymentType,
       o.designerID, d.name AS designerName, d.branch AS designerBranch
-    FROM ORDERS o
-    JOIN DESIGNER d ON o.designerID = d.designerID
+    FROM orders o
+    JOIN designer d ON o.designerID = d.designerID
     WHERE o.customerID = ?
     ORDER BY o.orderDate DESC
     `,
@@ -136,9 +167,9 @@ async function getAllOrders() {
       o.orderID, o.qty, o.price, o.orderDate, o.completionDate, o.isPickup, o.address, o.paymentType,
       o.customerID, c.firstName, c.lastName, c.email AS customerEmail,
       o.designerID, d.name AS designerName, d.branch AS designerBranch
-    FROM ORDERS o
-    JOIN CUSTOMER c ON o.customerID = c.customerID
-    JOIN DESIGNER d ON o.designerID = d.designerID
+    FROM orders o
+    JOIN customer c ON o.customerID = c.customerID
+    JOIN designer d ON o.designerID = d.designerID
     ORDER BY o.orderDate DESC
     `
   );
@@ -146,18 +177,15 @@ async function getAllOrders() {
 }
 
 /**
- * Best-sellers by type/style.
- * soldCount is computed (COUNT(*)) from ORDERITEMS joins.
- * Optional date filter: from/to based on ORDERS.orderDate
+ * Best-sellers-by-type with optional date filter.
  */
 async function getBestSellersByType({ from = null, to = null } = {}) {
-  // Each query returns top 1 per type
   const [ring] = await pool.query(
     `
     SELECT r.bandType AS style, COUNT(*) AS soldCount
-    FROM ORDERITEMS oi
-    JOIN ORDERS o ON o.orderID = oi.orderID
-    JOIN RING r ON r.accessoryID = oi.accessoryID
+    FROM orderitems oi
+    JOIN orders o ON o.orderID = oi.orderID
+    JOIN ring r ON r.accessoryID = oi.accessoryID
     WHERE (? IS NULL OR o.orderDate >= ?)
       AND (? IS NULL OR o.orderDate <= ?)
     GROUP BY r.bandType
@@ -170,9 +198,9 @@ async function getBestSellersByType({ from = null, to = null } = {}) {
   const [earring] = await pool.query(
     `
     SELECT e.style AS style, COUNT(*) AS soldCount
-    FROM ORDERITEMS oi
-    JOIN ORDERS o ON o.orderID = oi.orderID
-    JOIN EARRING e ON e.accessoryID = oi.accessoryID
+    FROM orderitems oi
+    JOIN orders o ON o.orderID = oi.orderID
+    JOIN earring e ON e.accessoryID = oi.accessoryID
     WHERE (? IS NULL OR o.orderDate >= ?)
       AND (? IS NULL OR o.orderDate <= ?)
     GROUP BY e.style
@@ -185,9 +213,9 @@ async function getBestSellersByType({ from = null, to = null } = {}) {
   const [necklace] = await pool.query(
     `
     SELECT n.style AS style, COUNT(*) AS soldCount
-    FROM ORDERITEMS oi
-    JOIN ORDERS o ON o.orderID = oi.orderID
-    JOIN NECKLACE n ON n.accessoryID = oi.accessoryID
+    FROM orderitems oi
+    JOIN orders o ON o.orderID = oi.orderID
+    JOIN necklace n ON n.accessoryID = oi.accessoryID
     WHERE (? IS NULL OR o.orderDate >= ?)
       AND (? IS NULL OR o.orderDate <= ?)
     GROUP BY n.style
@@ -200,9 +228,9 @@ async function getBestSellersByType({ from = null, to = null } = {}) {
   const [bracelet] = await pool.query(
     `
     SELECT b.style AS style, COUNT(*) AS soldCount
-    FROM ORDERITEMS oi
-    JOIN ORDERS o ON o.orderID = oi.orderID
-    JOIN BRACELET b ON b.accessoryID = oi.accessoryID
+    FROM orderitems oi
+    JOIN orders o ON o.orderID = oi.orderID
+    JOIN bracelet b ON b.accessoryID = oi.accessoryID
     WHERE (? IS NULL OR o.orderDate >= ?)
       AND (? IS NULL OR o.orderDate <= ?)
     GROUP BY b.style
@@ -220,9 +248,31 @@ async function getBestSellersByType({ from = null, to = null } = {}) {
   };
 }
 
+// src/models/orderModel.js
+
+// src/models/orderModel.js
+async function markOrderCompleted(orderID, designerID) {
+  const [result] = await pool.query(
+    `
+    UPDATE orders
+    SET
+      completionDate = CURDATE(),
+      status = 'completed'
+    WHERE orderID = ?
+      AND designerID = ?
+      AND status <> 'completed'
+    `,
+    [orderID, designerID]
+  );
+
+  return result.affectedRows > 0;
+}
+
+
 module.exports = {
   pool,
-  getAccessoryPricesByIds,
+  getAccessoriesForOrder,
+  markAccessoriesOrdered,
   insertOrder,
   insertOrderItems,
   getOrderHeader,
@@ -230,4 +280,5 @@ module.exports = {
   getOrdersByCustomer,
   getAllOrders,
   getBestSellersByType,
+  markOrderCompleted,
 };

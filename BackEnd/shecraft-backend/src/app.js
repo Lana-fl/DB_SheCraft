@@ -28,7 +28,7 @@ app.use("/images", express.static(path.join(__dirname, "../public/images")));
 app.use(
   cors({
     origin: "http://localhost:3001", // your React dev server
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     allowedHeaders: ["Content-Type"],
     credentials: true, // safe even if you don't use cookies yet
   })
@@ -46,6 +46,7 @@ app.use("/api/designers", designerRoutes);
 app.use("/api/charms", charmRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/stones", stoneRoutes);
+app.use("/api/accessory-instance", require("./routes/accessoryInstanceRoutes"));
 
 
 // Health check
