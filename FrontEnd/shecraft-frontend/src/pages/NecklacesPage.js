@@ -1198,7 +1198,7 @@ export default function NecklacesPage() {
             </button>
 
             <button className="nk-next" type="button" onClick={handleSubmit}>
-              Next to Designer
+              Order Summary 
             </button>
           </section>
 

@@ -15,10 +15,12 @@ import RingSelection from "./pages/RingSelection";
 import DesignerPage from "./pages/DesignerPage";
 import StepsBar from "./pages/StepsBar";
 import NecklaceSelection from "./pages/NecklaceSelection";
+import CharmNecklacePage from "./pages/CharmNecklacePage";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
 import BirthstoneNecklace from "./pages/BirthstoneNecklace"; 
 import BraceletSelection from "./pages/BraceletSelection";
+
 
 /* ACCOUNT SYSTEM */
 import AccountPage from "./pages/AccountPage";
@@ -79,13 +81,15 @@ function App() {
             <Route path="/orderpage" element={<OrderPage />} />
             <Route path="/necklacespage" element={<NecklacesPage />} />
             <Route path="/necklaces/birthstone" element={<BirthstoneNecklace />} />
+            <Route path="/necklaces/charm" element={<CharmNecklacePage />} />
             <Route path="/necklaces" element={<NecklaceSelection />} />
             <Route path="/rings" element={<RingSelection />} />
             <Route path="/ringspage" element={<RingsPage />} />
             <Route path="/bracelets" element={<BraceletSelection />} />
             <Route path="/braceletspage" element={<BraceletsPage />} />
-
+          
             <Route path="/earrings" element={<EarringsPage />} />
+            
           
             {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
