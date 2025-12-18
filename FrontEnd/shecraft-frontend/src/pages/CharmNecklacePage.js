@@ -784,7 +784,8 @@ import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 import "../styles/charmNecklace.css";
-import "../styles/necklace.css";
+import { useCart } from "../context/CartContext";
+
 
 
 
@@ -837,6 +838,7 @@ function addToLocalCartOnce(cartItem) {
 export default function CharmNecklacePage() {
   const navigate = useNavigate();
 
+  const { addToCart } = useCart(); 
   const [activePanel, setActivePanel] = useState(null);
 
   const [metal, setMetal] = useState(METALS[0]);
@@ -1086,23 +1088,20 @@ export default function CharmNecklacePage() {
       }
 
       // ✅ Add to cart ONCE
-      addToLocalCartOnce({
-        accessoryID,
-        type: "necklace",
-        style: "free charm",
-        metal: metal.name,
-        chain: selectedChain.name,
-        length: selectedLength,
-        charmColor,
-        charms: confirmedCharms.map((c) => ({
-          charmID: c.charmID,
-          design: c.design,
-          color: c.color,
-          text: c.type === "letter-custom" ? c.text : null,
-          price: c.price,
-        })),
-        price: computedPrice ?? estimatedTotal,
-      });
+      addToCart({
+  accessoryID,
+  type: "necklace",
+  style: "free charm",
+  metal: metal.name,
+  chain: selectedChain.name,
+  length: selectedLength,
+  charmColor,
+  summary: {
+    charms: confirmedCharms.map((c) => ({ charmID: c.charmID, quantity: 1 })),
+  },
+  price: computedPrice ?? estimatedTotal,
+});
+
 
       // ✅ go to OrderPage (as you asked)
       navigate(ORDER_PAGE_ROUTE);
