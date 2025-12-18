@@ -130,25 +130,33 @@ async function upsertOrnaments(conn, accessoryID, charms) {
   for (const it of charms) {
     if (!it?.charmID) continue;
     const q = it.quantity == null ? 1 : Number(it.quantity);
+    if (!Number.isFinite(q) || q <= 0) continue;
     map.set(it.charmID, (map.get(it.charmID) || 0) + q);
   }
 
-  const rows = [...map.entries()].map(([charmID, quantity]) => [
+  const entries = [...map.entries()];
+  if (entries.length === 0) return;
+
+  const rows = entries.map(([charmID, quantity]) => [
     accessoryID,
     charmID,
     Math.max(1, Math.trunc(quantity)),
   ]);
 
-  // assumes ornaments has columns: accessoryID, charmID, quantity and PK(accessoryID,charmID)
+  // build: (?,?,?),(?,?,?),...
+  const placeholders = rows.map(() => "(?,?,?)").join(", ");
+  const flat = rows.flat();
+
   await conn.query(
     `
     INSERT INTO ornaments (accessoryID, charmID, quantity)
-    VALUES ?
+    VALUES ${placeholders}
     ON DUPLICATE KEY UPDATE quantity = VALUES(quantity)
     `,
-    [rows]
+    flat
   );
 }
+
 
 async function upsertGems(conn, accessoryID, stones) {
   if (!Array.isArray(stones) || stones.length === 0) return;
@@ -157,25 +165,32 @@ async function upsertGems(conn, accessoryID, stones) {
   for (const it of stones) {
     if (!it?.stoneID) continue;
     const q = it.quantity == null ? 1 : Number(it.quantity);
+    if (!Number.isFinite(q) || q <= 0) continue;
     map.set(it.stoneID, (map.get(it.stoneID) || 0) + q);
   }
 
-  const rows = [...map.entries()].map(([stoneID, quantity]) => [
+  const entries = [...map.entries()];
+  if (entries.length === 0) return;
+
+  const rows = entries.map(([stoneID, quantity]) => [
     accessoryID,
     stoneID,
     Math.max(1, Math.trunc(quantity)),
   ]);
 
-  // assumes gems has columns: accessoryID, stoneID, quantity and PK(accessoryID,stoneID)
+  const placeholders = rows.map(() => "(?,?,?)").join(", ");
+  const flat = rows.flat();
+
   await conn.query(
     `
     INSERT INTO gems (accessoryID, stoneID, quantity)
-    VALUES ?
+    VALUES ${placeholders}
     ON DUPLICATE KEY UPDATE quantity = VALUES(quantity)
     `,
-    [rows]
+    flat
   );
 }
+
 
 // --- main transactional creator ---
 async function createAccessoryInstance({
