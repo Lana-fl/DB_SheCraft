@@ -15,7 +15,14 @@ export default function AccountPage() {
   useEffect(() => {
     async function loadAccount() {
       try {
-        const data = await api.getMyCustomerAccount();
+        let data;
+
+        if (user.role === "customer") {
+          data = await api.getMyCustomerAccount();
+        } else if (user.role === "designer") {
+          data = await api.getMyDesignerAccount();
+        }
+
         setAccount(data);
       } catch (err) {
         console.error("Failed to load account:", err);
@@ -89,6 +96,21 @@ export default function AccountPage() {
             <span className="info-label">Phone</span>
             <span className="info-value">{account?.phone || "-"}</span>
           </div>
+        )}
+
+        {/* DESIGNER FIELDS */}
+        {user.role === "designer" && (
+          <>
+            <div className="info-item">
+              <span className="info-label">Branch</span>
+              <span className="info-value">{account?.branch || "-"}</span>
+            </div>
+
+            <div className="info-item">
+              <span className="info-label">Phone</span>
+              <span className="info-value">{account?.phone || "-"}</span>
+            </div>
+          </>
         )}
 
         {/* ACTION BUTTONS */}

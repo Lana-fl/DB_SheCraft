@@ -1,22 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
-
 import { api } from "../api/client";
 import "../styles/AccountPage.css";
 
 export default function EditAccountPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
-  // ---------------- INITIAL DATA ----------------
-  const initialData = user?.user || {};
+  // ================= HOOKS (ALWAYS FIRST) =================
 
-  // ---------------- HOOKS ----------------
   const [formData, setFormData] = useState({
-    name: initialData.name || "",
-    email: initialData.email || "",
-    phone: initialData.phone || "",
-    specialty: initialData.specialty || "",
-    portfolioLink: initialData.portfolioLink || "",
+    name: user?.user?.name || "",
+    branch: user?.user?.branch || "",
+    email: user?.user?.email || "",
+    phone: user?.user?.phone || "",
   });
 
   const [passwords, setPasswords] = useState({
@@ -34,24 +32,24 @@ export default function EditAccountPage() {
   const [message, setMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  // ---------------- BLOCK IF NOT LOGGED IN ----------------
+  // ================= GUARD =================
+
   if (!user) {
     return (
       <div className="account-container">
         <div className="no-user-container">
           <h1 className="no-user-title">No Account Found</h1>
-          <p className="no-user-text">
-            Please log in to access your SheCraft account.
-          </p>
-          <a href="/login" className="no-user-button">
-            Go to Login
-          </a>
+          <p className="no-user-text">Please log in to access your account.</p>
+          <button className="edit-btn" onClick={() => navigate("/")}>
+            Go Home
+          </button>
         </div>
       </div>
     );
   }
 
-  // ---------------- FORM HANDLERS ----------------
+  // ================= HANDLERS =================
+
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
@@ -61,7 +59,7 @@ export default function EditAccountPage() {
     setPasswords(updated);
 
     if (updated.newPassword !== updated.confirmPassword) {
-      setPasswordError("New password and confirm password do not match.");
+      setPasswordError("Passwords do not match");
     } else {
       setPasswordError("");
     }
@@ -71,31 +69,46 @@ export default function EditAccountPage() {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   }
 
-  // ---------------- SAVE ACCOUNT INFO ----------------
+  // ================= SAVE ACCOUNT =================
+
   async function handleSave() {
     try {
-      // Split name → firstName / lastName
-      const nameParts = formData.name.trim().split(" ");
-      const firstName = nameParts[0] || null;
-      const lastName = nameParts.slice(1).join(" ") || null;
+      if (user.role === "customer") {
+        const nameParts = formData.name.trim().split(" ");
+        const firstName = nameParts[0] || null;
+        const lastName = nameParts.slice(1).join(" ") || null;
 
-      // Clean phone (digits only → satisfies DB CHECK)
-      const phoneNb = formData.phone
-        ? formData.phone.replace(/\D/g, "")
-        : null;
+        const phoneNb = formData.phone
+          ? formData.phone.replace(/\D/g, "")
+          : null;
 
-      if (phoneNb && !/^\d{8}$/.test(phoneNb)) {
-        setMessage("Phone number must be exactly 8 digits.");
-        return;
+        if (phoneNb && !/^\d{8}$/.test(phoneNb)) {
+          setMessage("Phone must be exactly 8 digits.");
+          return;
+        }
+
+        await api.updateCustomerAccount({
+          firstName,
+          lastName,
+          countryCode: "+961",
+          phoneNb,
+          email: formData.email,
+        });
       }
 
-      await api.updateCustomerAccount({
-        firstName,
-        lastName,
-        countryCode: "+961",
-        phoneNb,
-        email: formData.email,
-      });
+      if (user.role === "designer") {
+        const phoneNb = formData.phone
+          ? formData.phone.replace(/\D/g, "")
+          : null;
+
+        await api.updateDesignerAccount({
+          name: formData.name,
+          branch: formData.branch,
+          email: formData.email,
+          countryCode: "+961",
+          phoneNb,
+        });
+      }
 
       setMessage("Account updated successfully!");
     } catch (err) {
@@ -103,7 +116,8 @@ export default function EditAccountPage() {
     }
   }
 
-  // ---------------- SAVE PASSWORD (REAL BACKEND) ----------------
+  // ================= PASSWORD =================
+
   async function handlePasswordSave() {
     if (passwordError) return;
 
@@ -113,19 +127,15 @@ export default function EditAccountPage() {
         newPassword: passwords.newPassword,
       });
 
-      setMessage("Password updated successfully!");
-
-      setPasswords({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      setMessage("Password updated successfully");
+      setPasswords({ oldPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
-      setPasswordError(err.message || "Failed to update password");
+      setPasswordError(err.message || "Password update failed");
     }
   }
 
-  // ---------------- RENDER ----------------
+  // ================= RENDER =================
+
   return (
     <div className="account-container">
       <div className="account-banner">
@@ -138,7 +148,6 @@ export default function EditAccountPage() {
           <p style={{ color: "#e4c67b", marginBottom: "20px" }}>{message}</p>
         )}
 
-        {/* ACCOUNT INFO */}
         <h2 className="section-title">Account Information</h2>
 
         <div className="info-item">
@@ -151,6 +160,18 @@ export default function EditAccountPage() {
           />
         </div>
 
+        {user.role === "designer" && (
+          <div className="info-item">
+            <span className="info-label">Branch</span>
+            <input
+              className="info-value edit-input"
+              name="branch"
+              value={formData.branch}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+
         <div className="info-item">
           <span className="info-label">Email</span>
           <input
@@ -161,53 +182,26 @@ export default function EditAccountPage() {
           />
         </div>
 
-        {user.role === "customer" && (
-          <div className="info-item">
-            <span className="info-label">Phone</span>
-            <input
-              className="info-value edit-input"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-
-        {user.role === "designer" && (
-          <>
-            <div className="info-item">
-              <span className="info-label">Specialty</span>
-              <input
-                className="info-value edit-input"
-                name="specialty"
-                value={formData.specialty}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="info-item">
-              <span className="info-label">Portfolio Link</span>
-              <input
-                className="info-value edit-input"
-                name="portfolioLink"
-                value={formData.portfolioLink}
-                onChange={handleChange}
-              />
-            </div>
-          </>
-        )}
+        <div className="info-item">
+          <span className="info-label">Phone</span>
+          <input
+            className="info-value edit-input"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+        </div>
 
         <button className="edit-btn" onClick={handleSave}>
           Save Changes
         </button>
 
-        {/* PASSWORD */}
         <h2 className="section-title" style={{ marginTop: "40px" }}>
           Change Password
         </h2>
 
-        {["old", "new", "confirm"].map((field, idx) => (
-          <div className="info-item" key={idx}>
+        {["old", "new", "confirm"].map((field) => (
+          <div className="info-item" key={field}>
             <span className="info-label">
               {field === "old"
                 ? "Old Password"
@@ -215,6 +209,7 @@ export default function EditAccountPage() {
                 ? "New Password"
                 : "Confirm Password"}
             </span>
+
             <div className="password-wrapper">
               <input
                 type={showPassword[field] ? "text" : "password"}
@@ -235,6 +230,7 @@ export default function EditAccountPage() {
                 ]}
                 onChange={handlePasswordChange}
               />
+
               <button
                 type="button"
                 className="toggle-btn"

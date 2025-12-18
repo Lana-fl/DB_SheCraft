@@ -16,13 +16,13 @@ export default function CartPage({ isLoggedIn, userRole }) {
   };
 
   // -------- NOT LOGGED IN --------
-  if (!isLoggedIn) {
-    return (
-      <div className="cart-not-logged">
-        <h2>Please login to view your orders.</h2>
-      </div>
-    );
-  }
+  //if (!isLoggedIn) {
+    //return (
+     // <div className="cart-not-logged">
+       // <h2>Please login to view your orders.</h2>
+     // </div>
+   // );
+  //}
 
   // -------- CUSTOMER VIEW --------
   if (userRole === "customer") {
