@@ -21,6 +21,45 @@ function badRequest(msg) {
   return e;
 }
 
+function norm(s) {
+  return String(s || "").trim().toLowerCase();
+}
+
+/**
+ * ✅ Fixed-price rules (ignores metal/material price for these cases)
+ * You said:
+ * - necklace + style "name" => 40
+ * - ring style tennis => 70, aurora => 90, celeste => 80
+ * - bracelet style "name bracelet" => 35
+ * - earring style hoop square => 20, hoop round => 20, dangling => 45
+ */
+function getBasePrice(type, product = {}) {
+  const t = norm(type);
+  const style = norm(product?.style);
+
+  // necklace
+  if (t === "necklace" && style === "name") return 40;
+
+  // ring
+  if (t === "ring") {
+    if (style === "tennis") return 70;
+    if (style === "aurora") return 90;
+    if (style === "celeste") return 80;
+  }
+
+  // bracelet
+  if (t === "bracelet" && style === "name bracelet") return 35;
+
+  // earring
+  if (t === "earring") {
+    if (style === "hoop square") return 20;
+    if (style === "hoop round") return 20;
+    if (style === "dangling") return 45;
+  }
+
+  return 0; // not a fixed-price product
+}
+
 async function reserveAndDecrementCharms(conn, charms) {
   if (!Array.isArray(charms) || charms.length === 0) return;
 
@@ -47,8 +86,9 @@ async function reserveAndDecrementCharms(conn, charms) {
   const stock = new Map(rows.map((r) => [r.charmID, Number(r.qty)]));
   for (const [id, needed] of req.entries()) {
     const available = stock.get(id) ?? 0;
-    if (available < needed)
+    if (available < needed) {
       throw badRequest(`Charm ${id} out of stock (need ${needed}, have ${available})`);
+    }
   }
 
   for (const [id, needed] of req.entries()) {
@@ -82,8 +122,9 @@ async function reserveAndDecrementStones(conn, stones) {
   const stock = new Map(rows.map((r) => [r.stoneID, Number(r.qty)]));
   for (const [id, needed] of req.entries()) {
     const available = stock.get(id) ?? 0;
-    if (available < needed)
+    if (available < needed) {
       throw badRequest(`Stone ${id} out of stock (need ${needed}, have ${available})`);
+    }
   }
 
   for (const [id, needed] of req.entries()) {
@@ -91,15 +132,20 @@ async function reserveAndDecrementStones(conn, stones) {
   }
 }
 
-// --- pricing: material + charms + stones ---
-async function computeAccessoryPrice(conn, accessoryID) {
+/**
+ * ✅ pricing: basePrice + (optional material) + charms + stones
+ * includeMaterial=true => adds material.price
+ * includeMaterial=false => ignores material.price
+ */
+async function computeAccessoryPrice(conn, accessoryID, { basePrice = 0, includeMaterial = true } = {}) {
   const [[row]] = await conn.query(
     `
     SELECT
       a.accessoryID,
-      COALESCE(m.price, 0)
-      + COALESCE(ch.charmsTotal, 0)
-      + COALESCE(st.stonesTotal, 0) AS totalPrice
+      (? + (CASE WHEN ? THEN COALESCE(m.price, 0) ELSE 0 END)
+        + COALESCE(ch.charmsTotal, 0)
+        + COALESCE(st.stonesTotal, 0)
+      ) AS totalPrice
     FROM accessory a
     JOIN material m ON m.materialID = a.materialID
 
@@ -119,13 +165,13 @@ async function computeAccessoryPrice(conn, accessoryID) {
       GROUP BY g.accessoryID
     ) st ON st.accessoryID = a.accessoryID
 
-    WHERE a.accessoryID LIKE ?
+    WHERE a.accessoryID = ?
     `,
-    [accessoryID, accessoryID, accessoryID]
+    [Number(basePrice) || 0, includeMaterial ? 1 : 0, accessoryID, accessoryID, accessoryID]
   );
 
   if (!row) throw new Error(`Accessory not found for pricing: ${accessoryID}`);
-  return Number(row.totalPrice);
+  return Number(row.totalPrice || 0);
 }
 
 async function upsertOrnaments(conn, accessoryID, charms) {
@@ -223,7 +269,7 @@ async function createAccessoryInstance({
     // 3) insert child row based on type
     if (type === "ring") {
       const ringID = await nextId(conn, "ring", "ringID", "R", 3);
-      const { bandType, diameter } = product || {};
+      const { bandType, diameter, style } = product || {};
       await conn.query(
         `INSERT INTO ring (ringID, bandType, diameter, accessoryID) VALUES (?, ?, ?, ?)`,
         [ringID, bandType, diameter, accessoryID]
@@ -261,7 +307,14 @@ async function createAccessoryInstance({
     await upsertGems(conn, accessoryID, stones);
 
     // 5) compute price and update accessory
-    const computedPrice = await computeAccessoryPrice(conn, accessoryID);
+    const basePrice = getBasePrice(type, product);
+    const includeMaterial = basePrice <= 0; // fixed-price items ignore material
+
+    const computedPrice = await computeAccessoryPrice(conn, accessoryID, {
+      basePrice,
+      includeMaterial,
+    });
+
     await conn.query(`UPDATE accessory SET price = ? WHERE accessoryID = ?`, [
       computedPrice,
       accessoryID,
@@ -317,9 +370,10 @@ async function cancelAccessoryReservation(accessoryID) {
       ]);
     }
 
-    const [stRows] = await conn.query(`SELECT stoneID, quantity FROM gems WHERE accessoryID = ?`, [
-      accessoryID,
-    ]);
+    const [stRows] = await conn.query(
+      `SELECT stoneID, quantity FROM gems WHERE accessoryID = ?`,
+      [accessoryID]
+    );
 
     for (const r of stRows) {
       await conn.query(`UPDATE stone SET qty = qty + ? WHERE stoneID = ?`, [
