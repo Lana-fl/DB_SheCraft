@@ -689,11 +689,13 @@
   object-fit: contain;
   flex-shrink: 0;
 }
-.nk-imageWrap {
+/*
+ .nk-imageWrap {
   max-height: 120px;
   overflow: hidden;
-}
+ }*/
+ 
 .nk-charmImg {
   max-width: 80px;
   max-height: 80px;
-}
+} 
