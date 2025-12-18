@@ -1,0 +1,266 @@
+/* ---------- COLOR PALETTE ---------- */
+:root {
+  --br-bg: #ffffff;
+  --br-bg-soft: #f6e9ff;
+  --br-bg-blush: #fdeef7;
+  --br-text-main: #5a3d7a;
+  --br-text-muted: #7a6b85;
+  --br-accent: #bfadd7;
+  --br-border: #efdef8;
+  --br-shadow: 0 12px 30px rgba(90, 61, 122, 0.16);
+}
+
+.br-page {
+  background: var(--br-bg);
+  color: var(--br-text-main);
+  font-family: "Nunito", sans-serif;
+}
+
+.br-container {
+  width: min(1200px, 94%);
+  margin: 0 auto;
+  padding: 32px 0 50px;
+}
+
+.br-header {
+  text-align: center;
+  padding: 18px 0 26px;
+}
+
+.br-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.4rem;
+  letter-spacing: 0.06em;
+  margin: 0 0 6px;
+}
+
+.br-subtitle {
+  color: var(--br-text-muted);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.br-customizer {
+  display: grid;
+  grid-template-columns: 1.05fr 0.75fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.br-preview-card {
+  background: linear-gradient(180deg, var(--br-bg-soft), #fff);
+  border: 1px solid var(--br-border);
+  border-radius: 18px;
+  box-shadow: var(--br-shadow);
+  overflow: hidden;
+}
+
+.br-preview-top {
+  padding: 16px 16px 0;
+}
+
+.br-pill {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(191, 173, 215, 0.25);
+  border: 1px solid var(--br-border);
+  color: var(--br-text-main);
+  letter-spacing: 0.06em;
+  font-size: 0.9rem;
+}
+
+.br-preview-body {
+  padding: 14px 16px 18px;
+}
+
+.br-chain-img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(90, 61, 122, 0.18));
+}
+
+.br-length-block {
+  margin-top: 12px;
+  border: 1px solid var(--br-border);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--br-bg-blush);
+}
+
+.br-length-img {
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.br-length-text {
+  margin-top: 8px;
+  color: var(--br-text-muted);
+  font-size: 0.95rem;
+}
+
+.br-selected-charms {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--br-border);
+}
+
+.br-selected-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+
+.br-empty {
+  color: var(--br-text-muted);
+  font-size: 0.95rem;
+}
+
+.br-selected-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.br-selected-item {
+  position: relative;
+  border: 1px solid var(--br-border);
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.br-selected-item img {
+  width: 100%;
+  height: 70px;
+  object-fit: contain;
+}
+
+.br-selected-id {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--br-text-muted);
+  text-align: center;
+}
+
+.br-remove {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--br-border);
+  background: rgba(253, 238, 247, 0.9);
+  cursor: pointer;
+  color: var(--br-text-main);
+}
+
+.br-letter-chip {
+  height: 70px;
+  border-radius: 12px;
+  border: 1px dashed rgba(90, 61, 122, 0.35);
+  background: linear-gradient(
+    180deg,
+    rgba(191, 173, 215, 0.22),
+    rgba(253, 238, 247, 0.55)
+  );
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 8px;
+}
+
+.br-letter-top {
+  font-size: 0.8rem;
+  color: var(--br-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.br-letter-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.14em;
+}
+
+/* ---------- PANEL ---------- */
+
+.br-panel {
+  background: #fff;
+  border: 1px solid var(--br-border);
+  border-radius: 18px;
+  box-shadow: var(--br-shadow);
+  padding: 16px;
+  transform: translateX(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: 180ms ease;
+}
+
+.br-panel.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.br-panel-title {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.45rem;
+  margin: 0 0 12px;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.br-confirm,
+.br-next-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--br-accent);
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+.br-confirm:hover,
+.br-next-btn:hover {
+  background: #9d8cb7;
+  transform: translateY(-1px);
+}
+
+/* ---------- OVERLAY ---------- */
+
+.br-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(90, 61, 122, 0.18);
+  backdrop-filter: blur(2px);
+  z-index: 50;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 1050px) {
+  .br-customizer {
+    grid-template-columns: 1fr;
+  }
+
+  .br-panel {
+    margin-top: 12px;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .br-overlay {
+    display: none;
+  }
+}
