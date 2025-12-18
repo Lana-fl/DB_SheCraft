@@ -692,3 +692,9 @@
   .bs-panel{ width: 92vw; right: -95vw; }
   .step-box{ min-width: 220px; }
 }
+.bs-colorPrice {
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 600;
+  color: #000;
+}

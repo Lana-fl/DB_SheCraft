@@ -17,7 +17,7 @@ async function getStone(req, res) {
   try {
     const { stoneID } = req.params;
     const stone = await stoneModel.getStoneById(stoneID);
-
+ 
     if (!stone) {
       return res.status(404).json({ message: "Stone not found" });
     }
@@ -104,12 +104,22 @@ async function updateStoneQty(req, res) {
     res.status(500).json({ message: "Failed to update stone quantity" });
   }
 }
-
+async function getStonesByHexColor(req, res) {
+  try {
+    const { hexColor } = req.params;
+    const stones = await stoneModel.getStonesByHexColor(hexColor);
+    res.json(stones);
+  } catch (err) {
+    console.error("Error in getStonesByHexColor:", err);
+    res.status(500).json({ message: "Failed to fetch stones by hex color" });
+  }
+}
 module.exports = {
   getStones,
   getStone,
   getStonesByGem,
   getStonesByColor,
+  getStonesByHexColor,
   getStonesByRarity,
   getAvailableStones,
   updateStoneQty,
