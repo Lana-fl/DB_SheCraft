@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-/* PAGES */
+/* =======================
+   PAGES
+   ======================= */
+   import CharmBraceletPage from "./pages/CharmBraceletPage.js";
+
 import WelcomePage from "./pages/WelcomePage";
 import AboutPage from "./pages/AboutPage";
 import NecklacesPage from "./pages/NecklacesPage";
@@ -16,17 +20,20 @@ import DesignerPage from "./pages/DesignerPage";
 import StepsBar from "./pages/StepsBar";
 import NecklaceSelection from "./pages/NecklaceSelection";
 import CharmNecklacePage from "./pages/CharmNecklacePage";
+import BirthstoneNecklace from "./pages/BirthstoneNecklace";
+import BraceletSelection from "./pages/BraceletSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
-import BirthstoneNecklace from "./pages/BirthstoneNecklace"; 
-import BraceletSelection from "./pages/BraceletSelection";
 
-
-/* ACCOUNT SYSTEM */
+/* =======================
+   ACCOUNT SYSTEM
+   ======================= */
 import AccountPage from "./pages/AccountPage";
 import EditAccountPage from "./pages/EditAccountPage";
 
-/* CART PAGE */
+/* =======================
+   CART PAGE
+   ======================= */
 import CartPage from "./pages/CartPage";
 
 function App() {
@@ -40,18 +47,20 @@ function App() {
   return (
     <Router>
       <div className="page-container">
-
-        {/* GLOBAL HEADER */}
+        {/* ================= GLOBAL HEADER ================= */}
         <Header openLogin={openLogin} isLoggedIn={isLoggedIn} />
 
-        {/* LOGIN POPUP */}
+        {/* ================= LOGIN POPUP ================= */}
         {showLogin && (
           <div
             className="login-modal-overlay"
             onClick={closeLogin}
             role="presentation"
           >
-            <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="login-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
               <LoginPage
                 closePopup={closeLogin}
                 setIsLoggedIn={setIsLoggedIn}
@@ -61,10 +70,15 @@ function App() {
           </div>
         )}
 
-        {/* MAIN ROUTES */}
+        {/* ================= MAIN ROUTES ================= */}
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<WelcomePage openLogin={openLogin} />} />
+            {/* HOME */}
+            <Route
+              path="/"
+              element={<WelcomePage openLogin={openLogin} />}
+            />
+
             <Route path="/about" element={<AboutPage />} />
 
             {/* ACCOUNT */}
@@ -74,23 +88,47 @@ function App() {
             {/* CART */}
             <Route
               path="/cart"
-              element={<CartPage isLoggedIn={isLoggedIn} userRole={userRole} />}
+              element={
+                <CartPage
+                  isLoggedIn={isLoggedIn}
+                  userRole={userRole}
+                />
+              }
             />
 
             {/* SHOPPING */}
             <Route path="/orderpage" element={<OrderPage />} />
-            <Route path="/necklacespage" element={<NecklacesPage />} />
-            <Route path="/necklaces/birthstone" element={<BirthstoneNecklace />} />
-            <Route path="/necklaces/charm" element={<CharmNecklacePage />} />
+
+            {/* NECKLACES */}
             <Route path="/necklaces" element={<NecklaceSelection />} />
+            <Route path="/necklacespage" element={<NecklacesPage />} />
+            <Route
+              path="/necklaces/birthstone"
+              element={<BirthstoneNecklace />}
+            />
+            <Route
+              path="/necklaces/charm"
+              element={<CharmNecklacePage />}
+            />
+
+            {/* RINGS */}
             <Route path="/rings" element={<RingSelection />} />
             <Route path="/ringspage" element={<RingsPage />} />
+
+            {/* BRACELETS */}
             <Route path="/bracelets" element={<BraceletSelection />} />
-            <Route path="/braceletspage" element={<BraceletsPage />} />
-          
+            <Route
+              path="/braceletspage"
+              element={<BraceletsPage />}
+            />
+            <Route
+            path="/bracelet/charm"
+            element={<CharmBraceletPage />}
+            />
+
+            {/* EARRINGS */}
             <Route path="/earrings" element={<EarringsPage />} />
-            
-          
+
             {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/designer" element={<DesignerPage />} />
@@ -98,6 +136,7 @@ function App() {
           </Routes>
         </main>
 
+        {/* ================= FOOTER ================= */}
         <Footer />
       </div>
     </Router>

@@ -1,0 +1,398 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/charmBracelet.css";
+
+import LengthImg from "../assets/Bracelet/length.jpg";
+import Cable from "../assets/chains/cable.png";
+import Rope from "../assets/chains/rope.jpg";
+import Box from "../assets/chains/box.jpg";
+import Thin from "../assets/chains/thin.png";
+
+const API_BASE = "http://localhost:5000";
+const ORDER_PAGE_ROUTE = "/orderpage";
+
+/* DB constraints */
+const CHAIN_DB_MAP = { Cable: "cable", Rope: "rope", Box: "box", Thin: "thin" };
+const BRACELET_DB_STYLE = "free charm";
+
+const METALS = [
+  { name: "Silver", color: "#C0C0C0", api: "Silver" },
+  { name: "Gold", color: "#FFD700", api: "Gold" },
+  { name: "Rose Gold", color: "#B76E79", api: "RoseGold" },
+];
+
+const CHAINS = [
+  { name: "Cable", img: Cable },
+  { name: "Rope", img: Rope },
+  { name: "Box", img: Box },
+  { name: "Thin", img: Thin },
+];
+
+const LENGTHS = [6, 6.5, 7, 7.5, 8];
+const CHARM_COLORS = ["Multicolor", "Silver", "Gold", "RoseGold"];
+
+function safeNum(n) {
+  const x = Number(n);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function addToLocalCartOnce(cartItem) {
+  if (!cartItem?.accessoryID) return;
+  const raw = localStorage.getItem("cart");
+  const cart = raw ? JSON.parse(raw) : [];
+  if (!cart.some((it) => it.accessoryID === cartItem.accessoryID)) {
+    cart.push(cartItem);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+}
+
+export default function CharmBraceletPage() {
+  const navigate = useNavigate();
+
+  const [activePanel, setActivePanel] = useState(null);
+  const [metal, setMetal] = useState(METALS[0]);
+  const [charmColor, setCharmColor] = useState("Silver");
+
+  const [letterCharms, setLetterCharms] = useState([]);
+  const [shapeCharms, setShapeCharms] = useState([]);
+
+  const [selectedLetterStyle, setSelectedLetterStyle] = useState(null);
+  const [letterText, setLetterText] = useState("");
+
+  const [selectedShapes, setSelectedShapes] = useState([]);
+  const [confirmedCharms, setConfirmedCharms] = useState([]);
+
+  const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
+  const [selectedLength, setSelectedLength] = useState(7);
+
+  const [isCheckoutView, setIsCheckoutView] = useState(false);
+  const [uiError, setUiError] = useState("");
+  const [isPaying, setIsPaying] = useState(false);
+
+  /* ---------------- FETCH CHARMS ---------------- */
+  useEffect(() => {
+    async function fetchCharms() {
+      try {
+        const [lettersRes, shapesRes] = await Promise.all([
+          fetch(`${API_BASE}/api/charms/letters?color=${charmColor}`),
+          fetch(`${API_BASE}/api/charms/shapes?color=${charmColor}`),
+        ]);
+
+        const lettersData = await lettersRes.json();
+        const shapesData = await shapesRes.json();
+
+        setLetterCharms(Array.isArray(lettersData) ? lettersData : []);
+        setShapeCharms(Array.isArray(shapesData) ? shapesData : []);
+      } catch {
+        setLetterCharms([]);
+        setShapeCharms([]);
+      }
+    }
+    fetchCharms();
+  }, [charmColor]);
+
+  /* ---------------- HELPERS ---------------- */
+
+  const toggleShape = (charm) => {
+    setUiError("");
+    setSelectedShapes((prev) =>
+      prev.some((c) => c.charmID === charm.charmID)
+        ? prev.filter((c) => c.charmID !== charm.charmID)
+        : [...prev, charm]
+    );
+  };
+
+  const selectLetterStyleFn = (styleObj) => {
+    setUiError("");
+    if (selectedLetterStyle?.charmID === styleObj.charmID) {
+      setSelectedLetterStyle(null);
+      setLetterText("");
+      return;
+    }
+    setSelectedLetterStyle(styleObj);
+  };
+
+  const letterInConfirmed = useMemo(
+    () => confirmedCharms.find((c) => c.type === "letter-custom") || null,
+    [confirmedCharms]
+  );
+
+  const chainDbValue = useMemo(
+    () => CHAIN_DB_MAP[selectedChain?.name] || null,
+    [selectedChain]
+  );
+
+  const confirmSelection = () => {
+    setUiError("");
+    const trimmed = letterText.trim().slice(0, 10);
+
+    if (selectedLetterStyle && !trimmed) {
+      setUiError("Enter the bracelet text (max 10 characters).");
+      return;
+    }
+
+    const letterCustom = selectedLetterStyle
+      ? [{
+          charmID: selectedLetterStyle.charmID,
+          type: "letter-custom",
+          design: selectedLetterStyle.design,
+          color: charmColor,
+          text: trimmed,
+          photoURL: selectedLetterStyle.photoURL,
+          price: selectedLetterStyle.price,
+        }]
+      : [];
+
+    setConfirmedCharms([...selectedShapes, ...letterCustom]);
+    setActivePanel(null);
+    setIsCheckoutView(false);
+  };
+
+  const goToCheckoutView = () => {
+    setUiError("");
+    if (!confirmedCharms.length) {
+      setUiError("Please confirm your charms selection first.");
+      return;
+    }
+    if (letterInConfirmed && !letterInConfirmed.text?.trim()) {
+      setUiError("Letter charm requires text.");
+      return;
+    }
+    if (!chainDbValue) {
+      setUiError("Invalid chain selected.");
+      return;
+    }
+    setIsCheckoutView(true);
+  };
+
+  const editDesign = () => {
+    setUiError("");
+    setIsCheckoutView(false);
+    setActivePanel("charms");
+  };
+
+  const estimatedTotal = useMemo(() => {
+    return confirmedCharms.reduce((sum, c) => sum + safeNum(c.price), 0);
+  }, [confirmedCharms]);
+
+  /* ---------------- CONFIRM & PAY ---------------- */
+
+  const confirmAndPay = async () => {
+    setUiError("");
+    setIsPaying(true);
+
+    try {
+      const payload = {
+        type: "bracelet",
+        metal: metal.api,
+        nbOfCharms: confirmedCharms.length,
+        nbOfStones: 0,
+        product: {
+          chain: chainDbValue,
+          style: BRACELET_DB_STYLE,
+          length: selectedLength,
+        },
+        charms: confirmedCharms.map((c) => ({
+          charmID: c.charmID,
+          quantity: 1,
+          text: c.type === "letter-custom" ? c.text : null,
+        })),
+        stones: [],
+      };
+
+      const res = await fetch(`${API_BASE}/api/accessory-instance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || "Failed to create bracelet");
+
+      addToLocalCartOnce({
+        accessoryID: data.accessoryID,
+        type: "bracelet",
+        style: "free charm",
+        metal: metal.name,
+        chain: selectedChain.name,
+        length: selectedLength,
+        charmColor,
+        charms: confirmedCharms,
+        price: data.computedPrice ?? estimatedTotal,
+      });
+
+      navigate(ORDER_PAGE_ROUTE);
+    } catch (err) {
+      setUiError(err.message);
+    } finally {
+      setIsPaying(false);
+    }
+  };
+
+  /* ---------------- UI ---------------- */
+
+  return (
+    <div className="br-page">
+      <div className="br-container">
+        <header className="br-header">
+          <h2 className="br-title">Customize Your Charm Bracelet</h2>
+          <p className="br-subtitle">
+            Build your design, then review summary, then confirm & pay.
+          </p>
+        </header>
+
+        {uiError && (
+          <div style={{ marginBottom: 12, padding: 10, borderRadius: 10, background: "#ffe7e7", fontWeight: 700 }}>
+            {uiError}
+          </div>
+        )}
+
+        <div className="br-customizer">
+          {/* PREVIEW */}
+          <div className="br-preview-card">
+            <div className="br-preview-top">
+              <span className="br-pill">
+                {isCheckoutView ? "Checkout Summary" : "Order Summary"}
+              </span>
+            </div>
+
+            <div className="br-preview-body">
+              <img
+                src={selectedChain.img}
+                alt="Chain"
+                className="br-chain-img"
+              />
+
+              <div className="br-length-block">
+                <img src={LengthImg} alt="Length" className="br-length-img" />
+                <div className="br-length-text">
+                  Wrist size: {selectedLength}"
+                </div>
+              </div>
+
+              <div className="br-selected-charms">
+                <div className="br-selected-title">Selected Charms</div>
+
+                {confirmedCharms.length === 0 ? (
+                  <div className="br-empty">No charms selected</div>
+                ) : (
+                  <div className="br-selected-grid">
+                    {confirmedCharms.map((c) => (
+                      <div key={c.charmID} className="br-selected-item">
+                        <img src={`${API_BASE}${c.photoURL}`} alt={c.design} />
+                        <div className="br-selected-id">{c.charmID}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {isCheckoutView && (
+              <>
+                <button className="br-next-btn" onClick={confirmAndPay} disabled={isPaying}>
+                  {isPaying ? "Processing..." : "Confirm and Pay"}
+                </button>
+                <button
+                  className="br-confirm"
+                  style={{ background: "#ddd", color: "#333" }}
+                  onClick={editDesign}
+                >
+                  Edit Design
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* FORM */}
+          <div className="br-form">
+            <div className="br-section br-click" onClick={() => setActivePanel("charms")}>
+              <div className="br-section-row">
+                <span>Charms</span>
+                <span className="br-arrow">›</span>
+              </div>
+              <div className="br-muted">
+                {confirmedCharms.length || "Select"}
+              </div>
+            </div>
+
+            <div className="br-section br-click" onClick={() => setActivePanel("chain")}>
+              <div className="br-section-row">
+                <span>Chain & Size</span>
+                <span className="br-arrow">›</span>
+              </div>
+              <div className="br-muted">
+                {selectedChain.name} · {selectedLength}"
+              </div>
+            </div>
+
+            <button className="br-next-btn" onClick={goToCheckoutView}>
+              Go to Checkout
+            </button>
+          </div>
+
+          {/* PANEL */}
+          <div className={`br-panel ${activePanel ? "open" : ""}`}>
+            {activePanel === "charms" && (
+              <>
+                <h3 className="br-panel-title">Select Your Charms</h3>
+
+                <div className="br-charm-grid">
+                  {shapeCharms.map((c) => (
+                    <div
+                      key={c.charmID}
+                      className="br-charm"
+                      onClick={() => toggleShape(c)}
+                    >
+                      <img src={`${API_BASE}${c.photoURL}`} alt={c.design} />
+                      <div className="br-charm-id">{c.charmID}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <button className="br-confirm" onClick={confirmSelection}>
+                  Confirm Selection
+                </button>
+              </>
+            )}
+
+            {activePanel === "chain" && (
+              <>
+                <h3 className="br-panel-title">Chain & Size</h3>
+
+                <div className="br-grid">
+                  {CHAINS.map((c) => (
+                    <div
+                      key={c.name}
+                      className={`br-card ${selectedChain.name === c.name ? "selected" : ""}`}
+                      onClick={() => setSelectedChain(c)}
+                    >
+                      <img src={c.img} alt={c.name} />
+                      <div className="br-card-label">{c.name}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="br-length-row">
+                  {LENGTHS.map((len) => (
+                    <span
+                      key={len}
+                      className={`br-chip ${selectedLength === len ? "selected" : ""}`}
+                      onClick={() => setSelectedLength(len)}
+                    >
+                      {len}"
+                    </span>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {activePanel && (
+            <div className="br-overlay" onClick={() => setActivePanel(null)} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

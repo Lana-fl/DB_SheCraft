@@ -783,6 +783,10 @@ import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
+import "../styles/charmNecklace.css";
+import "../styles/necklace.css";
+
+
 
 const API_BASE = "http://localhost:5000";
 
@@ -1113,7 +1117,8 @@ export default function CharmNecklacePage() {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="nk-page">
+    <div className="nk-page nk-charmPage">
+
       <div className="nk-container">
         <header className="nk-header">
           <h2>Customize Your Charm Necklace</h2>
