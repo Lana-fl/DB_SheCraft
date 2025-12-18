@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../context/AuthContext";
+
+import { api } from "../api/client";
 import "../styles/AccountPage.css";
 
 export default function EditAccountPage() {
   const { user } = useAuth();
 
-  // ---------------- HOOKS (must be before any return) ----------------
+  // ---------------- INITIAL DATA ----------------
   const initialData = user?.user || {};
 
-  const [formData, setFormData] = useState(initialData);
+  // ---------------- HOOKS ----------------
+  const [formData, setFormData] = useState({
+    name: initialData.name || "",
+    email: initialData.email || "",
+    phone: initialData.phone || "",
+    specialty: initialData.specialty || "",
+    portfolioLink: initialData.portfolioLink || "",
+  });
 
   const [passwords, setPasswords] = useState({
     oldPassword: "",
@@ -63,49 +72,60 @@ export default function EditAccountPage() {
   }
 
   // ---------------- SAVE ACCOUNT INFO ----------------
-  function handleSave() {
-    const updatedUser = {
-      role: user.role,
-      password: user.password, // keep existing password
-      user: formData,
-    };
+  async function handleSave() {
+    try {
+      // Split name → firstName / lastName
+      const nameParts = formData.name.trim().split(" ");
+      const firstName = nameParts[0] || null;
+      const lastName = nameParts.slice(1).join(" ") || null;
 
-    localStorage.setItem("shecraft_user", JSON.stringify(updatedUser));
-    setMessage("Account updated successfully!");
+      // Clean phone (digits only → satisfies DB CHECK)
+      const phoneNb = formData.phone
+        ? formData.phone.replace(/\D/g, "")
+        : null;
+
+      if (phoneNb && !/^\d{8}$/.test(phoneNb)) {
+        setMessage("Phone number must be exactly 8 digits.");
+        return;
+      }
+
+      await api.updateCustomerAccount({
+        firstName,
+        lastName,
+        countryCode: "+961",
+        phoneNb,
+        email: formData.email,
+      });
+
+      setMessage("Account updated successfully!");
+    } catch (err) {
+      setMessage(err.message || "Failed to update account");
+    }
   }
 
-  // ---------------- SAVE PASSWORD ----------------
-  function handlePasswordSave() {
-    // Validate old password
-    if (passwords.oldPassword !== user.password) {
-      setPasswordError("Old password is incorrect.");
-      return;
+  // ---------------- SAVE PASSWORD (REAL BACKEND) ----------------
+  async function handlePasswordSave() {
+    if (passwordError) return;
+
+    try {
+      await api.changePassword({
+        oldPassword: passwords.oldPassword,
+        newPassword: passwords.newPassword,
+      });
+
+      setMessage("Password updated successfully!");
+
+      setPasswords({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (err) {
+      setPasswordError(err.message || "Failed to update password");
     }
-
-    // Validate new password match
-    if (passwordError) {
-      setMessage("Please fix the password mismatch before saving.");
-      return;
-    }
-
-    // Save new password
-    const updatedUser = {
-      role: user.role,
-      user: formData,
-      password: passwords.newPassword,
-    };
-
-    localStorage.setItem("shecraft_user", JSON.stringify(updatedUser));
-    setMessage("Password updated successfully!");
-
-    setPasswords({
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
   }
 
-  // ---------------- RENDER UI ----------------
+  // ---------------- RENDER ----------------
   return (
     <div className="account-container">
       <div className="account-banner">
@@ -115,18 +135,10 @@ export default function EditAccountPage() {
 
       <div className="account-card">
         {message && (
-          <p
-            style={{
-              color: "#e4c67b",
-              marginBottom: "20px",
-              fontSize: "1.1rem",
-            }}
-          >
-            {message}
-          </p>
+          <p style={{ color: "#e4c67b", marginBottom: "20px" }}>{message}</p>
         )}
 
-        {/* ---------------- ACCOUNT INFO ---------------- */}
+        {/* ACCOUNT INFO */}
         <h2 className="section-title">Account Information</h2>
 
         <div className="info-item">
@@ -149,32 +161,18 @@ export default function EditAccountPage() {
           />
         </div>
 
-        {/* CUSTOMER FIELDS */}
         {user.role === "customer" && (
-          <>
-            <div className="info-item">
-              <span className="info-label">Phone</span>
-              <input
-                className="info-value edit-input"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="info-item">
-              <span className="info-label">Address</span>
-              <input
-                className="info-value edit-input"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-              />
-            </div>
-          </>
+          <div className="info-item">
+            <span className="info-label">Phone</span>
+            <input
+              className="info-value edit-input"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
+          </div>
         )}
 
-        {/* DESIGNER FIELDS */}
         {user.role === "designer" && (
           <>
             <div className="info-item">
@@ -203,79 +201,53 @@ export default function EditAccountPage() {
           Save Changes
         </button>
 
-        {/* ---------------- PASSWORD SECTION ---------------- */}
+        {/* PASSWORD */}
         <h2 className="section-title" style={{ marginTop: "40px" }}>
           Change Password
         </h2>
 
-        {/* OLD PASSWORD */}
-        <div className="info-item">
-          <span className="info-label">Old Password</span>
-          <div className="password-wrapper">
-            <input
-              type={showPassword.old ? "text" : "password"}
-              className="info-value edit-input"
-              name="oldPassword"
-              value={passwords.oldPassword}
-              onChange={handlePasswordChange}
-            />
-            <button
-              type="button"
-              className="toggle-btn"
-              onClick={() => togglePassword("old")}
-            >
-              {showPassword.old ? "Hide" : "Show"}
-            </button>
+        {["old", "new", "confirm"].map((field, idx) => (
+          <div className="info-item" key={idx}>
+            <span className="info-label">
+              {field === "old"
+                ? "Old Password"
+                : field === "new"
+                ? "New Password"
+                : "Confirm Password"}
+            </span>
+            <div className="password-wrapper">
+              <input
+                type={showPassword[field] ? "text" : "password"}
+                className="info-value edit-input"
+                name={
+                  field === "old"
+                    ? "oldPassword"
+                    : field === "new"
+                    ? "newPassword"
+                    : "confirmPassword"
+                }
+                value={passwords[
+                  field === "old"
+                    ? "oldPassword"
+                    : field === "new"
+                    ? "newPassword"
+                    : "confirmPassword"
+                ]}
+                onChange={handlePasswordChange}
+              />
+              <button
+                type="button"
+                className="toggle-btn"
+                onClick={() => togglePassword(field)}
+              >
+                {showPassword[field] ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
 
-        {/* NEW PASSWORD */}
-        <div className="info-item">
-          <span className="info-label">New Password</span>
-          <div className="password-wrapper">
-            <input
-              type={showPassword.new ? "text" : "password"}
-              className="info-value edit-input"
-              name="newPassword"
-              value={passwords.newPassword}
-              onChange={handlePasswordChange}
-            />
-            <button
-              type="button"
-              className="toggle-btn"
-              onClick={() => togglePassword("new")}
-            >
-              {showPassword.new ? "Hide" : "Show"}
-            </button>
-          </div>
-        </div>
-
-        {/* CONFIRM PASSWORD */}
-        <div className="info-item">
-          <span className="info-label">Confirm Password</span>
-          <div className="password-wrapper">
-            <input
-              type={showPassword.confirm ? "text" : "password"}
-              className="info-value edit-input"
-              name="confirmPassword"
-              value={passwords.confirmPassword}
-              onChange={handlePasswordChange}
-            />
-            <button
-              type="button"
-              className="toggle-btn"
-              onClick={() => togglePassword("confirm")}
-            >
-              {showPassword.confirm ? "Hide" : "Show"}
-            </button>
-          </div>
-        </div>
-
-        {/* LIVE ERRORS */}
         {passwordError && (
-          <p style={{ color: "red", marginTop: "5px", marginBottom: "10px" }}>
-            {passwordError}
-          </p>
+          <p style={{ color: "red", marginTop: "5px" }}>{passwordError}</p>
         )}
 
         <button className="edit-btn" onClick={handlePasswordSave}>

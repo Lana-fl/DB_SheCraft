@@ -99,10 +99,81 @@ async function deleteCustomer(req, res) {
   }
 }
 
+// PUT /api/customers/account
+async function updateMyCustomerAccount(req, res) {
+  try {
+    // 🔒 Comes from JWT (authController guarantees this)
+    const customerID = req.user.id;
+
+    const {
+      firstName,
+      lastName,
+      countryCode,
+      phoneNb,
+      email,
+    } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    await pool.query(
+      `
+      UPDATE CUSTOMER
+      SET firstName = ?, lastName = ?, countryCode = ?, phoneNb = ?, email = ?
+      WHERE customerID = ?
+      `,
+      [
+        firstName || null,
+        lastName || null,
+        countryCode || null,
+        phoneNb || null,
+        email,
+        customerID,
+      ]
+    );
+
+    res.json({ message: "Account updated successfully" });
+  } catch (err) {
+    console.error("Error updating customer account:", err);
+    res.status(500).json({ message: "Failed to update account" });
+  }
+}
+
+async function getMyCustomerAccount(req, res) {
+  try {
+    const { id } = req.user;
+
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        CONCAT_WS(' ', firstName, lastName) AS name,
+        email,
+        phoneNb AS phone
+      FROM CUSTOMER
+      WHERE customerID = ?
+      `,
+      [id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to load account" });
+  }
+}
+
+
 module.exports = {
   getCustomers,
   getCustomer,
   createCustomer,
   updateCustomer,
   deleteCustomer,
+    updateMyCustomerAccount,
+    getMyCustomerAccount,
 };

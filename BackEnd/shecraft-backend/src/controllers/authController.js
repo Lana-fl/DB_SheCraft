@@ -1,24 +1,45 @@
-// src/controllers/authController.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 
-// Helper: create JWT
+// ===================== HELPER: SEQUENTIAL ID =====================
+async function getNextSequentialId(connection, tableName, idColumn, prefix) {
+  const [rows] = await connection.query(
+    `
+    SELECT ${idColumn} AS maxId
+    FROM ${tableName}
+    WHERE ${idColumn} LIKE ?
+    ORDER BY CAST(SUBSTRING(${idColumn}, 2) AS UNSIGNED) DESC
+    LIMIT 1
+    `,
+    [`${prefix}%`]
+  );
+
+  if (!rows.length || !rows[0].maxId) {
+    return `${prefix}001`;
+  }
+
+  const lastId = rows[0].maxId;
+  const numberPart = parseInt(lastId.substring(1), 10) + 1;
+  return `${prefix}${String(numberPart).padStart(3, "0")}`;
+}
+
+// ===================== HELPER: JWT =====================
 function generateToken(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || "1d",
   });
 }
 
-// ---------- LOGIN (same as before) ----------
+// ===================== LOGIN =====================
 async function login(req, res) {
   try {
     const { role, email, password } = req.body;
 
     if (!role || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "role, email and password are required" });
+      return res.status(400).json({
+        message: "role, email and password are required",
+      });
     }
 
     if (!["customer", "designer"].includes(role)) {
@@ -33,13 +54,13 @@ async function login(req, res) {
       [email]
     );
 
-    if (rows.length === 0) {
+    if (!rows.length) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
     const user = rows[0];
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash || "");
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -61,13 +82,15 @@ async function login(req, res) {
   }
 }
 
-// ---------- CUSTOMER SIGNUP ----------
+// ===================== CUSTOMER SIGNUP =====================
 async function signupCustomer(req, res) {
+  const connection = await pool.getConnection();
+
   try {
+    await connection.beginTransaction();
+
     const {
-      customerID,
-      firstName,
-      lastName,
+      name,
       countryCode,
       phoneNb,
       email,
@@ -75,45 +98,53 @@ async function signupCustomer(req, res) {
       password,
     } = req.body;
 
-    if (!customerID || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "customerID, email and password are required" });
+    if (!email || !password || !name) {
+      await connection.rollback();
+      return res.status(400).json({
+        message: "name, email and password are required",
+      });
     }
 
-    // Optional basic checks
-    if (countryCode && !/^\+[0-9]{1,3}$/.test(countryCode)) {
-      return res.status(400).json({ message: "Invalid countryCode format" });
-    }
+    // split name → firstName / lastName
+    const parts = name.trim().split(" ");
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(" ") || null;
 
     if (phoneNb && !/^[0-9]{8}$/.test(phoneNb)) {
-      return res.status(400).json({ message: "Invalid phoneNb format" });
+      await connection.rollback();
+      return res.status(400).json({ message: "Invalid phone number format" });
     }
 
+    const customerID = await getNextSequentialId(
+      connection,
+      "CUSTOMER",
+      "customerID",
+      "C"
+    );
+
     const passwordHash = await bcrypt.hash(password, 10);
+    const cardHash = cardNb ? await bcrypt.hash(cardNb, 10) : null;
 
-let cardHash = null;
-if (cardNb) {
-  cardHash = await bcrypt.hash(cardNb, 10);
-}
+    await connection.query(
+      `
+      INSERT INTO CUSTOMER
+        (customerID, firstName, lastName, countryCode, phoneNb, email, cardNb, passwordHash)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      [
+        customerID,
+        firstName,
+        lastName,
+        countryCode || null,
+        phoneNb || null,
+        email,
+        cardHash,
+        passwordHash,
+      ]
+    );
 
-await pool.query(
-  `INSERT INTO CUSTOMER
-    (customerID, firstName, lastName, countryCode, phoneNb, email, cardNb, passwordHash)
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    customerID,
-    firstName || null,
-    lastName || null,
-    countryCode || null,
-    phoneNb || null,
-    email,
-    cardHash,        // 🔐 store the hash, not the raw card
-    passwordHash,
-  ]
-);
+    await connection.commit();
 
-    // Auto-login after signup (optional but nice)
     const token = generateToken({ id: customerID, role: "customer" });
 
     res.status(201).json({
@@ -126,53 +157,50 @@ await pool.query(
       },
     });
   } catch (err) {
+    await connection.rollback();
     console.error("Error in signupCustomer:", err);
-
-    if (err.code === "ER_DUP_ENTRY") {
-      return res
-        .status(409)
-        .json({ message: "Customer with this email or ID already exists" });
-    }
-
     res.status(500).json({ message: "Customer registration failed" });
+  } finally {
+    connection.release();
   }
 }
 
-// ---------- DESIGNER SIGNUP ----------
+// ===================== DESIGNER SIGNUP =====================
 async function signupDesigner(req, res) {
-  try {
-    const {
-      designerID,
-      name,
-      branch,
-      email,
-      countryCode, 
-      phoneNb,
-      password,
-    } = req.body;
+  const connection = await pool.getConnection();
 
-    // supplierID removed from required fields
-    if (!designerID || !name || !branch || !email || !password) {
+  try {
+    await connection.beginTransaction();
+
+    const { name, branch, email, countryCode, phoneNb, password } = req.body;
+
+    if (!name || !branch || !email || !password) {
+      await connection.rollback();
       return res.status(400).json({
-        message:
-          "designerID, name, branch, email and password are required",
+        message: "name, branch, email and password are required",
       });
     }
 
-    if (countryCode && !/^\+[0-9]{1,3}$/.test(countryCode)) {
-      return res.status(400).json({ message: "Invalid countryCode format" });
+    if (phoneNb && !/^[0-9]{8}$/.test(phoneNb)) {
+      await connection.rollback();
+      return res.status(400).json({ message: "Invalid phone number format" });
     }
 
-    if (phoneNb && !/^[0-9]{8}$/.test(phoneNb)) {
-      return res.status(400).json({ message: "Invalid phoneNb format" });
-    }
+    const designerID = await getNextSequentialId(
+      connection,
+      "DESIGNER",
+      "designerID",
+      "D"
+    );
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      `INSERT INTO DESIGNER
+    await connection.query(
+      `
+      INSERT INTO DESIGNER
         (designerID, name, branch, email, countryCode, phoneNb, passwordHash)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
       [
         designerID,
         name,
@@ -183,6 +211,8 @@ async function signupDesigner(req, res) {
         passwordHash,
       ]
     );
+
+    await connection.commit();
 
     const token = generateToken({ id: designerID, role: "designer" });
 
@@ -196,20 +226,59 @@ async function signupDesigner(req, res) {
       },
     });
   } catch (err) {
+    await connection.rollback();
     console.error("Error in signupDesigner:", err);
-
-    if (err.code === "ER_DUP_ENTRY") {
-      return res
-        .status(409)
-        .json({ message: "Designer with this email or ID already exists" });
-    }
-
     res.status(500).json({ message: "Designer registration failed" });
+  } finally {
+    connection.release();
   }
 }
 
+// ===================== CHANGE PASSWORD =====================
+async function changePassword(req, res) {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { id, role } = req.user;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ message: "Missing passwords" });
+    }
+
+    const table = role === "customer" ? "CUSTOMER" : "DESIGNER";
+    const idField = role === "customer" ? "customerID" : "designerID";
+
+    const [rows] = await pool.query(
+      `SELECT passwordHash FROM ${table} WHERE ${idField} = ?`,
+      [id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const valid = await bcrypt.compare(oldPassword, rows[0].passwordHash);
+    if (!valid) {
+      return res.status(401).json({ message: "Old password is incorrect" });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+
+    await pool.query(
+      `UPDATE ${table} SET passwordHash = ? WHERE ${idField} = ?`,
+      [newHash, id]
+    );
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error("Error changing password:", err);
+    res.status(500).json({ message: "Failed to update password" });
+  }
+}
+
+// ===================== EXPORTS =====================
 module.exports = {
   login,
   signupCustomer,
   signupDesigner,
+  changePassword,
 };

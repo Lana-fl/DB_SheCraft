@@ -20,7 +20,7 @@ const app = express(); // ✅ CREATE APP FIRST
 
 // ---------- GLOBAL MIDDLEWARE ----------
 app.use(cors({
-  origin: "http://localhost:3001",   // frontend port
+  origin: "http://localhost:3000",   // frontend port
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
