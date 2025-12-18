@@ -12,6 +12,9 @@ import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 
+/* ✅ CART CONTEXT (THIS IS THE FIX) */
+import { useCart } from "../context/CartContext";
+
 /* ---------------- CONSTANTS ---------------- */
 const API_BASE = "http://localhost:5000";
 const ORDER_PAGE_ROUTE = "/orderpage";
@@ -23,7 +26,7 @@ const CHAIN_DB_MAP = {
   Thin: "thin",
 };
 
-// ✅ bracelet.style constraint must match DB (you said style IN ('name','free charm','birthstone'))
+// ✅ bracelet.style constraint must match DB
 const BRACELET_DB_STYLE = "free charm";
 
 const METALS = [
@@ -48,16 +51,6 @@ function safeNum(n) {
   return Number.isFinite(x) ? x : 0;
 }
 
-function addToLocalCartOnce(cartItem) {
-  if (!cartItem?.accessoryID) return;
-  const raw = localStorage.getItem("cart");
-  const cart = raw ? JSON.parse(raw) : [];
-  if (!cart.some((it) => it.accessoryID === cartItem.accessoryID)) {
-    cart.push(cartItem);
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }
-}
-
 function normalizeArray(x) {
   return Array.isArray(x) ? x : [];
 }
@@ -65,6 +58,7 @@ function normalizeArray(x) {
 /* ================== COMPONENT ================== */
 export default function CharmBraceletPage() {
   const navigate = useNavigate();
+  const { addToCart } = useCart(); // ✅ FIX: use context cart
 
   const [activePanel, setActivePanel] = useState(null); // "charms" | "chain" | null
   const [metal, setMetal] = useState(METALS[0]);
@@ -73,26 +67,20 @@ export default function CharmBraceletPage() {
   const [letterCharms, setLetterCharms] = useState([]);
   const [shapeCharms, setShapeCharms] = useState([]);
 
-  // ✅ one letter style + word
   const [selectedLetterStyle, setSelectedLetterStyle] = useState(null);
   const [letterText, setLetterText] = useState("");
 
-  // ✅ shapes multi-select
   const [selectedShapes, setSelectedShapes] = useState([]);
-
-  // ✅ confirmed selection drives summary
   const [confirmedCharms, setConfirmedCharms] = useState([]);
 
   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
   const [selectedLength, setSelectedLength] = useState(7);
 
-  // ✅ checkout mode (still same page)
   const [isCheckoutView, setIsCheckoutView] = useState(false);
 
   const [uiError, setUiError] = useState("");
   const [isPaying, setIsPaying] = useState(false);
 
-  // show backend response details after pay
   const [reservedAccessoryID, setReservedAccessoryID] = useState(null);
   const [reservedComputedPrice, setReservedComputedPrice] = useState(null);
 
@@ -138,13 +126,11 @@ export default function CharmBraceletPage() {
     [confirmedCharms]
   );
 
-  // estimated total from confirmed charms (DB prices from charm table)
   const estimatedTotal = useMemo(
     () => confirmedCharms.reduce((s, c) => s + safeNum(c.price), 0),
     [confirmedCharms]
   );
 
-  // list to render in summary
   const charmSummaryList = useMemo(() => {
     return confirmedCharms.map((c) => {
       const isLetter = c.type === "letter-custom";
@@ -160,7 +146,6 @@ export default function CharmBraceletPage() {
   }, [confirmedCharms, charmColor]);
 
   /* ---------------- ACTIONS ---------------- */
-
   const openCharmsPanel = () => {
     setUiError("");
     setActivePanel("charms");
@@ -184,7 +169,6 @@ export default function CharmBraceletPage() {
 
   const selectLetterStyle = (styleObj) => {
     setUiError("");
-    // click again to unselect
     if (selectedLetterStyle?.charmID === styleObj.charmID) {
       setSelectedLetterStyle(null);
       setLetterText("");
@@ -193,7 +177,6 @@ export default function CharmBraceletPage() {
     setSelectedLetterStyle(styleObj);
   };
 
-  // ✅ Confirm Selection updates confirmedCharms (summary source of truth)
   const confirmSelection = () => {
     setUiError("");
     setReservedAccessoryID(null);
@@ -201,7 +184,6 @@ export default function CharmBraceletPage() {
 
     const trimmed = letterText.trim().slice(0, 10);
 
-    // must type if letter style selected
     if (selectedLetterStyle && !trimmed) {
       setUiError("If you choose a letter charm style, you must enter text (max 10) before confirming.");
       return;
@@ -236,7 +218,6 @@ export default function CharmBraceletPage() {
       return;
     }
 
-    // if confirmed has letter, must have text
     if (confirmedLetter && !String(confirmedLetter.text || "").trim()) {
       setUiError("Letter charm is confirmed but text is missing. Please edit and enter text (max 10).");
       return;
@@ -245,14 +226,13 @@ export default function CharmBraceletPage() {
     setIsCheckoutView(true);
   };
 
-  // Edit design just brings you back to editing (no API called yet, so no cancel needed)
   const editDesign = () => {
     setUiError("");
     setIsCheckoutView(false);
     setActivePanel("charms");
   };
 
-  // ✅ ONLY here we call POST /api/accessory-instance
+  // ✅ ONLY here we call POST + addToCart + navigate
   const confirmAndPay = async () => {
     setUiError("");
 
@@ -279,31 +259,23 @@ export default function CharmBraceletPage() {
     setIsPaying(true);
 
     try {
-      // IMPORTANT: backend model expects charms as [{charmID, quantity}]
-      // Also reserveAndDecrementCharms expects charmID and optional quantity.
       const charmsPayload = confirmedCharms.map((c) => ({
         charmID: c.charmID,
         quantity: 1,
-        // NOTE: backend currently ignores text unless you store it somewhere else.
-        // Keeping it here is harmless for future use.
         text: c.type === "letter-custom" ? (c.text || null) : null,
       }));
 
       const payload = {
         type: "bracelet",
-        metal: metal.api, // controller resolves materialID from metal
+        metal: metal.api,
         nbOfCharms: confirmedCharms.length,
         nbOfStones: 0,
         product: {
-          chain: chainDbValue,          // ✅ required by DB constraint
-          style: BRACELET_DB_STYLE,     // ✅ required by DB constraint
+          chain: chainDbValue,
+          style: BRACELET_DB_STYLE,
           length: selectedLength,
-          // extra info (safe)
-          charmColor,
-          letterText: confirmedLetter?.text || null,
-          letterStyleCharmID: confirmedLetter?.charmID || null,
         },
-        charms: charmsPayload, // ✅ MUST be objects (not array of ids)
+        charms: charmsPayload,
         stones: [],
       };
 
@@ -323,26 +295,25 @@ export default function CharmBraceletPage() {
       const accessoryID = data?.accessoryID || null;
       const computedPrice = data?.computedPrice ?? null;
 
+      if (!accessoryID) throw new Error("Backend did not return accessoryID.");
+
       setReservedAccessoryID(accessoryID);
       setReservedComputedPrice(computedPrice);
 
-      // add to cart ONCE
-      addToLocalCartOnce({
+      // ✅ FIX: add into CartContext storage (tala_cart_v1) + duplicates prevented there
+      addToCart({
         accessoryID,
         type: "bracelet",
-        style: BRACELET_DB_STYLE,
         metal: metal.name,
-        metalApi: metal.api,
+        price: computedPrice ?? estimatedTotal,
         chain: selectedChain.name,
-        chainDb: chainDbValue,
         length: selectedLength,
         charmColor,
-        charms: confirmedCharms,
-        // prefer backend computed price (material + charms)
-        price: computedPrice ?? estimatedTotal,
+        summary: {
+          charms: charmsPayload, // CartPage reads item.summary.charms
+        },
       });
 
-      // navigate after adding to cart
       navigate(ORDER_PAGE_ROUTE);
     } catch (e) {
       console.error(e);
@@ -383,7 +354,6 @@ export default function CharmBraceletPage() {
                 <span className="nk-badge">{isCheckoutView ? "Checkout Summary" : "Order Summary"}</span>
               </div>
 
-              {/* Preview images */}
               <div className="nk-imageWrap nk-charmPreview">
                 {confirmedCharms.length === 0 ? (
                   <p className="nk-placeholder">No charms confirmed yet.</p>
@@ -394,18 +364,12 @@ export default function CharmBraceletPage() {
                       src={`${API_BASE}${c.photoURL}`}
                       alt={c.design || "charm"}
                       className="nk-charmImg"
-                      style={{
-                        width: 60,
-                        height: 60,
-                        objectFit: "cover",
-                        borderRadius: 12,
-                      }}
+                      style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 12 }}
                     />
                   ))
                 )}
               </div>
 
-              {/* Summary meta */}
               <div className="nk-previewMeta">
                 <div className="nk-metaRow">
                   <span>Metal</span>
@@ -429,7 +393,6 @@ export default function CharmBraceletPage() {
                   <strong>{confirmedCharms.length}</strong>
                 </div>
 
-                {/* Charm list */}
                 {confirmedCharms.length > 0 && (
                   <div style={{ marginTop: 10 }}>
                     <div style={{ fontWeight: 800, marginBottom: 6 }}>Charm List</div>
@@ -479,18 +442,12 @@ export default function CharmBraceletPage() {
                 )}
               </div>
 
-              {/* Checkout actions (same page) */}
               {isCheckoutView ? (
                 <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
                   <button className="nk-rowBtn" type="button" onClick={editDesign}>
                     Edit Design
                   </button>
-                  <button
-                    className="nk-next"
-                    type="button"
-                    onClick={confirmAndPay}
-                    disabled={isPaying}
-                  >
+                  <button className="nk-next" type="button" onClick={confirmAndPay} disabled={isPaying}>
                     {isPaying ? "Processing..." : "Confirm & Pay"}
                   </button>
                 </div>
@@ -500,7 +457,6 @@ export default function CharmBraceletPage() {
 
           {/* RIGHT CONTROLS */}
           <section className="nk-controls">
-            {/* Metal */}
             <div className="nk-section">
               <label className="nk-label">Metal</label>
               <div className="nk-metals">
@@ -522,7 +478,6 @@ export default function CharmBraceletPage() {
               </div>
             </div>
 
-            {/* Charm color */}
             <div className="nk-section">
               <label className="nk-label">Charm Color</label>
               <select
@@ -532,10 +487,6 @@ export default function CharmBraceletPage() {
                   setUiError("");
                   setCharmColor(e.target.value);
                   setIsCheckoutView(false);
-                  // NOTE: we do NOT reset your selections automatically here
-                  // If you want: uncomment next lines
-                  // setSelectedLetterStyle(null); setLetterText("");
-                  // setSelectedShapes([]); setConfirmedCharms([]);
                 }}
               >
                 {CHARM_COLORS.map((c) => (
@@ -557,7 +508,6 @@ export default function CharmBraceletPage() {
             </button>
           </section>
 
-          {/* PANEL + OVERLAY */}
           {activePanel && <div className="nk-overlay" onClick={() => setActivePanel(null)} />}
 
           <aside className={`nk-panel ${activePanel ? "open" : ""}`}>
@@ -571,7 +521,6 @@ export default function CharmBraceletPage() {
             <div className="nk-panelBody">
               {activePanel === "charms" && (
                 <>
-                  {/* LETTERS */}
                   <h4>Letter Charm Style (choose 1)</h4>
                   <div className="nk-grid">
                     {letterCharms.map((c) => (
@@ -589,7 +538,6 @@ export default function CharmBraceletPage() {
                     ))}
                   </div>
 
-                  {/* text required if letter selected */}
                   {selectedLetterStyle && (
                     <div style={{ marginTop: 12 }}>
                       <label style={{ display: "block", fontWeight: 900, marginBottom: 6 }}>
@@ -608,7 +556,6 @@ export default function CharmBraceletPage() {
                     </div>
                   )}
 
-                  {/* SHAPES */}
                   <h4 style={{ marginTop: 18 }}>Shape Charms</h4>
                   <div className="nk-grid">
                     {shapeCharms.map((c) => (
@@ -625,7 +572,6 @@ export default function CharmBraceletPage() {
                     ))}
                   </div>
 
-                  {/* Confirm selection */}
                   <div style={{ marginTop: 14 }}>
                     <button className="nk-confirm" type="button" onClick={confirmSelection}>
                       Confirm Selection
