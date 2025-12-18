@@ -1,18 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+/* ---------------- STYLES ---------------- */
+import "../styles/bracelet.css";
 import "../styles/charmBracelet.css";
 
+/* ---------------- ASSETS ---------------- */
 import LengthImg from "../assets/Bracelet/length.jpg";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 
+/* ---------------- CONSTANTS ---------------- */
 const API_BASE = "http://localhost:5000";
 const ORDER_PAGE_ROUTE = "/orderpage";
 
-/* DB constraints */
-const CHAIN_DB_MAP = { Cable: "cable", Rope: "rope", Box: "box", Thin: "thin" };
+const CHAIN_DB_MAP = {
+  Cable: "cable",
+  Rope: "rope",
+  Box: "box",
+  Thin: "thin",
+};
+
 const BRACELET_DB_STYLE = "free charm";
 
 const METALS = [
@@ -31,6 +41,7 @@ const CHAINS = [
 const LENGTHS = [6, 6.5, 7, 7.5, 8];
 const CHARM_COLORS = ["Multicolor", "Silver", "Gold", "RoseGold"];
 
+/* ---------------- HELPERS ---------------- */
 function safeNum(n) {
   const x = Number(n);
   return Number.isFinite(x) ? x : 0;
@@ -46,6 +57,7 @@ function addToLocalCartOnce(cartItem) {
   }
 }
 
+/* ================== COMPONENT ================== */
 export default function CharmBraceletPage() {
   const navigate = useNavigate();
 
@@ -78,11 +90,12 @@ export default function CharmBraceletPage() {
           fetch(`${API_BASE}/api/charms/shapes?color=${charmColor}`),
         ]);
 
-        const lettersData = await lettersRes.json();
-        const shapesData = await shapesRes.json();
+        if (!lettersRes.ok || !shapesRes.ok) {
+          throw new Error("Charm fetch failed");
+        }
 
-        setLetterCharms(Array.isArray(lettersData) ? lettersData : []);
-        setShapeCharms(Array.isArray(shapesData) ? shapesData : []);
+        setLetterCharms(await lettersRes.json());
+        setShapeCharms(await shapesRes.json());
       } catch {
         setLetterCharms([]);
         setShapeCharms([]);
@@ -91,10 +104,38 @@ export default function CharmBraceletPage() {
     fetchCharms();
   }, [charmColor]);
 
-  /* ---------------- HELPERS ---------------- */
+  /* ---------------- MEMOS ---------------- */
+  const letterInConfirmed = useMemo(
+    () => confirmedCharms.find((c) => c.type === "letter-custom"),
+    [confirmedCharms]
+  );
 
+  const chainDbValue = useMemo(
+    () => CHAIN_DB_MAP[selectedChain?.name],
+    [selectedChain]
+  );
+
+  const estimatedTotal = useMemo(
+    () => confirmedCharms.reduce((s, c) => s + safeNum(c.price), 0),
+    [confirmedCharms]
+  );
+
+  const charmSummaryList = useMemo(
+    () =>
+      confirmedCharms.map((c) => ({
+        key: `${c.charmID}-${c.type || "shape"}`,
+        id: c.charmID,
+        label:
+          c.type === "letter-custom"
+            ? `${c.design} (Text: ${c.text})`
+            : c.design,
+        color: c.color || charmColor,
+      })),
+    [confirmedCharms, charmColor]
+  );
+
+  /* ---------------- ACTIONS ---------------- */
   const toggleShape = (charm) => {
-    setUiError("");
     setSelectedShapes((prev) =>
       prev.some((c) => c.charmID === charm.charmID)
         ? prev.filter((c) => c.charmID !== charm.charmID)
@@ -102,45 +143,22 @@ export default function CharmBraceletPage() {
     );
   };
 
-  const selectLetterStyleFn = (styleObj) => {
-    setUiError("");
-    if (selectedLetterStyle?.charmID === styleObj.charmID) {
-      setSelectedLetterStyle(null);
-      setLetterText("");
-      return;
-    }
-    setSelectedLetterStyle(styleObj);
-  };
-
-  const letterInConfirmed = useMemo(
-    () => confirmedCharms.find((c) => c.type === "letter-custom") || null,
-    [confirmedCharms]
-  );
-
-  const chainDbValue = useMemo(
-    () => CHAIN_DB_MAP[selectedChain?.name] || null,
-    [selectedChain]
-  );
-
   const confirmSelection = () => {
-    setUiError("");
-    const trimmed = letterText.trim().slice(0, 10);
-
+    const trimmed = letterText.trim();
     if (selectedLetterStyle && !trimmed) {
-      setUiError("Enter the bracelet text (max 10 characters).");
+      setUiError("Enter text for letter charm");
       return;
     }
 
     const letterCustom = selectedLetterStyle
-      ? [{
-          charmID: selectedLetterStyle.charmID,
-          type: "letter-custom",
-          design: selectedLetterStyle.design,
-          color: charmColor,
-          text: trimmed,
-          photoURL: selectedLetterStyle.photoURL,
-          price: selectedLetterStyle.price,
-        }]
+      ? [
+          {
+            ...selectedLetterStyle,
+            type: "letter-custom",
+            text: trimmed,
+            color: charmColor,
+          },
+        ]
       : [];
 
     setConfirmedCharms([...selectedShapes, ...letterCustom]);
@@ -148,37 +166,8 @@ export default function CharmBraceletPage() {
     setIsCheckoutView(false);
   };
 
-  const goToCheckoutView = () => {
-    setUiError("");
-    if (!confirmedCharms.length) {
-      setUiError("Please confirm your charms selection first.");
-      return;
-    }
-    if (letterInConfirmed && !letterInConfirmed.text?.trim()) {
-      setUiError("Letter charm requires text.");
-      return;
-    }
-    if (!chainDbValue) {
-      setUiError("Invalid chain selected.");
-      return;
-    }
-    setIsCheckoutView(true);
-  };
-
-  const editDesign = () => {
-    setUiError("");
-    setIsCheckoutView(false);
-    setActivePanel("charms");
-  };
-
-  const estimatedTotal = useMemo(() => {
-    return confirmedCharms.reduce((sum, c) => sum + safeNum(c.price), 0);
-  }, [confirmedCharms]);
-
-  /* ---------------- CONFIRM & PAY ---------------- */
-
   const confirmAndPay = async () => {
-    setUiError("");
+    if (!isCheckoutView) return;
     setIsPaying(true);
 
     try {
@@ -203,11 +192,12 @@ export default function CharmBraceletPage() {
       const res = await fetch(`${API_BASE}/api/accessory-instance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Failed to create bracelet");
+      if (!res.ok) throw new Error(data?.message);
 
       addToLocalCartOnce({
         accessoryID: data.accessoryID,
@@ -222,174 +212,145 @@ export default function CharmBraceletPage() {
       });
 
       navigate(ORDER_PAGE_ROUTE);
-    } catch (err) {
-      setUiError(err.message);
+    } catch (e) {
+      setUiError(e.message);
     } finally {
       setIsPaying(false);
     }
   };
 
   /* ---------------- UI ---------------- */
-
   return (
-    <div className="br-page">
-      <div className="br-container">
-        <header className="br-header">
-          <h2 className="br-title">Customize Your Charm Bracelet</h2>
-          <p className="br-subtitle">
-            Build your design, then review summary, then confirm & pay.
+    <div className="nk-page nk-charmPage">
+      <div className="nk-container">
+        <header className="nk-header">
+          <h2>Customize Your Charm Bracelet</h2>
+          <p className="nk-subtitle">
+            Build your design, then review summary, then Confirm & Pay.
           </p>
         </header>
 
         {uiError && (
-          <div style={{ marginBottom: 12, padding: 10, borderRadius: 10, background: "#ffe7e7", fontWeight: 700 }}>
-            {uiError}
-          </div>
+          <div className="nk-error">{uiError}</div>
         )}
 
-        <div className="br-customizer">
-          {/* PREVIEW */}
-          <div className="br-preview-card">
-            <div className="br-preview-top">
-              <span className="br-pill">
-                {isCheckoutView ? "Checkout Summary" : "Order Summary"}
-              </span>
-            </div>
-
-            <div className="br-preview-body">
-              <img
-                src={selectedChain.img}
-                alt="Chain"
-                className="br-chain-img"
-              />
-
-              <div className="br-length-block">
-                <img src={LengthImg} alt="Length" className="br-length-img" />
-                <div className="br-length-text">
-                  Wrist size: {selectedLength}"
-                </div>
+        <div className="nk-customizer">
+          {/* LEFT PREVIEW */}
+          <section className="nk-preview">
+            <div className="nk-previewCard">
+              <div className="nk-previewTop">
+                <span className="nk-badge">
+                  {isCheckoutView ? "Checkout Summary" : "Order Summary"}
+                </span>
               </div>
 
-              <div className="br-selected-charms">
-                <div className="br-selected-title">Selected Charms</div>
-
+              <div className="nk-imageWrap nk-charmPreview">
                 {confirmedCharms.length === 0 ? (
-                  <div className="br-empty">No charms selected</div>
+                  <p className="nk-placeholder">No charms confirmed yet.</p>
                 ) : (
-                  <div className="br-selected-grid">
-                    {confirmedCharms.map((c) => (
-                      <div key={c.charmID} className="br-selected-item">
-                        <img src={`${API_BASE}${c.photoURL}`} alt={c.design} />
-                        <div className="br-selected-id">{c.charmID}</div>
-                      </div>
-                    ))}
-                  </div>
+                  confirmedCharms.map((c) => (
+                    <img
+                      key={`${c.charmID}-${c.type}`}
+                      src={`${API_BASE}${c.photoURL}`}
+                      alt={c.design}
+                      className="nk-charmImg"
+                    />
+                  ))
                 )}
               </div>
-            </div>
 
-            {isCheckoutView && (
-              <>
-                <button className="br-next-btn" onClick={confirmAndPay} disabled={isPaying}>
+              <div className="nk-previewMeta">
+                <div className="nk-metaRow">
+                  <span>Metal</span>
+                  <strong>{metal.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Chain</span>
+                  <strong>{selectedChain.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Length</span>
+                  <strong>{selectedLength}"</strong>
+                </div>
+
+                <div className="nk-metaRow">
+                  <span>Total</span>
+                  <strong>${estimatedTotal.toFixed(2)}</strong>
+                </div>
+              </div>
+
+              {isCheckoutView && (
+                <button
+                  className="nk-next"
+                  onClick={confirmAndPay}
+                  disabled={isPaying}
+                >
                   {isPaying ? "Processing..." : "Confirm and Pay"}
                 </button>
-                <button
-                  className="br-confirm"
-                  style={{ background: "#ddd", color: "#333" }}
-                  onClick={editDesign}
-                >
-                  Edit Design
-                </button>
-              </>
-            )}
-          </div>
-
-          {/* FORM */}
-          <div className="br-form">
-            <div className="br-section br-click" onClick={() => setActivePanel("charms")}>
-              <div className="br-section-row">
-                <span>Charms</span>
-                <span className="br-arrow">›</span>
-              </div>
-              <div className="br-muted">
-                {confirmedCharms.length || "Select"}
-              </div>
+              )}
             </div>
+          </section>
 
-            <div className="br-section br-click" onClick={() => setActivePanel("chain")}>
-              <div className="br-section-row">
-                <span>Chain & Size</span>
-                <span className="br-arrow">›</span>
-              </div>
-              <div className="br-muted">
-                {selectedChain.name} · {selectedLength}"
-              </div>
-            </div>
-
-            <button className="br-next-btn" onClick={goToCheckoutView}>
+          {/* RIGHT CONTROLS */}
+          <section className="nk-controls">
+            <button className="nk-rowBtn" onClick={() => setActivePanel("charms")}>
+              Charms
+            </button>
+            <button className="nk-rowBtn" onClick={() => setActivePanel("chain")}>
+              Chain & Length
+            </button>
+            <button className="nk-next" onClick={() => setIsCheckoutView(true)}>
               Go to Checkout
             </button>
-          </div>
+          </section>
 
           {/* PANEL */}
-          <div className={`br-panel ${activePanel ? "open" : ""}`}>
-            {activePanel === "charms" && (
-              <>
-                <h3 className="br-panel-title">Select Your Charms</h3>
-
-                <div className="br-charm-grid">
-                  {shapeCharms.map((c) => (
-                    <div
-                      key={c.charmID}
-                      className="br-charm"
-                      onClick={() => toggleShape(c)}
-                    >
-                      <img src={`${API_BASE}${c.photoURL}`} alt={c.design} />
-                      <div className="br-charm-id">{c.charmID}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <button className="br-confirm" onClick={confirmSelection}>
-                  Confirm Selection
-                </button>
-              </>
-            )}
-
-            {activePanel === "chain" && (
-              <>
-                <h3 className="br-panel-title">Chain & Size</h3>
-
-                <div className="br-grid">
-                  {CHAINS.map((c) => (
-                    <div
-                      key={c.name}
-                      className={`br-card ${selectedChain.name === c.name ? "selected" : ""}`}
-                      onClick={() => setSelectedChain(c)}
-                    >
-                      <img src={c.img} alt={c.name} />
-                      <div className="br-card-label">{c.name}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="br-length-row">
-                  {LENGTHS.map((len) => (
-                    <span
-                      key={len}
-                      className={`br-chip ${selectedLength === len ? "selected" : ""}`}
-                      onClick={() => setSelectedLength(len)}
-                    >
-                      {len}"
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
           {activePanel && (
-            <div className="br-overlay" onClick={() => setActivePanel(null)} />
+            <aside className="nk-panel open">
+              <div className="nk-panelHeader">
+                <h3>{activePanel === "charms" ? "Charms" : "Chain & Length"}</h3>
+                <button onClick={() => setActivePanel(null)}>Close</button>
+              </div>
+
+              <div className="nk-panelBody">
+                {activePanel === "chain" && (
+                  <>
+                    <h4>Chain</h4>
+                    <div className="nk-chainGrid">
+                      {CHAINS.map((c) => (
+                        <button
+                          key={c.name}
+                          className={`nk-chainCard ${
+                            selectedChain.name === c.name ? "isActive" : ""
+                          }`}
+                          onClick={() => setSelectedChain(c)}
+                        >
+                          <img src={c.img} alt={c.name} />
+                          <strong>{c.name}</strong>
+                        </button>
+                      ))}
+                    </div>
+
+                    <h4>Length</h4>
+                    <div className="nk-lengths">
+                      {LENGTHS.map((l) => (
+                        <button
+                          key={l}
+                          className={`nk-lengthBtn ${
+                            selectedLength === l ? "isActive" : ""
+                          }`}
+                          onClick={() => setSelectedLength(l)}
+                        >
+                          {l}"
+                        </button>
+                      ))}
+                    </div>
+
+                    <img src={LengthImg} alt="Length guide" />
+                  </>
+                )}
+              </div>
+            </aside>
           )}
         </div>
       </div>
