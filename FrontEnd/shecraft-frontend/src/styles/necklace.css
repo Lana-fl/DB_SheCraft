@@ -689,11 +689,11 @@
   object-fit: contain;
   flex-shrink: 0;
 }
-/*
+
  .nk-imageWrap {
   max-height: 120px;
   overflow: hidden;
- }*/
+ }
  
 .nk-charmImg {
   max-width: 80px;
