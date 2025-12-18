@@ -674,3 +674,26 @@
   transform:translateY(-50%);
   color:#cdbfd6 !important;
 }
+
+.nk-charmPreview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.nk-charmImg {
+  width: 60px;        /* adjust size here */
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.nk-imageWrap {
+  max-height: 120px;
+  overflow: hidden;
+}
+.nk-charmImg {
+  max-width: 80px;
+  max-height: 80px;
+}

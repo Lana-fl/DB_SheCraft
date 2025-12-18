@@ -29,8 +29,11 @@ app.use(cors({
 app.use(express.json());
 app.use(requestLogger);
 
-// Static files
-app.use("/images", express.static(path.join(__dirname, "../public/images")));
+
+// serve files in backend/public/images as /images/...
+app.use("/images", express.static(path.join(__dirname, "..", "..", "public", "images")));
+
+
 
 // ---------- ROUTES ----------
 app.use("/api/auth", authRoutes);

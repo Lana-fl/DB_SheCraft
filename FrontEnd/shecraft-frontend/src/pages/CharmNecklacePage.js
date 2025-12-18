@@ -424,26 +424,31 @@ export default function CharmNecklacePage() {
   /* ---------------- FETCH CHARMS ---------------- */
 
   useEffect(() => {
-    async function fetchCharms() {
-      try {
-        const [lettersRes, shapesRes] = await Promise.all([
-          fetch(
-            `http://localhost:5000/api/charms/letters?color=${charmColor}`
-          ),
-          fetch(
-            `http://localhost:5000/api/charms/shapes?color=${charmColor}`
-          ),
-        ]);
+  async function fetchCharms() {
+    try {
+      const [lettersRes, shapesRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/charms/letters?color=${charmColor}`),
+        fetch(`http://localhost:5000/api/charms/shapes?color=${charmColor}`),
+      ]);
 
-        setLetterCharms(await lettersRes.json());
-        setShapeCharms(await shapesRes.json());
-      } catch (err) {
-        console.error("Failed to fetch charms", err);
-      }
+      if (!lettersRes.ok) throw new Error(`Letters API failed: ${lettersRes.status}`);
+      if (!shapesRes.ok) throw new Error(`Shapes API failed: ${shapesRes.status}`);
+
+      const lettersData = await lettersRes.json();
+      const shapesData = await shapesRes.json();
+
+      setLetterCharms(Array.isArray(lettersData) ? lettersData : []);
+      setShapeCharms(Array.isArray(shapesData) ? shapesData : []);
+    } catch (err) {
+      console.error("Failed to fetch charms", err);
+      setLetterCharms([]);
+      setShapeCharms([]);
     }
+  }
 
-    fetchCharms();
-  }, [charmColor]);
+  fetchCharms();
+}, [charmColor]);
+
 
   /* ---------------- HELPERS ---------------- */
 
@@ -502,11 +507,11 @@ export default function CharmNecklacePage() {
                 ) : (
                   confirmedCharms.map((c) => (
                     <img
-                      key={c.charmID}
-                      src={c.photoURL}
-                      alt={c.design}
-                      className="nk-charmImg"
-                    />
+    key={c.charmID}
+    src={`http://localhost:5000${c.photoURL}`}
+    alt={c.design}
+    className="nk-charmImg"
+  />
                   ))
                 )}
               </div>
@@ -615,7 +620,7 @@ export default function CharmNecklacePage() {
                         }`}
                         onClick={() => toggleCharm(c, "letter")}
                       >
-                        <img src={c.photoURL} alt={c.design} />
+                        <img src={`http://localhost:5000${c.photoURL}`} alt={c.design} />
                         <small>{c.design.replace("letter ", "")}</small>
                       </button>
                     ))}
@@ -635,7 +640,7 @@ export default function CharmNecklacePage() {
                         }`}
                         onClick={() => toggleCharm(c, "shape")}
                       >
-                        <img src={c.photoURL} alt="shape charm" />
+                        <img src={`http://localhost:5000${c.photoURL}`} alt={c.design} />
                       </button>
                     ))}
                   </div>
