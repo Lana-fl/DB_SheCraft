@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/bracelet.css";
+import "../styles/charmBracelet.css";
 
-import LengthImg from "../assets/bracelet/length.png";
+import LengthImg from "../assets/Bracelet/length.jpg";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
