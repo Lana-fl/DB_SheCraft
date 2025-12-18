@@ -87,13 +87,14 @@
 //   getStoneById,
 //   getStonesByGem,
 //   getStonesByColor,
-     getStonesByHexColor
+  //   getStonesByHexColor
 //   getStonesByRarity,
 //   getAvailableStones,
 //   updateStoneQty,
 // };
 // src/models/stoneModel.js
 const pool = require("../config/db");
+
 
 // Base select (reuse everywhere)
 const BASE_SELECT = `
@@ -171,13 +172,20 @@ async function getStonesByHexColor(hex) {
   );
   return rows;
 }
-
+async function getBirthstonesByMonth(month) {
+  const [rows] = await pool.query(
+    `${BASE_SELECT} WHERE stoneID LIKE 'B%' AND gem = ? AND qty > 0`,
+    [month]
+  );
+  return rows;
+}
 module.exports = {
   getAllStones,
   getStoneById,
   getStonesByGem,
   getStonesByColor,
-  getStonesByHexColor, // 👈 export
+  getStonesByHexColor,
+  getBirthstonesByMonth,   // ✅ now REAL model function
   getStonesByRarity,
   getAvailableStones,
   updateStoneQty,

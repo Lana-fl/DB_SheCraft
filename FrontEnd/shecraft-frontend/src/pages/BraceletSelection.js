@@ -35,12 +35,19 @@ export default function BraceletSelection() {
   const navigate = useNavigate();
 
   const handleSelectBracelet = (braceletType) => {
-    if (braceletType === "charm") {
-      navigate("/bracelet/charm");
-      return;
-    }
-    navigate("/braceletspage", { state: { braceletType } });
-  };
+  if (braceletType === "charm") {
+    navigate("/bracelet/charm");
+    return;
+  }
+
+  if (braceletType === "birthstone") {
+    navigate("/bracelet/birthstone");
+    return;
+  }
+
+  navigate("/braceletspage", { state: { braceletType } });
+};
+
 
   return (
     <div className="page-wrapper">

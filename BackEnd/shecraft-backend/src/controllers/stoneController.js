@@ -106,20 +106,33 @@ async function updateStoneQty(req, res) {
 }
 async function getStonesByHexColor(req, res) {
   try {
-    const { hexColor } = req.params;
-    const stones = await stoneModel.getStonesByHexColor(hexColor);
+    const { hex } = req.params; // ✅ matches /hex/:hex
+    const stones = await stoneModel.getStonesByHexColor(hex);
     res.json(stones);
   } catch (err) {
     console.error("Error in getStonesByHexColor:", err);
     res.status(500).json({ message: "Failed to fetch stones by hex color" });
   }
 }
+
+async function getBirthstonesByMonth(req, res) {
+  try {
+    const { month } = req.params; // month string (e.g. "January")
+    const stones = await stoneModel.getBirthstonesByMonth(month);
+    res.json(stones);
+  } catch (err) {
+    console.error("Error in getBirthstonesByMonth:", err);
+    res.status(500).json({ message: "Failed to fetch birthstones by month" });
+  }
+}
+
 module.exports = {
   getStones,
   getStone,
   getStonesByGem,
   getStonesByColor,
   getStonesByHexColor,
+  getBirthstonesByMonth,
   getStonesByRarity,
   getAvailableStones,
   updateStoneQty,

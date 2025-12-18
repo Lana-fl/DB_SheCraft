@@ -25,6 +25,7 @@ import BraceletSelection from "./pages/BraceletSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
 
+import BirthstoneBracelet from "./pages/BirthstoneBracelet";
 /* =======================
    ACCOUNT SYSTEM
    ======================= */
@@ -124,6 +125,10 @@ function App() {
             <Route
             path="/bracelet/charm"
             element={<CharmBraceletPage />}
+            />
+            <Route
+              path="/bracelet/birthstone"
+              element={<BirthstoneNecklace />}
             />
 
             {/* EARRINGS */}

@@ -378,26 +378,28 @@
 //     </div>
 //   );
 // }
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/birthstonenecklace.css";
+import "../styles/necklace.css";
 
-/* ===== chain/length assets ===== */
+/* chain/length assets */
 import LengthImg from "../assets/necklace/length.png";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 
-/* ===== necklace preview images ===== */
+/* preview images */
 import NecklaceColorPreviewImg from "../assets/gems/birthstone.jpeg";
 import NecklaceWithGemImg from "../assets/necklace/stylebirthstone.png";
 
-/* ===== cut images ===== */
+/* cut images */
 import CutOval from "../assets/Cuts/oval.jpeg";
 import CutPear from "../assets/Cuts/pear.jpeg";
 import CutPrincess from "../assets/Cuts/princess.jpeg";
 import CutRound from "../assets/Cuts/round.jpg";
+
+const API_BASE = "http://localhost:5000";
 
 const METALS = [
   { name: "Silver", color: "#C0C0C0" },
@@ -424,79 +426,95 @@ const CUTS = [
 export default function BirthstoneNecklace() {
   const navigate = useNavigate();
 
-  const [birthstones, setBirthstones] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [stonesByColor, setStonesByColor] = useState([]);
-  const [selectedCut, setSelectedCut] = useState(null);
-  const [metal, setMetal] = useState("");
-  const [selectedChain, setSelectedChain] = useState(null);
-  const [selectedLength, setSelectedLength] = useState(null);
+  // panel (same concept as NecklacesPage)
+  const [activePanel, setActivePanel] = useState(null); // "chainLength" | null
 
-  // Fetch birthstones once
+  // data
+  const [allBirthstones, setAllBirthstones] = useState([]); // raw B* stones
+
+  // selections
+  const [selectedMonth, setSelectedMonth] = useState(null); // string month
+  const [monthStones, setMonthStones] = useState([]); // all stones for selected month
+  const [availableColors, setAvailableColors] = useState([]); // unique colors for month [{label, hex, price}]
+  const [selectedColor, setSelectedColor] = useState(null); // {label, hex, price}
+  const [selectedColorStones, setSelectedColorStones] = useState([]); // stones filtered by color
+
+  const [selectedCut, setSelectedCut] = useState(null);
+  const [metal, setMetal] = useState(METALS[0].color);
+  const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
+  const [selectedLength, setSelectedLength] = useState(16);
+
   useEffect(() => {
     const fetchBirthstones = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/stones");
+        const res = await fetch(`${API_BASE}/api/stones`);
         const data = await res.json();
 
-        // Filter stones with stoneID starting with 'B'
-        const filtered = data.filter((s) => s.stoneID.startsWith("B"));
+        const filtered = Array.isArray(data)
+          ? data.filter((s) => typeof s.stoneID === "string" && s.stoneID.startsWith("B"))
+          : [];
 
-        // Group by month
-        const grouped = filtered.reduce((acc, stone) => {
-          if (!acc[stone.birthMonth]) {
-            acc[stone.birthMonth] = {
-              month: stone.birthMonth,
-              stone: stone.gem,
-              colors: [],
-            };
-          }
-
-          // Add unique colors
-          if (!acc[stone.birthMonth].colors.some((c) => c.hex === stone.colorHex)) {
-            acc[stone.birthMonth].colors.push({
-              label: stone.color,
-              hex: stone.colorHex,
-              price: stone.price,
-            });
-          }
-          return acc;
-        }, {});
-
-        setBirthstones(Object.values(grouped));
+        setAllBirthstones(filtered);
       } catch (err) {
         console.error("Failed to fetch birthstones:", err);
+        setAllBirthstones([]);
       }
     };
 
     fetchBirthstones();
   }, []);
 
-  // When month is selected
+ const months = useMemo(() => {
+  const uniqueMonths = new Set();
+
+  for (const s of allBirthstones) {
+    if (typeof s.gem === "string" && s.gem.trim() !== "") {
+      uniqueMonths.add(s.gem.trim());
+    }
+  }
+
+  // optional: keep a stable sorted display
+  return Array.from(uniqueMonths);
+}, [allBirthstones]);
+
+  const closePanel = () => setActivePanel(null);
+  const togglePanel = (panel) => setActivePanel((prev) => (prev === panel ? null : panel));
+
+  // Month pick: load month stones + unique colors
   const onPickMonth = (month) => {
     setSelectedMonth(month);
     setSelectedColor(null);
+    setSelectedCut(null);
 
-    // Populate stonesByColor immediately
-    setStonesByColor(
-      month.colors.map((c) => ({
-        gem: month.stone,
-        color: c.label,
-        colorHex: c.hex,
-        price: c.price,
-      }))
-    );
+   const stones = allBirthstones.filter((s) => (s.gem || "").trim() === month);
+
+    setMonthStones(stones);
+
+    const unique = new Map();
+    for (const st of stones) {
+      const hex = (st.colorHex || "").trim();
+      if (!hex) continue;
+      if (!unique.has(hex)) {
+        unique.set(hex, {
+          label: st.color || "Color",
+          hex: hex,
+          price: st.price ?? 0,
+        });
+      }
+    }
+    const colors = Array.from(unique.values());
+    setAvailableColors(colors);
+
+    setSelectedColorStones([]);
   };
 
-  // When color is selected
-  const onPickColor = (color) => {
-    setSelectedColor(color);
+  // Color pick: filter monthStones -> selectedColorStones
+  const onPickColor = (c) => {
+  setSelectedColor(c);
+  const filtered = monthStones.filter((s) => (s.colorHex || "").trim() === c.hex);
+  setSelectedColorStones(filtered);
+};
 
-    // Filter stones of this color
-    const filtered = stonesByColor.filter((s) => s.colorHex === color.hex);
-    setStonesByColor(filtered);
-  };
 
   const canProceed =
     !!selectedMonth &&
@@ -507,218 +525,281 @@ export default function BirthstoneNecklace() {
     !!selectedLength;
 
   const handleSubmit = () => {
-    if (!canProceed) {
-      alert("Please select all options before proceeding.");
-      return;
-    }
+    if (!canProceed) return;
 
     navigate("/checkout", {
       state: {
         itemType: "birthstone_necklace",
-        metal,
-        chainType: selectedChain,
+        metal, // hex color for metal like your necklace page
+        chainType: selectedChain, // keep object consistent with your necklace flow
         selectedLength,
-        birthstoneMonth: selectedMonth.month,
-        birthstoneName: selectedMonth.stone,
-        birthstoneColor: selectedColor,
+        birthstoneMonth: selectedMonth,
+        birthstoneColor: selectedColor, // {label, hex, price}
         birthstoneCut: selectedCut,
+        // optional details if you need them later:
+        birthstoneCandidates: selectedColorStones,
       },
     });
   };
 
+  const shownPrice =
+    selectedColor?.price ??
+    selectedColorStones?.[0]?.price ??
+    monthStones?.[0]?.price ??
+    0;
+
   return (
-    <div className="bs-page">
-      <div className="bs-container">
-        <header className="bs-header">
+    <div className="nk-page">
+      <div className="nk-container">
+        <header className="nk-header">
           <h2>Birthstone Necklace</h2>
-          <p className="bs-subtitle">Select month → color → cut → metal → chain → length.</p>
+          <p className="nk-subtitle">Select Month → Color → Cut → Metal → Chain & Length.</p>
         </header>
 
-        <div className="bs-customizer">
+        <div className="nk-customizer">
           {/* LEFT PREVIEW */}
-          <section className="bs-preview">
-            <div className="bs-previewCard">
-              <div className="bs-previewTop">
-                <span className="bs-badge">Live Preview</span>
-                <span className="bs-chip">
-                  {metal ? METALS.find((m) => m.color === metal)?.name : "Choose Metal"}
-                </span>
+          <section className="nk-preview">
+            <div className="nk-previewCard">
+              <div className="nk-previewTop">
+                <span className="nk-badge">Live Preview</span>
+                <span className="nk-chip">{METALS.find((m) => m.color === metal)?.name}</span>
               </div>
 
-              <div className="bs-previewGrid">
-                <div className="bs-imageWrap">
-                  <img src={NecklaceWithGemImg} alt="Necklace preview" className="bs-mainImg" />
-                  <div className="bs-floatTag">Necklace</div>
-                </div>
-
-                <div className="bs-imageWrap bs-imageWrapSoft">
-                  <img src={NecklaceColorPreviewImg} alt="Gem color preview" className="bs-mainImg" />
-                  <div className="bs-floatTag">Gem Color</div>
-                  <div className="bs-colorBadge">
-                    <span
-                      className={`bs-colorDot ${selectedColor ? "on" : ""}`}
-                      style={{ backgroundColor: selectedColor?.hex || "#ece7ef" }}
-                    />
-                    <span className="bs-colorBadgeText">
-                      {selectedColor
-                        ? `${selectedColor.label} ($${stonesByColor[0]?.price || selectedColor.price})`
-                        : "Pick a color"}
-                    </span>
-                  </div>
-                </div>
+              <div className="nk-imageWrap">
+                <img src={NecklaceWithGemImg} alt="Necklace preview" className="nk-mainImg" />
               </div>
 
-              {selectedMonth && selectedColor && (
-                <div className="bs-meta">
-                  <div className="bs-row">
-                    <span>Month → Color</span>
-                    <strong>
-                      {selectedMonth.month} →{" "}
+      <div className="nk-imageWrap" style={{ marginTop: 12 }}>
+  <img
+    src={NecklaceColorPreviewImg}
+    alt="Gem color preview"
+    className="nk-mainImg"
+  />
+</div>
+
+              <div className="nk-previewMeta">
+                <div className="nk-metaRow">
+                  <span>Month</span>
+                  <strong>{selectedMonth || "—"}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Color</span>
+                  <strong>
+                    {selectedColor ? (
                       <span style={{ color: selectedColor.hex }}>{selectedColor.label}</span>
-                    </strong>
-                  </div>
+                    ) : (
+                      "—"
+                    )}
+                  </strong>
                 </div>
-              )}
+                <div className="nk-metaRow">
+                  <span>Cut</span>
+                  <strong>{selectedCut || "—"}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Chain</span>
+                  <strong>{selectedChain.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Length</span>
+                  <strong>{selectedLength}"</strong>
+                </div>
+              </div>
 
-              {stonesByColor.length > 0 && (
-                <div className="bs-stoneList">
-                  <h4>Stones of selected color:</h4>
-                  <ul>
-                    {stonesByColor.map((s, idx) => (
-                      <li key={idx}>
-                        <span className="bs-colorDot" style={{ backgroundColor: s.colorHex }} />{" "}
-                        {s.gem} — {s.color} — ${s.price}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              
             </div>
           </section>
 
           {/* RIGHT CONTROLS */}
-          <section className="bs-controls">
-            {/* Month */}
-            <div className="bs-section">
-              <label className="bs-label">Month</label>
-              <div className="bs-monthGrid">
-                {birthstones.map((b) => (
+          <section className="nk-controls">
+            {/* MONTH FIRST */}
+            <div className="nk-section">
+              <label className="nk-label">Month</label>
+              <div className="nk-grid" style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+                {months.map((m) => (
                   <button
-                    key={b.month}
+                    key={m}
                     type="button"
-                    className={`bs-monthBtn ${selectedMonth?.month === b.month ? "isActive" : ""}`}
-                    onClick={() => onPickMonth(b)}
+                    className={`nk-cardPick ${selectedMonth === m ? "isActive" : ""}`}
+                    onClick={() => onPickMonth(m)}
                   >
-                    {b.month}
+                    <div className="nk-cardText">
+                      <strong>{m}</strong>
+                      <span>Tap to select</span>
+                    </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Color */}
+            {/* COLORS AFTER MONTH */}
             {selectedMonth && (
-              <div className="bs-section">
-                <label className="bs-label">Gem Color</label>
-                <div className="bs-colorGrid">
-                  {selectedMonth.colors.map((c) => (
+              <div className="nk-section">
+                <label className="nk-label">Gem Color</label>
+
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+                  {availableColors.map((c) => (
                     <button
                       key={c.hex}
                       type="button"
-                      className={`bs-colorBtn ${selectedColor?.hex === c.hex ? "isActive" : ""}`}
                       onClick={() => onPickColor(c)}
+                      className={`nk-metalBtn ${selectedColor?.hex === c.hex ? "isActive" : ""}`}
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: "50%",
+                        display: "grid",
+                        placeItems: "center",
+                        padding: 0,
+                      }}
+                      title={`${c.label} ($${c.price})`}
                     >
                       <span
-                        className="bs-colorSwatch"
-                        style={{ backgroundColor: c.hex, borderRadius: "50%" }}
+                        style={{
+                          width: 26,
+                          height: 26,
+                          borderRadius: "50%",
+                          backgroundColor: c.hex,
+                          border: "2px solid rgba(0,0,0,0.08)",
+                          display: "inline-block",
+                        }}
                       />
-                      <span className="bs-colorText">{c.label}</span>
-                      {selectedColor?.hex === c.hex && (
-                        <span className="bs-colorPrice">
-                          ${stonesByColor.find((s) => s.colorHex === c.hex)?.price || c.price}
-                        </span>
-                      )}
                     </button>
                   ))}
                 </div>
+
+                {selectedColor && (
+                  <p className="nk-help" style={{ marginTop: 10 }}>
+                    Selected: <strong style={{ color: selectedColor.hex }}>{selectedColor.label}</strong>{" "}
+                    · <strong>${shownPrice}</strong>
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Cut */}
-            <div className="bs-section">
-              <label className="bs-label">Cut</label>
-              <div className="bs-cutGrid">
+            {/* CUT */}
+            <div className="nk-section">
+              <label className="nk-label">Cut</label>
+              <div className="nk-grid" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
                 {CUTS.map((c) => (
                   <button
                     key={c.key}
                     type="button"
-                    className={`bs-cutCard ${selectedCut === c.key ? "isActive" : ""}`}
+                    className={`nk-cardPick ${selectedCut === c.key ? "isActive" : ""}`}
                     onClick={() => setSelectedCut(c.key)}
                   >
-                    <img className="bs-cutImg" src={c.img} alt={c.key} />
-                    <div className="bs-cutName">{c.key}</div>
+                    <img src={c.img} alt={c.key} className="nk-cardImg" />
+                    <div className="nk-cardText">
+                      <strong>{c.key}</strong>
+                      <span>Tap to select</span>
+                    </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Metal */}
-            <div className="bs-section">
-              <label className="bs-label">Metal</label>
-              <div className="bs-metals">
+            {/* METAL */}
+            <div className="nk-section">
+              <label className="nk-label">Metal</label>
+              <div className="nk-metals">
                 {METALS.map((m) => (
                   <button
                     key={m.name}
                     type="button"
-                    className={`bs-metalBtn ${metal === m.color ? "isActive" : ""}`}
+                    className={`nk-metalBtn ${metal === m.color ? "isActive" : ""}`}
                     onClick={() => setMetal(m.color)}
                   >
-                    <span className="bs-metalDot" style={{ backgroundColor: m.color }} />
-                    <span className="bs-metalName">{m.name}</span>
+                    <span className="nk-metalDot" style={{ backgroundColor: m.color }} />
+                    <span className="nk-metalName">{m.name}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Chain & Length */}
-            <div className="bs-section">
-              <label className="bs-label">Chain</label>
-              <div className="bs-chains">
-                {CHAINS.map((c) => (
-                  <button
-                    key={c.name}
-                    type="button"
-                    className={`bs-chainBtn ${selectedChain?.name === c.name ? "isActive" : ""}`}
-                    onClick={() => setSelectedChain(c)}
-                  >
-                    <img src={c.img} alt={c.name} className="bs-chainImg" />
-                    <span>{c.name}</span>
-                  </button>
-                ))}
+            {/* Chain & Length (right tab like necklace page) */}
+            <button
+              type="button"
+              className={`nk-rowBtn ${activePanel === "chainLength" ? "open" : ""}`}
+              onClick={() => togglePanel("chainLength")}
+            >
+              <div className="nk-rowLeft">
+                <span className="nk-rowTitle">Chain & Length</span>
+                <span className="nk-rowValue">
+                  {selectedChain.name} · {selectedLength}"
+                </span>
               </div>
+              <span className="nk-chevron" aria-hidden="true" />
+            </button>
 
-              <label className="bs-label">Length</label>
-              <div className="bs-lengths">
-                {LENGTHS.map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    className={`bs-lengthBtn ${selectedLength === l ? "isActive" : ""}`}
-                    onClick={() => setSelectedLength(l)}
-                  >
-                    {l}"
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button className="bs-next" type="button" onClick={handleSubmit} disabled={!canProceed}>
+            <button className="nk-next" type="button" onClick={handleSubmit} disabled={!canProceed}>
               Order Summary
             </button>
 
             {!canProceed && (
-              <p className="bs-error">Required: Month, Color, Cut, Metal, Chain, Length.</p>
+              <p className="nk-help" style={{ color: "#b00020" }}>
+                Required: Month, Color, Cut, Metal, Chain, Length.
+              </p>
             )}
           </section>
+
+          {/* RIGHT SLIDE PANEL (Chain & Length) */}
+          <aside className={`nk-panel ${activePanel ? "open" : ""}`} aria-hidden={!activePanel}>
+            <div className="nk-panelHeader">
+              <div>
+                <h3 className="nk-panelTitle">Chain & Length</h3>
+                <p className="nk-panelSub">Choose the chain type and length.</p>
+              </div>
+
+              <button type="button" className="nk-close" onClick={closePanel}>
+                Close
+              </button>
+            </div>
+
+            <div className="nk-panelBody">
+              <h4 className="nk-panelSectionTitle">Chain Type</h4>
+              <div className="nk-chainGrid">
+                {CHAINS.map((c) => (
+                  <button
+                    key={c.name}
+                    type="button"
+                    className={`nk-chainCard ${selectedChain.name === c.name ? "isActive" : ""}`}
+                    onClick={() => setSelectedChain(c)}
+                  >
+                    <img src={c.img} alt={c.name} className="nk-chainImg" />
+                    <strong>{c.name}</strong>
+                  </button>
+                ))}
+              </div>
+
+              <h4 className="nk-panelSectionTitle">Length</h4>
+              <div className="nk-lengths">
+                {LENGTHS.map((len) => (
+                  <button
+                    key={len}
+                    type="button"
+                    className={`nk-lengthBtn ${selectedLength === len ? "isActive" : ""}`}
+                    onClick={() => setSelectedLength(len)}
+                  >
+                    {len}"
+                  </button>
+                ))}
+              </div>
+
+              <div className="nk-lengthPreview">
+                <img src={LengthImg} alt="Length Guide" className="nk-lengthImg" />
+              </div>
+            </div>
+
+            {activePanel && (
+              <div className="nk-panelFooter">
+                <button className="nk-confirm" type="button" onClick={closePanel}>
+                  Confirm Selection
+                </button>
+              </div>
+            )}
+          </aside>
+
+          {activePanel && <div className="nk-overlay" onClick={closePanel} />}
         </div>
       </div>
     </div>
