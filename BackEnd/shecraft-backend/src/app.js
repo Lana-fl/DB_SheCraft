@@ -33,7 +33,7 @@ app.use(requestLogger);
 // serve files in backend/public/images as /images/...
 app.use(
   "/images",
-  express.static(path.join(__dirname, "public/images"))
+  express.static(path.join(process.cwd(), "public/images"))
 );
 
 
