@@ -18,6 +18,7 @@ import NecklaceSelection from "./pages/NecklaceSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
 import BirthstoneNecklace from "./pages/BirthstoneNecklace"; 
+import BraceletSelection from "./pages/BraceletSelection";
 
 /* ACCOUNT SYSTEM */
 import AccountPage from "./pages/AccountPage";
@@ -81,7 +82,9 @@ function App() {
             <Route path="/necklaces" element={<NecklaceSelection />} />
             <Route path="/rings" element={<RingSelection />} />
             <Route path="/ringspage" element={<RingsPage />} />
-            <Route path="/bracelets" element={<BraceletsPage />} />
+            <Route path="/bracelets" element={<BraceletSelection />} />
+            <Route path="/braceletspage" element={<BraceletsPage />} />
+
             <Route path="/earrings" element={<EarringsPage />} />
           
             {/* OTHER */}
