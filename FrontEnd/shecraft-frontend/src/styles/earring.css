@@ -1,0 +1,680 @@
+/* ========== EARRINGS PAGE - PANDORA LILAC AESTHETIC ========== */
+
+.ear-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f4f9 0%, #ece7ef 50%, #e8dff0 100%);
+  padding: 3rem 2rem;
+  font-family: "Cormorant Garamond", serif;
+}
+
+/* ========== HERO / INITIAL TYPE SELECTION ========== */
+
+.ear-hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.ear-title {
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: #4A235A;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.ear-subtitle {
+  font-size: 1.3rem;
+  color: #9B59B6;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+.ear-typeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ear-typeCard {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 20px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.ear-typeCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(155, 89, 182, 0.2);
+  border-color: #D2B4DE;
+}
+
+.ear-typeImg {
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background: #f8f4f9;
+}
+
+.ear-typeImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ear-typeCard h3 {
+  font-size: 2rem;
+  color: #4A235A;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.ear-typeCard p {
+  font-size: 1.1rem;
+  color: #9B59B6;
+  font-weight: 400;
+}
+
+/* ========== CUSTOMIZER LAYOUT ========== */
+
+.ear-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ear-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.ear-header h2 {
+  font-size: 2.8rem;
+  color: #4A235A;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.ear-headerSub {
+  font-size: 1.15rem;
+  color: #9B59B6;
+  font-weight: 400;
+}
+
+.ear-customizer {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* ========== LEFT PREVIEW ========== */
+
+.ear-preview {
+  position: sticky;
+  top: 120px;
+}
+
+.ear-previewCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(155, 89, 182, 0.15);
+  border: 2px solid #EBDEF0;
+}
+
+.ear-previewTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.ear-badge {
+  background: linear-gradient(135deg, #9B59B6, #D2B4DE);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ear-chip {
+  background: #f8f4f9;
+  color: #4A235A;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ear-previewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.ear-previewSingle {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #f8f4f9;
+  margin-bottom: 2rem;
+}
+
+.ear-previewSingle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ear-imageWrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8f4f9;
+  height: 180px;
+}
+
+.ear-imageWrapSoft {
+  background: linear-gradient(135deg, #f8f4f9, #EBDEF0);
+}
+
+.ear-mainImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ear-floatTag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(74, 35, 90, 0.85);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
+}
+
+.ear-colorBadge {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.ear-colorDot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ear-colorDot.on {
+  box-shadow: 0 0 12px rgba(155, 89, 182, 0.6);
+}
+
+.ear-colorBadgeText {
+  font-size: 0.85rem;
+  color: #4A235A;
+  font-weight: 600;
+}
+
+.ear-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.ear-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #EBDEF0;
+}
+
+.ear-row span {
+  font-size: 0.95rem;
+  color: #9B59B6;
+  font-weight: 500;
+}
+
+.ear-row strong {
+  font-size: 1rem;
+  color: #4A235A;
+  font-weight: 600;
+}
+
+/* ========== RIGHT CONTROLS ========== */
+
+.ear-controls {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(155, 89, 182, 0.15);
+  border: 2px solid #EBDEF0;
+}
+
+.ear-section {
+  margin-bottom: 2.5rem;
+}
+
+.ear-label {
+  display: block;
+  font-size: 1.3rem;
+  color: #4A235A;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.ear-help {
+  font-size: 0.95rem;
+  color: #9B59B6;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* ========== MONTH GRID ========== */
+
+.ear-monthGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.8rem;
+}
+
+.ear-monthBtn {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 0.8rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #9B59B6;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.ear-monthBtn:hover {
+  background: #f8f4f9;
+  border-color: #D2B4DE;
+  transform: translateY(-2px);
+}
+
+.ear-monthBtn.isActive {
+  background: linear-gradient(135deg, #9B59B6, #D2B4DE);
+  border-color: #9B59B6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
+/* ========== COLOR GRID ========== */
+
+.ear-lockCard {
+  background: #f8f4f9;
+  border: 2px dashed #D2B4DE;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: #9B59B6;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.ear-colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.ear-colorBtn {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.ear-colorBtn:hover {
+  border-color: #D2B4DE;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(155, 89, 182, 0.2);
+}
+
+.ear-colorBtn.isActive {
+  border-color: #9B59B6;
+  background: #f8f4f9;
+  box-shadow: 0 6px 16px rgba(155, 89, 182, 0.25);
+}
+
+.ear-colorSwatch {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ear-colorText {
+  font-size: 0.95rem;
+  color: #4A235A;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ========== CUT GRID ========== */
+
+.ear-cutGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.ear-cutCard {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.ear-cutCard:hover {
+  border-color: #D2B4DE;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(155, 89, 182, 0.2);
+}
+
+.ear-cutCard.isActive {
+  border-color: #9B59B6;
+  background: #f8f4f9;
+  box-shadow: 0 6px 16px rgba(155, 89, 182, 0.25);
+}
+
+.ear-cutImg {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.ear-cutName {
+  font-size: 0.95rem;
+  color: #4A235A;
+  font-weight: 600;
+}
+
+/* ========== METAL BUTTONS ========== */
+
+.ear-metals {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ear-metalBtn {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 1;
+  min-width: 140px;
+}
+
+.ear-metalBtn:hover {
+  border-color: #D2B4DE;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.2);
+}
+
+.ear-metalBtn.isActive {
+  border-color: #9B59B6;
+  background: #f8f4f9;
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.25);
+}
+
+.ear-metalDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.ear-metalName {
+  font-size: 1rem;
+  color: #4A235A;
+  font-weight: 600;
+  font-family: "Cormorant Garamond", serif;
+}
+
+/* ========== BACKING GRID ========== */
+
+.ear-backingGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.ear-backingBtn {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.95rem;
+  color: #9B59B6;
+  font-weight: 600;
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.ear-backingBtn:hover {
+  border-color: #D2B4DE;
+  transform: translateY(-2px);
+  background: #f8f4f9;
+}
+
+.ear-backingBtn.isActive {
+  background: linear-gradient(135deg, #9B59B6, #D2B4DE);
+  border-color: #9B59B6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
+/* ========== STYLE GRID (for charm) ========== */
+
+.ear-styleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.ear-styleCard {
+  background: white;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ear-styleCard:hover {
+  border-color: #D2B4DE;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(155, 89, 182, 0.2);
+}
+
+.ear-styleCard.isActive {
+  border-color: #9B59B6;
+  background: #f8f4f9;
+  box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3);
+}
+
+.ear-styleImg {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f8f4f9;
+}
+
+.ear-styleName {
+  font-size: 1rem;
+  color: #4A235A;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ========== TEXT INPUT (for charm color) ========== */
+
+.ear-textInput {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid #EBDEF0;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #4A235A;
+  font-family: "Cormorant Garamond", serif;
+  background: white;
+  transition: all 0.25s ease;
+}
+
+.ear-textInput:focus {
+  outline: none;
+  border-color: #9B59B6;
+  box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+}
+
+.ear-textInput::placeholder {
+  color: #D2B4DE;
+}
+
+/* ========== NEXT BUTTON ========== */
+
+.ear-next {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #9B59B6, #D2B4DE);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Cormorant Garamond", serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
+
+.ear-next:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(155, 89, 182, 0.4);
+}
+
+.ear-next:disabled {
+  background: #D2B4DE;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ear-error {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff0f0;
+  border: 2px solid #ffb3b3;
+  border-radius: 12px;
+  color: #c62828;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 1024px) {
+  .ear-customizer {
+    grid-template-columns: 1fr;
+  }
+
+  .ear-preview {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ear-title {
+    font-size: 2.5rem;
+  }
+
+  .ear-monthGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .ear-cutGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ear-backingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ear-styleGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ear-metals {
+    flex-direction: column;
+  }
+
+  .ear-metalBtn {
+    min-width: 100%;
+  }
+}
