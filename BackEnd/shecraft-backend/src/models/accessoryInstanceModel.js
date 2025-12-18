@@ -28,24 +28,27 @@ async function reserveAndDecrementCharms(conn, charms) {
   for (const it of charms) {
     if (!it?.charmID) continue;
     const q = it.quantity == null ? 1 : Number(it.quantity);
+    if (!Number.isFinite(q) || q <= 0) continue;
     req.set(it.charmID, (req.get(it.charmID) || 0) + q);
   }
+
   const ids = [...req.keys()];
   if (ids.length === 0) return;
 
   const placeholders = ids.map(() => "?").join(",");
 
-  // lock rows
   const [rows] = await conn.query(
     `SELECT charmID, qty FROM charm WHERE charmID IN (${placeholders}) FOR UPDATE`,
     ids
   );
+
   if (rows.length !== ids.length) throw badRequest("One or more charmIDs do not exist");
 
-  const stock = new Map(rows.map(r => [r.charmID, Number(r.qty)]));
+  const stock = new Map(rows.map((r) => [r.charmID, Number(r.qty)]));
   for (const [id, needed] of req.entries()) {
     const available = stock.get(id) ?? 0;
-    if (available < needed) throw badRequest(`Charm ${id} out of stock (need ${needed}, have ${available})`);
+    if (available < needed)
+      throw badRequest(`Charm ${id} out of stock (need ${needed}, have ${available})`);
   }
 
   for (const [id, needed] of req.entries()) {
@@ -60,8 +63,10 @@ async function reserveAndDecrementStones(conn, stones) {
   for (const it of stones) {
     if (!it?.stoneID) continue;
     const q = it.quantity == null ? 1 : Number(it.quantity);
+    if (!Number.isFinite(q) || q <= 0) continue;
     req.set(it.stoneID, (req.get(it.stoneID) || 0) + q);
   }
+
   const ids = [...req.keys()];
   if (ids.length === 0) return;
 
@@ -71,19 +76,20 @@ async function reserveAndDecrementStones(conn, stones) {
     `SELECT stoneID, qty FROM stone WHERE stoneID IN (${placeholders}) FOR UPDATE`,
     ids
   );
+
   if (rows.length !== ids.length) throw badRequest("One or more stoneIDs do not exist");
 
-  const stock = new Map(rows.map(r => [r.stoneID, Number(r.qty)]));
+  const stock = new Map(rows.map((r) => [r.stoneID, Number(r.qty)]));
   for (const [id, needed] of req.entries()) {
     const available = stock.get(id) ?? 0;
-    if (available < needed) throw badRequest(`Stone ${id} out of stock (need ${needed}, have ${available})`);
+    if (available < needed)
+      throw badRequest(`Stone ${id} out of stock (need ${needed}, have ${available})`);
   }
 
   for (const [id, needed] of req.entries()) {
     await conn.query(`UPDATE stone SET qty = qty - ? WHERE stoneID = ?`, [needed, id]);
   }
 }
-
 
 // --- pricing: material + charms + stones ---
 async function computeAccessoryPrice(conn, accessoryID) {
@@ -113,7 +119,7 @@ async function computeAccessoryPrice(conn, accessoryID) {
       GROUP BY g.accessoryID
     ) st ON st.accessoryID = a.accessoryID
 
-    WHERE a.accessoryID = ?
+    WHERE a.accessoryID LIKE ?
     `,
     [accessoryID, accessoryID, accessoryID]
   );
@@ -125,7 +131,6 @@ async function computeAccessoryPrice(conn, accessoryID) {
 async function upsertOrnaments(conn, accessoryID, charms) {
   if (!Array.isArray(charms) || charms.length === 0) return;
 
-  // enforce uniqueness by charmID; sum quantities
   const map = new Map();
   for (const it of charms) {
     if (!it?.charmID) continue;
@@ -143,7 +148,6 @@ async function upsertOrnaments(conn, accessoryID, charms) {
     Math.max(1, Math.trunc(quantity)),
   ]);
 
-  // build: (?,?,?),(?,?,?),...
   const placeholders = rows.map(() => "(?,?,?)").join(", ");
   const flat = rows.flat();
 
@@ -156,7 +160,6 @@ async function upsertOrnaments(conn, accessoryID, charms) {
     flat
   );
 }
-
 
 async function upsertGems(conn, accessoryID, stones) {
   if (!Array.isArray(stones) || stones.length === 0) return;
@@ -191,14 +194,13 @@ async function upsertGems(conn, accessoryID, stones) {
   );
 }
 
-
 // --- main transactional creator ---
 async function createAccessoryInstance({
   type, // "ring" | "necklace" | "bracelet" | "earring"
-  materialID,
+  materialID, // ✅ MUST be provided by controller
   nbOfCharms = 0,
   nbOfStones = 0,
-  product, // type-specific fields
+  product,
   charms = [],
   stones = [],
 }) {
@@ -206,17 +208,16 @@ async function createAccessoryInstance({
   try {
     await conn.beginTransaction();
 
+    if (!materialID) throw badRequest("materialID is required");
+
     // 1) create accessoryID
     const accessoryID = await nextId(conn, "accessory", "accessoryID", "X", 3);
 
-
-    // 2) insert accessory (price starts at 0; will be computed)
+    // 2) insert accessory
     await conn.query(
-      `
-      INSERT INTO accessory (accessoryID, price, materialID, status)
-VALUES (?, ?, ?, 'reserved')
-      `,
-      [accessoryID, 0, materialID]
+      `INSERT INTO accessory (accessoryID, price, materialID, status)
+       VALUES (?, 0, ?, 'reserved')`,
+      [accessoryID, materialID]
     );
 
     // 3) insert child row based on type
@@ -249,10 +250,10 @@ VALUES (?, ?, ?, 'reserved')
         [earringID, backing, style, size, accessoryID]
       );
     } else {
-      throw new Error(`Unsupported type: ${type}`);
+      throw badRequest(`Unsupported type: ${type}`);
     }
 
-    // 4) insert ornaments/gems
+    // 4) reserve + decrement inventory, then insert ornaments/gems
     await reserveAndDecrementCharms(conn, charms);
     await reserveAndDecrementStones(conn, stones);
 
@@ -281,7 +282,6 @@ async function cancelAccessoryReservation(accessoryID) {
   try {
     await conn.beginTransaction();
 
-    // Lock accessory row (prevents double cancel / races)
     const [[acc]] = await conn.query(
       `SELECT accessoryID, status FROM accessory WHERE accessoryID = ? FOR UPDATE`,
       [accessoryID]
@@ -305,37 +305,32 @@ async function cancelAccessoryReservation(accessoryID) {
       throw e;
     }
 
-    // Release charms back based on ORNAMENTS
     const [chRows] = await conn.query(
       `SELECT charmID, quantity FROM ornaments WHERE accessoryID = ?`,
       [accessoryID]
     );
 
     for (const r of chRows) {
-      await conn.query(
-        `UPDATE charm SET qty = qty + ? WHERE charmID = ?`,
-        [Number(r.quantity), r.charmID]
-      );
+      await conn.query(`UPDATE charm SET qty = qty + ? WHERE charmID = ?`, [
+        Number(r.quantity),
+        r.charmID,
+      ]);
     }
 
-    // Release stones back based on GEMS
-    const [stRows] = await conn.query(
-      `SELECT stoneID, quantity FROM gems WHERE accessoryID = ?`,
-      [accessoryID]
-    );
+    const [stRows] = await conn.query(`SELECT stoneID, quantity FROM gems WHERE accessoryID = ?`, [
+      accessoryID,
+    ]);
 
     for (const r of stRows) {
-      await conn.query(
-        `UPDATE stone SET qty = qty + ? WHERE stoneID = ?`,
-        [Number(r.quantity), r.stoneID]
-      );
+      await conn.query(`UPDATE stone SET qty = qty + ? WHERE stoneID = ?`, [
+        Number(r.quantity),
+        r.stoneID,
+      ]);
     }
 
-    // Mark cancelled (prevents future releases)
-    await conn.query(
-      `UPDATE accessory SET status = 'cancelled' WHERE accessoryID = ?`,
-      [accessoryID]
-    );
+    await conn.query(`UPDATE accessory SET status = 'cancelled' WHERE accessoryID = ?`, [
+      accessoryID,
+    ]);
 
     await conn.commit();
     return {
@@ -351,9 +346,7 @@ async function cancelAccessoryReservation(accessoryID) {
   }
 }
 
-
 module.exports = {
   createAccessoryInstance,
   cancelAccessoryReservation,
 };
-

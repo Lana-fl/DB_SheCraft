@@ -785,6 +785,8 @@ import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 import "../styles/charmNecklace.css";
 import "../styles/necklace.css";
+import { useCart } from "../context/CartContext";
+
 
 
 
@@ -798,9 +800,9 @@ const CHAIN_DB_MAP = { Cable: "cable", Rope: "rope", Box: "box", Thin: "thin" };
 const NECKLACE_DB_STYLE = "free charm"; // allowed: 'name','free charm','birthstone'
 
 const METALS = [
-  { name: "Silver", color: "#C0C0C0", api: "Silver" },
-  { name: "Gold", color: "#FFD700", api: "Gold" },
-  { name: "Rose Gold", color: "#B76E79", api: "RoseGold" },
+  { name: "silver", color: "#C0C0C0", api: "silver" },
+  { name: "gold", color: "#FFD700", api: "gold" },
+  { name: "rose gold", color: "#B76E79", api: "rose gold" },
 ];
 
 const CHAINS = [
@@ -836,6 +838,8 @@ function addToLocalCartOnce(cartItem) {
 
 export default function CharmNecklacePage() {
   const navigate = useNavigate();
+
+  const { addToCart } = useCart();
 
   const [activePanel, setActivePanel] = useState(null);
 
@@ -1087,24 +1091,26 @@ export default function CharmNecklacePage() {
         throw new Error("Backend did not return accessoryID.");
       }
 
-      // ✅ Add to cart ONCE
-      addToLocalCartOnce({
-        accessoryID,
-        type: "necklace",
-        style: "free charm",
-        metal: metal.name,
-        chain: selectedChain.name,
-        length: selectedLength,
-        charmColor,
-        charms: confirmedCharms.map((c) => ({
-          charmID: c.charmID,
-          design: c.design,
-          color: c.color,
-          text: c.type === "letter-custom" ? c.text : null,
-          price: c.price,
-        })),
-        price: computedPrice ?? estimatedTotal,
-      });
+      addToCart({
+  accessoryID,
+  type: "necklace",
+  metal: metal.name,
+  price: computedPrice ?? estimatedTotal,
+
+  // ✅ CartPage reads item.summary.charms
+  summary: {
+    chain: selectedChain.name,
+    length: selectedLength,
+    charmColor,
+    charms: confirmedCharms.map((c) => ({
+      charmID: c.charmID,
+      quantity: 1,
+      name: c.design,
+      color: c.color || charmColor,
+      text: c.type === "letter-custom" ? c.text : null,
+    })),
+  },
+});
 
       // ✅ go to OrderPage (as you asked)
       navigate(ORDER_PAGE_ROUTE);
