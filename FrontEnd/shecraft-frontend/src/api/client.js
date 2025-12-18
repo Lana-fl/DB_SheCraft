@@ -98,9 +98,22 @@ getMyAccount() {
   });
 }
 
+getMyDesignerAccount() {
+  return this.request("/api/designers/account");
+}
+
+updateDesignerAccount({ name, branch, countryCode, phoneNb, email }) {
+  return this.request("/api/designers/account", {
+    method: "PUT",
+    body: JSON.stringify({ name, branch, countryCode, phoneNb, email }),
+  });
+}
+
+
 
   // ❌ NO logout() here anymore
   // Logout is handled ONLY by useAuth.logout()
 }
+
 
 export const api = new ApiClient(API_BASE_URL);

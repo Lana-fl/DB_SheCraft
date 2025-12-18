@@ -68,7 +68,7 @@ export default function LoginPage({ closePopup }) {
             : await api.signupDesigner({ name, email, password, branch });
       }
 
-      // ✅ Save auth in context (and localStorage inside AuthContext.login)
+      // ✅ Save auth in context
       login({
         role,
         user: data.user,
@@ -114,7 +114,9 @@ export default function LoginPage({ closePopup }) {
 
             <button
               type="button"
-              className={`role-pill ${role === "customer" ? "active" : ""}`}
+              className={`role-pill ${
+                role === "customer" ? "active" : ""
+              }`}
               onClick={() => setRole("customer")}
             >
               Customer
@@ -122,7 +124,9 @@ export default function LoginPage({ closePopup }) {
 
             <button
               type="button"
-              className={`role-pill ${role === "designer" ? "active" : ""}`}
+              className={`role-pill ${
+                role === "designer" ? "active" : ""
+              }`}
               onClick={() => setRole("designer")}
             >
               Designer
@@ -188,7 +192,9 @@ export default function LoginPage({ closePopup }) {
               </form>
             )}
 
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
+            {errorMessage && (
+              <p className="error-message">{errorMessage}</p>
+            )}
           </div>
         </div>
       </div>

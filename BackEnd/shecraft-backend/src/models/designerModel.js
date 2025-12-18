@@ -1,7 +1,11 @@
 // src/models/designerModel.js
 const pool = require("../config/db");
 
-// Get all designers (we don't return passwordHash if it exists)
+/* ===============================
+   GETTERS
+================================ */
+
+// Get all designers (no passwordHash)
 async function getAllDesigners() {
   const [rows] = await pool.query(`
     SELECT 
@@ -32,10 +36,15 @@ async function getDesignerById(designerID) {
     `,
     [designerID]
   );
+
   return rows[0] || null;
 }
 
-// Update designer basic info
+/* ===============================
+   UPDATES (ADMIN)
+================================ */
+
+// Update designer by ID (admin / management)
 async function updateDesigner(designerID, data) {
   const { name, branch, email, countryCode, phoneNb } = data;
 
@@ -50,31 +59,78 @@ async function updateDesigner(designerID, data) {
       phoneNb = ?
     WHERE designerID = ?
     `,
-    [
-      name || null,
-      branch || null,
-      email || null,
-      countryCode || null,
-      phoneNb || null,
-      designerID,
-    ]
+    [name, branch, email, countryCode, phoneNb, designerID]
   );
 
   return result.affectedRows > 0;
 }
 
-// Delete designer
+/* ===============================
+   DELETE
+================================ */
+
 async function deleteDesigner(designerID) {
   const [result] = await pool.query(
     "DELETE FROM DESIGNER WHERE designerID = ?",
     [designerID]
   );
+
   return result.affectedRows > 0;
 }
+
+/* ===============================
+   MY DESIGNER ACCOUNT (JWT)
+================================ */
+
+// Get logged-in designer account
+async function getMyDesignerAccount(designerID) {
+  const [rows] = await pool.query(
+    `
+    SELECT
+      name,
+      email,
+      branch,
+      countryCode,
+      phoneNb
+    FROM DESIGNER
+    WHERE designerID = ?
+    `,
+    [designerID]
+  );
+
+  return rows[0] || null;
+}
+
+// Update logged-in designer account
+async function updateMyDesignerAccount(designerID, data) {
+  const { name, branch, email, countryCode, phoneNb } = data;
+
+  const [result] = await pool.query(
+    `
+    UPDATE DESIGNER
+    SET
+      name = ?,
+      branch = ?,
+      email = ?,
+      countryCode = ?,
+      phoneNb = ?
+    WHERE designerID = ?
+    `,
+    [name, branch, email, countryCode, phoneNb, designerID]
+  );
+
+  return result.affectedRows > 0;
+}
+
+/* ===============================
+   EXPORTS
+================================ */
 
 module.exports = {
   getAllDesigners,
   getDesignerById,
   updateDesigner,
   deleteDesigner,
+  getMyDesignerAccount,
+  updateMyDesignerAccount,
 };

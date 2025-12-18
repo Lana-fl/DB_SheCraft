@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/bracelet.css";
 
-// ===== Name style images (ONLY THESE) =====
+/* ===== Name style images ===== */
 import BubbleImg from "../assets/Bracelet/braceletstyle/bubble.jpg";
 import CursiveImg from "../assets/Bracelet/braceletstyle/cursive.jpg";
 import LetterSparkImg from "../assets/Bracelet/braceletstyle/letterspark.jpg";
 
-// ===== Other images =====
+/* ===== Other images ===== */
 import LengthImg from "../assets/Bracelet/length.jpg";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
@@ -33,39 +33,37 @@ const CHAINS = [
   { name: "Thin", img: Thin },
 ];
 
-const LENGTHS = [6, 7, 8, 9];
+const LENGTHS = [6, 6.5, 7, 7.5];
 
 export default function BraceletsPage() {
   const navigate = useNavigate();
 
-  const [currentStep, setCurrentStep] = useState(1);
   const [activePanel, setActivePanel] = useState(null);
+  const [hoverIndex, setHoverIndex] = useState(0);
 
   const [selectedNameStyle, setSelectedNameStyle] = useState({
     ...NAME_STYLES[0],
     fixed: false,
   });
-  const [hoverIndex, setHoverIndex] = useState(0);
 
   const [nameText, setNameText] = useState("");
   const [metal, setMetal] = useState(METALS[0].color);
   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
   const [selectedLength, setSelectedLength] = useState(7);
 
+  /* slower auto-preview */
   useEffect(() => {
     if (selectedNameStyle.fixed) return;
     const interval = setInterval(() => {
-      setHoverIndex((prev) => (prev + 1) % NAME_STYLES.length);
-    }, 1100);
+      setHoverIndex((i) => (i + 1) % NAME_STYLES.length);
+    }, 2200);
     return () => clearInterval(interval);
   }, [selectedNameStyle.fixed]);
 
   const closePanel = () => setActivePanel(null);
-  const togglePanel = (panel) =>
-    setActivePanel((prev) => (prev === panel ? null : panel));
+  const togglePanel = (p) => setActivePanel((prev) => (prev === p ? null : p));
 
   const handleSubmit = () => {
-    setCurrentStep(2);
     navigate("/checkout", {
       state: {
         itemType: "bracelet",
@@ -89,27 +87,26 @@ export default function BraceletsPage() {
         </header>
 
         <div className="nk-customizer">
-          {/* LEFT PREVIEW */}
+          {/* PREVIEW */}
           <section className="nk-preview">
             <div className="nk-previewCard">
               <div className="nk-previewTop">
                 <span className="nk-badge">Live Preview</span>
                 <span className="nk-chip">
-                  {METALS.find((m) => m.color === metal)?.name || "Metal"}
+                  {METALS.find((m) => m.color === metal)?.name}
                 </span>
               </div>
 
               <div className="nk-imageWrap">
                 <img
+                  className="nk-mainImg"
                   src={
                     selectedNameStyle.fixed
                       ? selectedNameStyle.img
                       : NAME_STYLES[hoverIndex].img
                   }
-                  alt="Bracelet Preview"
-                  className="nk-mainImg"
+                  alt="Bracelet preview"
                 />
-
                 {nameText && (
                   <div className="nk-nameOverlay">
                     <span className="nk-nameText">{nameText}</span>
@@ -134,21 +131,18 @@ export default function BraceletsPage() {
             </div>
           </section>
 
-          {/* RIGHT CONTROLS */}
+          {/* CONTROLS */}
           <section className="nk-controls">
             <div className="nk-section">
               <label className="nk-label">Engraved Name</label>
               <input
                 className="nk-input"
-                type="text"
                 maxLength={12}
                 placeholder="Enter name (max 12)"
                 value={nameText}
                 onChange={(e) => setNameText(e.target.value)}
               />
-              <p className="nk-help">
-                Tip: shorter names look more balanced.
-              </p>
+              <p className="nk-help">Tip: shorter names look more balanced.</p>
             </div>
 
             <div className="nk-section">
@@ -157,7 +151,6 @@ export default function BraceletsPage() {
                 {METALS.map((m) => (
                   <button
                     key={m.name}
-                    type="button"
                     className={`nk-metalBtn ${
                       metal === m.color ? "isActive" : ""
                     }`}
@@ -165,7 +158,7 @@ export default function BraceletsPage() {
                   >
                     <span
                       className="nk-metalDot"
-                      style={{ backgroundColor: m.color }}
+                      style={{ background: m.color }}
                     />
                     <span className="nk-metalName">{m.name}</span>
                   </button>
@@ -173,16 +166,12 @@ export default function BraceletsPage() {
               </div>
             </div>
 
-            <button
-              className="nk-rowBtn"
-              onClick={() => togglePanel("nameStyle")}
-            >
+            <button className="nk-rowBtn" onClick={() => togglePanel("nameStyle")}>
               <div className="nk-rowLeft">
                 <span className="nk-rowTitle">Name Style</span>
-                <span className="nk-rowValue">
-                  {selectedNameStyle.name}
-                </span>
+                <span className="nk-rowValue">{selectedNameStyle.name}</span>
               </div>
+              <span className="nk-chevron" />
             </button>
 
             <button
@@ -195,6 +184,7 @@ export default function BraceletsPage() {
                   {selectedChain.name} · {selectedLength}"
                 </span>
               </div>
+              <span className="nk-chevron" />
             </button>
 
             <button className="nk-next" onClick={handleSubmit}>
@@ -202,38 +192,56 @@ export default function BraceletsPage() {
             </button>
           </section>
 
-          {/* PANEL */}
+          {/* SLIDE PANEL */}
           {activePanel && (
             <>
               <aside className="nk-panel open">
                 <div className="nk-panelHeader">
-                  <h3>
-                    {activePanel === "nameStyle"
-                      ? "Select Name Style"
-                      : "Chain & Length"}
-                  </h3>
+                  <div>
+                    <h3 className="nk-panelTitle">
+                      {activePanel === "nameStyle"
+                        ? "Select Name Style"
+                        : "Chain & Length"}
+                    </h3>
+                    <p className="nk-panelSub">
+                      {activePanel === "nameStyle"
+                        ? "Pick the font look that matches your vibe."
+                        : "Choose the chain type and length."}
+                    </p>
+                  </div>
                   <button className="nk-close" onClick={closePanel}>
                     Close
                   </button>
                 </div>
 
                 <div className="nk-panelBody">
-                  {activePanel === "nameStyle" &&
-                    NAME_STYLES.map((style) => (
-                      <button
-                        key={style.name}
-                        className="nk-cardPick"
-                        onClick={() =>
-                          setSelectedNameStyle({
-                            ...style,
-                            fixed: true,
-                          })
-                        }
-                      >
-                        <img src={style.img} alt={style.name} />
-                        <strong>{style.name}</strong>
-                      </button>
-                    ))}
+                  {activePanel === "nameStyle" && (
+                    <div className="nk-grid">
+                      {NAME_STYLES.map((style) => (
+                        <button
+                          key={style.name}
+                          className={`nk-cardPick ${
+                            selectedNameStyle.name === style.name
+                              ? "isActive"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            setSelectedNameStyle({ ...style, fixed: true })
+                          }
+                        >
+                          <img
+                            src={style.img}
+                            alt={style.name}
+                            className="nk-cardImg"
+                          />
+                          <div className="nk-cardText">
+                            <strong>{style.name}</strong>
+                            <span>Tap to select</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
                   {activePanel === "chainLength" && (
                     <>
@@ -241,10 +249,18 @@ export default function BraceletsPage() {
                         {CHAINS.map((c) => (
                           <button
                             key={c.name}
-                            className="nk-chainCard"
+                            className={`nk-chainCard ${
+                              selectedChain.name === c.name ? "isActive" : ""
+                            }`}
                             onClick={() => setSelectedChain(c)}
                           >
-                            <img src={c.img} alt={c.name} />
+                            <div className="nk-chainImgWrapper">
+                              <img
+                                src={c.img}
+                                alt={c.name}
+                                className="nk-chainImg"
+                              />
+                            </div>
                             <strong>{c.name}</strong>
                           </button>
                         ))}
@@ -254,7 +270,9 @@ export default function BraceletsPage() {
                         {LENGTHS.map((len) => (
                           <button
                             key={len}
-                            className="nk-lengthBtn"
+                            className={`nk-lengthBtn ${
+                              selectedLength === len ? "isActive" : ""
+                            }`}
                             onClick={() => setSelectedLength(len)}
                           >
                             {len}"
@@ -262,13 +280,21 @@ export default function BraceletsPage() {
                         ))}
                       </div>
 
-                      <img
-                        src={LengthImg}
-                        alt="Length Guide"
-                        className="nk-lengthImg"
-                      />
+                      <div className="nk-lengthPreview">
+                        <img
+                          src={LengthImg}
+                          alt="Bracelet length guide"
+                          className="nk-lengthImg"
+                        />
+                      </div>
                     </>
                   )}
+                </div>
+
+                <div className="nk-panelFooter">
+                  <button className="nk-confirm" onClick={closePanel}>
+                    Confirm Style
+                  </button>
                 </div>
               </aside>
 

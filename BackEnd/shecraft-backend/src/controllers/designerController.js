@@ -63,9 +63,58 @@ async function deleteDesigner(req, res) {
   }
 }
 
+// ================= MY DESIGNER ACCOUNT =================
+
+async function getMyDesignerAccount(req, res) {
+  try {
+    const designerID = req.user.id;
+
+    const designer = await designerModel.getMyDesignerAccount(designerID);
+
+    if (!designer) {
+      return res.status(404).json({ message: "Designer not found" });
+    }
+
+    res.json(designer);
+  } catch (err) {
+    console.error("Error fetching designer account:", err);
+    res.status(500).json({ message: "Failed to load account" });
+  }
+}
+
+async function updateMyDesignerAccount(req, res) {
+  try {
+    const designerID = req.user.id;
+    const { name, branch, email } = req.body;
+
+    if (!name || !branch || !email) {
+      return res.status(400).json({
+        message: "Name, branch, and email are required",
+      });
+    }
+
+    const updated = await designerModel.updateMyDesignerAccount(
+      designerID,
+      req.body
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Designer not found" });
+    }
+
+    res.json({ message: "Account updated successfully" });
+  } catch (err) {
+    console.error("Error updating designer account:", err);
+    res.status(500).json({ message: "Failed to update account" });
+  }
+}
+
+
 module.exports = {
   getDesigners,
   getDesigner,
   updateDesigner,
   deleteDesigner,
+  getMyDesignerAccount,
+  updateMyDesignerAccount,
 };
