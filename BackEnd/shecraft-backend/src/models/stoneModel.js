@@ -27,7 +27,7 @@
 // async function getStonesByGem(gem) {
 //   const [rows] = await pool.query(
 //     `SELECT stoneID, certificationID, cut, gem, purity, rarity,
-//             price, color, weight, qty
+//             price, color, weight, qty,colorHex
 //      FROM STONE
 //      WHERE gem = ?`,
 //     [gem]
@@ -39,7 +39,7 @@
 // async function getStonesByColor(color) {
 //   const [rows] = await pool.query(
 //     `SELECT stoneID, certificationID, cut, gem, purity, rarity,
-//             price, color, weight, qty
+//             price, color, weight, qty,c
 //      FROM STONE
 //      WHERE color = ?`,
 //     [color]
@@ -87,6 +87,7 @@
 //   getStoneById,
 //   getStonesByGem,
 //   getStonesByColor,
+     getStonesByHexColor
 //   getStonesByRarity,
 //   getAvailableStones,
 //   updateStoneQty,
@@ -97,7 +98,7 @@ const pool = require("../config/db");
 // Base select (reuse everywhere)
 const BASE_SELECT = `
   SELECT stoneID, certificationID, cut, gem, purity, rarity,
-         price, color, hexColor, weight, qty
+         price, color, colorHex, weight, qty
   FROM STONE
 `;
 
@@ -165,7 +166,7 @@ async function updateStoneQty(stoneID, newQty) {
 // models/stoneModel.js
 async function getStonesByHexColor(hex) {
   const [rows] = await db.execute(
-    `SELECT * FROM STONE WHERE colorHex = ? AND qty > 0`,
+    `SELECT  FROM STONE WHERE colorHex = ? AND qty > 0`,
     [hex]
   );
   return rows;

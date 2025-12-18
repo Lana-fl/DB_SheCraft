@@ -114,10 +114,19 @@ export default function CartPage() {
 
       // IMPORTANT: release inventory in DB
       // change base URL to whatever you mounted (example below)
-      await fetch(`/api/accessory-instance/${accessoryID}/cancel`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const API_BASE = "http://localhost:5000";
+
+const res = await fetch(`${API_BASE}/api/accessory-instance/${accessoryID}/cancel`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+});
+
+const data = await res.json().catch(() => ({}));
+if (!res.ok) {
+  throw new Error(data?.message || data?.error || `Cancel failed (${res.status})`);
+}
+
 
       removeFromCart(accessoryID);
     } catch (e) {
