@@ -12,5 +12,5 @@ router.get("/color/:color", stoneController.getStonesByColor);  // by color
 router.get("/rarity/:rarity", stoneController.getStonesByRarity); // by rarity
 router.get("/:stoneID", stoneController.getStone);              // by ID
 router.put("/:stoneID/qty", stoneController.updateStoneQty);    // update qty
-
+router.get("/birthstone/:month", stoneController.getStonesByHexColor); 
 module.exports = router;
