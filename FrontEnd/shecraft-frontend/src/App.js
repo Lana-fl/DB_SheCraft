@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 /* =======================
    PAGES
    ======================= */
-   import CharmBraceletPage from "./pages/CharmBraceletPage";
+   import CharmBraceletPage from "./pages/CharmBraceletPage.js";
 
 import WelcomePage from "./pages/WelcomePage";
 import AboutPage from "./pages/AboutPage";
@@ -122,7 +122,7 @@ function App() {
               element={<BraceletsPage />}
             />
             <Route
-            path="/bracelets/charm"
+            path="/bracelet/charm"
             element={<CharmBraceletPage />}
             />
 
