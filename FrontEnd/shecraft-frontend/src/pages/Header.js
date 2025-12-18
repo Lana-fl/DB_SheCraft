@@ -125,7 +125,7 @@ const Header = ({ openLogin }) => {
           type="button"
           className="icon-button"
           aria-label="Orders"
-          onClick={() => handleProtectedNav("/orders")}
+          onClick={() => handleProtectedNav("/orderpage")}
         >
           <img src={orderImg} alt="Orders" className="icon-img" />
         </button>

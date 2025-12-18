@@ -376,3 +376,330 @@
 //     </div>
 //   );
 // }
+
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/necklace.css";
+
+import LengthImg from "../assets/necklace/length.png";
+import Cable from "../assets/chains/cable.png";
+import Rope from "../assets/chains/rope.jpg";
+import Box from "../assets/chains/box.jpg";
+import Thin from "../assets/chains/thin.png";
+
+const METALS = [
+  { name: "Silver", color: "#C0C0C0", api: "Silver" },
+  { name: "Gold", color: "#FFD700", api: "Gold" },
+  { name: "Rose Gold", color: "#B76E79", api: "RoseGold" },
+];
+
+const CHAINS = [
+  { name: "Cable", img: Cable },
+  { name: "Rope", img: Rope },
+  { name: "Box", img: Box },
+  { name: "Thin", img: Thin },
+];
+
+const LENGTHS = [14, 16, 18, 20];
+const CHARM_COLORS = ["Multicolor", "Silver", "Gold", "RoseGold"];
+
+export default function CharmNecklacePage() {
+  const navigate = useNavigate();
+
+  const [activePanel, setActivePanel] = useState(null);
+
+  const [metal, setMetal] = useState(METALS[0]);
+  const [charmColor, setCharmColor] = useState("Silver");
+
+  const [letterCharms, setLetterCharms] = useState([]);
+  const [shapeCharms, setShapeCharms] = useState([]);
+
+  const [selectedLetters, setSelectedLetters] = useState([]);
+  const [selectedShapes, setSelectedShapes] = useState([]);
+  const [confirmedCharms, setConfirmedCharms] = useState([]);
+
+  const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
+  const [selectedLength, setSelectedLength] = useState(16);
+
+  /* ---------------- FETCH CHARMS ---------------- */
+
+  useEffect(() => {
+  async function fetchCharms() {
+    try {
+      const [lettersRes, shapesRes] = await Promise.all([
+        fetch(`http://localhost:5000/api/charms/letters?color=${charmColor}`),
+        fetch(`http://localhost:5000/api/charms/shapes?color=${charmColor}`),
+      ]);
+
+      if (!lettersRes.ok) throw new Error(`Letters API failed: ${lettersRes.status}`);
+      if (!shapesRes.ok) throw new Error(`Shapes API failed: ${shapesRes.status}`);
+
+      const lettersData = await lettersRes.json();
+      const shapesData = await shapesRes.json();
+
+      setLetterCharms(Array.isArray(lettersData) ? lettersData : []);
+      setShapeCharms(Array.isArray(shapesData) ? shapesData : []);
+    } catch (err) {
+      console.error("Failed to fetch charms", err);
+      setLetterCharms([]);
+      setShapeCharms([]);
+    }
+  }
+
+  fetchCharms();
+}, [charmColor]);
+
+
+  /* ---------------- HELPERS ---------------- */
+
+  const toggleCharm = (charm, type) => {
+    const list = type === "letter" ? selectedLetters : selectedShapes;
+    const setList = type === "letter" ? setSelectedLetters : setSelectedShapes;
+
+    if (list.some((c) => c.charmID === charm.charmID)) {
+      setList(list.filter((c) => c.charmID !== charm.charmID));
+    } else {
+      setList([...list, charm]);
+    }
+  };
+
+  const confirmCharms = () => {
+    setConfirmedCharms([...selectedLetters, ...selectedShapes]);
+    setActivePanel(null);
+  };
+
+  const handleSubmit = () => {
+    navigate("/checkout", {
+      state: {
+        itemType: "charm-necklace",
+        charms: confirmedCharms,
+        chain: selectedChain,
+        length: selectedLength,
+        metal,
+      },
+    });
+  };
+
+  /* ---------------- UI ---------------- */
+
+  return (
+    <div className="nk-page">
+      <div className="nk-container">
+        <header className="nk-header">
+          <h2>Customize Your Charm Necklace</h2>
+          <p className="nk-subtitle">
+            Select letter charms, shapes, chain, and finish.
+          </p>
+        </header>
+
+        <div className="nk-customizer">
+          {/* PREVIEW */}
+          <section className="nk-preview">
+            <div className="nk-previewCard">
+              <div className="nk-previewTop">
+                <span className="nk-badge">Live Preview</span>
+                <span className="nk-chip">{metal.name}</span>
+              </div>
+
+              <div className="nk-imageWrap nk-charmPreview">
+                {confirmedCharms.length === 0 ? (
+                  <p className="nk-placeholder">No charms selected</p>
+                ) : (
+                  confirmedCharms.map((c) => (
+                    <img
+    key={c.charmID}
+    src={`http://localhost:5000${c.photoURL}`}
+    alt={c.design}
+    className="nk-charmImg"
+  />
+                  ))
+                )}
+              </div>
+
+              <div className="nk-previewMeta">
+                <div className="nk-metaRow">
+                  <span>Charms</span>
+                  <strong>{confirmedCharms.length}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Chain</span>
+                  <strong>{selectedChain.name}</strong>
+                </div>
+                <div className="nk-metaRow">
+                  <span>Length</span>
+                  <strong>{selectedLength}"</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CONTROLS */}
+          <section className="nk-controls">
+            <div className="nk-section">
+              <label className="nk-label">Metal</label>
+              <div className="nk-metals">
+                {METALS.map((m) => (
+                  <button
+                    key={m.name}
+                    className={`nk-metalBtn ${
+                      metal.name === m.name ? "isActive" : ""
+                    }`}
+                    onClick={() => setMetal(m)}
+                  >
+                    <span
+                      className="nk-metalDot"
+                      style={{ backgroundColor: m.color }}
+                    />
+                    {m.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="nk-section">
+              <label className="nk-label">Charm Color</label>
+              <select
+                className="nk-input"
+                value={charmColor}
+                onChange={(e) => setCharmColor(e.target.value)}
+              >
+                {CHARM_COLORS.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              className="nk-rowBtn"
+              onClick={() => setActivePanel("charms")}
+            >
+              <span>Charms</span>
+              <span>{confirmedCharms.length || "Select"}</span>
+            </button>
+
+            <button
+              className="nk-rowBtn"
+              onClick={() => setActivePanel("chain")}
+            >
+              <span>Chain & Length</span>
+              <span>
+                {selectedChain.name} · {selectedLength}"
+              </span>
+            </button>
+
+            <button className="nk-next" onClick={handleSubmit}>
+              Next to Designer
+            </button>
+          </section>
+
+          {/* PANEL */}
+          <aside className={`nk-panel ${activePanel ? "open" : ""}`}>
+            <div className="nk-panelHeader">
+              <h3>
+                {activePanel === "charms"
+                  ? "Select Your Charms"
+                  : "Chain & Length"}
+              </h3>
+              <button onClick={() => setActivePanel(null)}>Close</button>
+            </div>
+
+            <div className="nk-panelBody">
+              {activePanel === "charms" && (
+                <>
+                  <h4>Letter Charms</h4>
+                  <div className="nk-grid">
+                    {letterCharms.map((c) => (
+                      <button
+                        key={c.charmID}
+                        className={`nk-cardPick ${
+                          selectedLetters.some(
+                            (x) => x.charmID === c.charmID
+                          )
+                            ? "isActive"
+                            : ""
+                        }`}
+                        onClick={() => toggleCharm(c, "letter")}
+                      >
+                        <img src={`http://localhost:5000${c.photoURL}`} alt={c.design} />
+                        <small>{c.design.replace("letter ", "")}</small>
+                      </button>
+                    ))}
+                  </div>
+
+                  <h4>Shape Charms</h4>
+                  <div className="nk-grid">
+                    {shapeCharms.map((c) => (
+                      <button
+                        key={c.charmID}
+                        className={`nk-cardPick ${
+                          selectedShapes.some(
+                            (x) => x.charmID === c.charmID
+                          )
+                            ? "isActive"
+                            : ""
+                        }`}
+                        onClick={() => toggleCharm(c, "shape")}
+                      >
+                        <img src={`http://localhost:5000${c.photoURL}`} alt={c.design} />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {activePanel === "chain" && (
+                <>
+                  <h4>Chain Type</h4>
+                  <div className="nk-chainGrid">
+                    {CHAINS.map((c) => (
+                      <button
+                        key={c.name}
+                        className={`nk-chainCard ${
+                          selectedChain.name === c.name ? "isActive" : ""
+                        }`}
+                        onClick={() => setSelectedChain(c)}
+                      >
+                        <img src={c.img} alt={c.name} />
+                        <strong>{c.name}</strong>
+                      </button>
+                    ))}
+                  </div>
+
+                  <h4>Length</h4>
+                  <div className="nk-lengths">
+                    {LENGTHS.map((len) => (
+                      <button
+                        key={len}
+                        className={`nk-lengthBtn ${
+                          selectedLength === len ? "isActive" : ""
+                        }`}
+                        onClick={() => setSelectedLength(len)}
+                      >
+                        {len}"
+                      </button>
+                    ))}
+                  </div>
+
+                  <img src={LengthImg} alt="Length guide" />
+                </>
+              )}
+            </div>
+
+            {activePanel === "charms" && (
+              <div className="nk-panelFooter">
+                <button className="nk-confirm" onClick={confirmCharms}>
+                  Confirm Selection
+                </button>
+              </div>
+            )}
+          </aside>
+
+          {activePanel && (
+            <div className="nk-overlay" onClick={() => setActivePanel(null)} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
