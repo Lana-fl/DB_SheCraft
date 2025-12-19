@@ -12,7 +12,7 @@ import Rope from "../assets/chains/rope.jpg";
 import Box from "../assets/chains/box.jpg";
 import Thin from "../assets/chains/thin.png";
 
-/* ✅ CART CONTEXT (THIS IS THE FIX) */
+
 import { useCart } from "../context/CartContext";
 
 /* ---------------- CONSTANTS ---------------- */
@@ -58,9 +58,9 @@ function normalizeArray(x) {
 /* ================== COMPONENT ================== */
 export default function CharmBraceletPage() {
   const navigate = useNavigate();
-  const { addToCart } = useCart(); // ✅ FIX: use context cart
+  const { addToCart } = useCart(); 
 
-  const [activePanel, setActivePanel] = useState(null); // "charms" | "chain" | null
+  const [activePanel, setActivePanel] = useState(null); 
   const [metal, setMetal] = useState(METALS[0]);
   const [charmColor, setCharmColor] = useState("Silver");
 
@@ -232,7 +232,7 @@ export default function CharmBraceletPage() {
     setActivePanel("charms");
   };
 
-  // ✅ ONLY here we call POST + addToCart + navigate
+
   const confirmAndPay = async () => {
     setUiError("");
 
@@ -300,7 +300,7 @@ export default function CharmBraceletPage() {
       setReservedAccessoryID(accessoryID);
       setReservedComputedPrice(computedPrice);
 
-      // ✅ FIX: add into CartContext storage (tala_cart_v1) + duplicates prevented there
+      
       addToCart({
         accessoryID,
         type: "bracelet",
