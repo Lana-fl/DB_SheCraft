@@ -17,7 +17,7 @@ import OrderPage from "./pages/OrderPage";
 import Checkout from "./pages/CheckOut";
 import RingSelection from "./pages/RingSelection";
 import DesignerPage from "./pages/DesignerPage";
-import StepsBar from "./pages/StepsBar";
+
 import NecklaceSelection from "./pages/NecklaceSelection";
 import CharmNecklacePage from "./pages/CharmNecklacePage";
 import BirthstoneNecklace from "./pages/BirthstoneNecklace";
@@ -38,6 +38,7 @@ import EditAccountPage from "./pages/EditAccountPage";
    CART PAGE
    ======================= */
 import CartPage from "./pages/CartPage";
+import DesignerDashboard from "./pages/DesignerDashboard";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);
@@ -87,7 +88,16 @@ function App() {
             {/* ACCOUNT */}
             <Route path="/account" element={<AccountPage />} />
             <Route path="/account/edit" element={<EditAccountPage />} />
-
+            <Route
+  path="/designer/dashboard"
+  element={
+    isLoggedIn && userRole === "designer" ? (
+      <DesignerDashboard />
+    ) : (
+      <WelcomePage openLogin={openLogin} />
+    )
+  }
+/>
             {/* CART */}
             <Route
               path="/cart"
@@ -149,7 +159,7 @@ function App() {
             {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/designer" element={<DesignerPage />} />
-            <Route path="/steps" element={<StepsBar />} />
+            
             <Route path="/final-step" element={<FinalStep />} />
           </Routes>
         </main>

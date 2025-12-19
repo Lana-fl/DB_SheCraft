@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import "../styles/necklace.css";
 
-/* preview images (KEEP SAME COLOR IMAGE) */
+/* preview images */
 import GemColorPreviewImg from "../assets/gems/birthstone.jpeg";
 import EarringPreviewImg from "../assets/Earring/birthstoneearing.jpg";
 
@@ -13,21 +14,22 @@ import CutPrincess from "../assets/Cuts/princess.jpeg";
 import CutRound from "../assets/Cuts/round.jpg";
 
 const API_BASE = "http://localhost:5000";
+const EARRING_DB_STYLE = "birthstone";
 
-/* metals */
+/* METALS — SAME STRUCTURE AS BRACELET */
 const METALS = [
-  { name: "Silver", color: "#C0C0C0" },
-  { name: "Gold", color: "#FFD700" },
-  { name: "Rose Gold", color: "#B76E79" },
+  { name: "Silver", color: "#C0C0C0", api: "Silver" },
+  { name: "Gold", color: "#FFD700", api: "Gold" },
+  { name: "Rose Gold", color: "#B76E79", api: "Rose Gold" },
 ];
 
-/* backings — EXACTLY AS YOU SAID */
+/* BACKINGS — value = DB, name = UI */
 const BACKINGS = [
   { name: "Screw Back", value: "screw" },
   { name: "Clasp Back", value: "clasp" },
 ];
 
-/* cuts */
+/* CUTS */
 const CUTS = [
   { key: "Round", img: CutRound },
   { key: "Oval", img: CutOval },
@@ -35,62 +37,88 @@ const CUTS = [
   { key: "Princess", img: CutPrincess },
 ];
 
+/* helpers */
+const norm = (s) => String(s || "").trim().toLowerCase();
+
+function pickStoneForCut(stones, selectedCut) {
+  if (!Array.isArray(stones) || stones.length === 0) return null;
+  if (!selectedCut) return stones[0];
+
+  const want = norm(selectedCut);
+
+  return (
+    stones.find((st) =>
+      [st.cut, st.shape, st.cutType, st.type]
+        .map(norm)
+        .filter(Boolean)
+        .some((c) => c.includes(want) || want.includes(c))
+    ) || stones[0]
+  );
+}
+
 export default function BirthstoneEarring() {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
-  /* data */
+  /* DATA */
   const [allBirthstones, setAllBirthstones] = useState([]);
 
-  /* selections */
+  /* SELECTIONS */
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [monthStones, setMonthStones] = useState([]);
   const [availableColors, setAvailableColors] = useState([]);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedColorStones, setSelectedColorStones] = useState([]);
 
   const [selectedCut, setSelectedCut] = useState(null);
   const [metal, setMetal] = useState(METALS[0].color);
-  const [backing, setBacking] = useState(null);
+  const [backing, setBacking] = useState(null); // 🔥 STORES "screw" | "clasp"
 
-  /* fetch birthstones */
+  /* UI FEEDBACK (same as bracelet) */
+  const [uiError, setUiError] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [addedMsg, setAddedMsg] = useState("");
+  const [addedAccessoryID, setAddedAccessoryID] = useState(null);
+  const [lastComputedPrice, setLastComputedPrice] = useState(null);
+
+  /* FETCH STONES */
   useEffect(() => {
-    const fetchStones = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/stones`);
-        const data = await res.json();
-
+    fetch(`${API_BASE}/api/stones`)
+      .then((res) => res.json())
+      .then((data) => {
         const birthstones = Array.isArray(data)
           ? data.filter((s) => s.stoneID?.startsWith("B"))
           : [];
-
         setAllBirthstones(birthstones);
-      } catch (err) {
-        console.error("Error fetching stones", err);
-      }
-    };
-
-    fetchStones();
+      })
+      .catch((err) => console.error("Fetch stones error:", err));
   }, []);
 
-  /* months list */
+  /* MONTHS */
   const months = useMemo(() => {
     const set = new Set();
     allBirthstones.forEach((s) => s.gem && set.add(s.gem));
     return Array.from(set);
   }, [allBirthstones]);
 
-  /* month selection */
+  /* PICK MONTH */
   const onPickMonth = (month) => {
     setSelectedMonth(month);
     setSelectedColor(null);
     setSelectedCut(null);
+    setSelectedColorStones([]);
+    setUiError("");
+    setAddedMsg("");
+    setAddedAccessoryID(null);
+    setLastComputedPrice(null);
 
     const stones = allBirthstones.filter((s) => s.gem === month);
     setMonthStones(stones);
 
-    const uniqueColors = new Map();
+    const map = new Map();
     stones.forEach((s) => {
-      if (!uniqueColors.has(s.colorHex)) {
-        uniqueColors.set(s.colorHex, {
+      if (s.colorHex && !map.has(s.colorHex)) {
+        map.set(s.colorHex, {
           label: s.color,
           hex: s.colorHex,
           price: s.price ?? 0,
@@ -98,31 +126,118 @@ export default function BirthstoneEarring() {
       }
     });
 
-    setAvailableColors(Array.from(uniqueColors.values()));
+    setAvailableColors(Array.from(map.values()));
   };
+
+  /* PICK COLOR */
+  const onPickColor = (c) => {
+    setSelectedColor(c);
+    setSelectedColorStones(
+      monthStones.filter((s) => s.colorHex === c.hex)
+    );
+    setUiError("");
+    setAddedMsg("");
+    setAddedAccessoryID(null);
+    setLastComputedPrice(null);
+  };
+
+  const metalObj = useMemo(
+    () => METALS.find((m) => m.color === metal),
+    [metal]
+  );
 
   const canProceed =
     selectedMonth &&
     selectedColor &&
     selectedCut &&
-    metal &&
+    metalObj &&
     backing;
 
-  const handleSubmit = () => {
-    if (!canProceed) return;
+  const stonePrice =
+    selectedColor?.price ??
+    selectedColorStones?.[0]?.price ??
+    0;
 
-    navigate("/checkout", {
-      state: {
-        itemType: "birthstone_earring",
-        metal,
+  /* ✅ ADD TO CART — SAME LOGIC AS BRACELET */
+  const addToCartNow = async () => {
+    setUiError("");
+    setAddedMsg("");
+    setAddedAccessoryID(null);
+    setLastComputedPrice(null);
+
+    if (!canProceed) {
+      setUiError("Required: Month, Color, Cut, Metal, Backing.");
+      return;
+    }
+
+    const chosenStone = pickStoneForCut(
+      selectedColorStones,
+      selectedCut
+    );
+
+    if (!chosenStone?.stoneID) {
+      setUiError("No stone found for this selection.");
+      return;
+    }
+
+    setIsAdding(true);
+    try {
+      const payload = {
+        type: "earring",
+        metal: metalObj.api,
+        nbOfCharms: 0,
+        nbOfStones: 1,
+        product: {
+          style: EARRING_DB_STYLE,
+          backing, // ✅ "screw" | "clasp"
+          birthstoneMonth: selectedMonth,
+          birthstoneColor: selectedColor.label,
+          birthstoneColorHex: selectedColor.hex,
+          birthstoneCut: selectedCut,
+        },
+        charms: [],
+        stones: [{ stoneID: chosenStone.stoneID, quantity: 1 }],
+      };
+
+      const res = await fetch(`${API_BASE}/api/accessory-instance`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || "Failed");
+
+      addToCart({
+        accessoryID: data.accessoryID,
+        type: "earring",
+        style: EARRING_DB_STYLE,
+        metal: metalObj.name,
         backing,
-        birthstoneMonth: selectedMonth,
-        birthstoneColor: selectedColor,
-        birthstoneCut: selectedCut,
-      },
-    });
+        summary: {
+          birthstone: {
+            month: selectedMonth,
+            color: selectedColor,
+            cut: selectedCut,
+            stoneID: chosenStone.stoneID,
+          },
+        },
+        price: data.computedPrice ?? stonePrice,
+      });
+
+      setAddedAccessoryID(data.accessoryID);
+      setLastComputedPrice(data.computedPrice);
+      setAddedMsg("Added to cart!");
+    } catch (err) {
+      console.error(err);
+      setUiError(err.message || "Failed to add to cart.");
+    } finally {
+      setIsAdding(false);
+    }
   };
 
+  /* ================= UI ================= */
   return (
     <div className="nk-page">
       <div className="nk-container">
@@ -133,24 +248,19 @@ export default function BirthstoneEarring() {
           </p>
         </header>
 
+        {uiError && <div className="nk-error">{uiError}</div>}
+
         <div className="nk-customizer">
           {/* PREVIEW */}
           <section className="nk-preview">
             <div className="nk-previewCard">
               <div className="nk-previewTop">
                 <span className="nk-badge">Live Preview</span>
-                <span className="nk-chip">
-                  {METALS.find((m) => m.color === metal)?.name}
-                </span>
+                <span className="nk-chip">{metalObj?.name}</span>
               </div>
 
-              <div className="nk-imageWrap">
-                <img src={EarringPreviewImg} alt="Earring preview" className="nk-mainImg" />
-              </div>
-
-              <div className="nk-imageWrap" style={{ marginTop: 12 }}>
-                <img src={GemColorPreviewImg} alt="Gem preview" className="nk-mainImg" />
-              </div>
+              <img src={EarringPreviewImg} className="nk-mainImg" />
+              <img src={GemColorPreviewImg} className="nk-mainImg" />
 
               <div className="nk-previewMeta">
                 <div className="nk-metaRow">
@@ -180,14 +290,14 @@ export default function BirthstoneEarring() {
             {/* MONTH */}
             <div className="nk-section">
               <label className="nk-label">Month</label>
-              <div className="nk-grid" style={{ gridTemplateColumns: "repeat(3,1fr)" }}>
+              <div className="nk-grid">
                 {months.map((m) => (
                   <button
                     key={m}
                     className={`nk-cardPick ${selectedMonth === m ? "isActive" : ""}`}
                     onClick={() => onPickMonth(m)}
                   >
-                    <strong>{m}</strong>
+                    {m}
                   </button>
                 ))}
               </div>
@@ -197,14 +307,19 @@ export default function BirthstoneEarring() {
             {selectedMonth && (
               <div className="nk-section">
                 <label className="nk-label">Gem Color</label>
-                <div style={{ display: "flex", gap: 12 }}>
+                <div className="nk-metals">
                   {availableColors.map((c) => (
                     <button
                       key={c.hex}
-                      className={`nk-metalBtn ${selectedColor?.hex === c.hex ? "isActive" : ""}`}
-                      onClick={() => setSelectedColor(c)}
+                      className={`nk-metalBtn ${
+                        selectedColor?.hex === c.hex ? "isActive" : ""
+                      }`}
+                      onClick={() => onPickColor(c)}
                     >
-                      <span className="nk-metalDot" style={{ backgroundColor: c.hex }} />
+                      <span
+                        className="nk-metalDot"
+                        style={{ backgroundColor: c.hex }}
+                      />
                     </button>
                   ))}
                 </div>
@@ -214,15 +329,17 @@ export default function BirthstoneEarring() {
             {/* CUT */}
             <div className="nk-section">
               <label className="nk-label">Cut</label>
-              <div className="nk-grid" style={{ gridTemplateColumns: "repeat(2,1fr)" }}>
+              <div className="nk-grid">
                 {CUTS.map((c) => (
                   <button
                     key={c.key}
-                    className={`nk-cardPick ${selectedCut === c.key ? "isActive" : ""}`}
+                    className={`nk-cardPick ${
+                      selectedCut === c.key ? "isActive" : ""
+                    }`}
                     onClick={() => setSelectedCut(c.key)}
                   >
-                    <img src={c.img} className="nk-cardImg" alt={c.key} />
-                    <strong>{c.key}</strong>
+                    <img src={c.img} className="nk-cardImg" />
+                    {c.key}
                   </button>
                 ))}
               </div>
@@ -235,11 +352,16 @@ export default function BirthstoneEarring() {
                 {METALS.map((m) => (
                   <button
                     key={m.name}
-                    className={`nk-metalBtn ${metal === m.color ? "isActive" : ""}`}
+                    className={`nk-metalBtn ${
+                      metal === m.color ? "isActive" : ""
+                    }`}
                     onClick={() => setMetal(m.color)}
                   >
-                    <span className="nk-metalDot" style={{ backgroundColor: m.color }} />
-                    <span className="nk-metalName">{m.name}</span>
+                    <span
+                      className="nk-metalDot"
+                      style={{ backgroundColor: m.color }}
+                    />
+                    {m.name}
                   </button>
                 ))}
               </div>
@@ -248,22 +370,34 @@ export default function BirthstoneEarring() {
             {/* BACKING */}
             <div className="nk-section">
               <label className="nk-label">Backing</label>
-              <div className="nk-grid" style={{ gridTemplateColumns: "repeat(2,1fr)" }}>
+              <div className="nk-grid">
                 {BACKINGS.map((b) => (
                   <button
                     key={b.value}
-                    className={`nk-cardPick ${backing === b.name ? "isActive" : ""}`}
-                    onClick={() => setBacking(b.name)}
+                    className={`nk-cardPick ${
+                      backing === b.value ? "isActive" : ""
+                    }`}
+                    onClick={() => setBacking(b.value)}
                   >
-                    <strong>{b.name}</strong>
+                    {b.name}
                   </button>
                 ))}
               </div>
             </div>
 
-            <button className="nk-next" onClick={handleSubmit} disabled={!canProceed}>
-              Order Summary
+            <button
+              className="nk-next"
+              onClick={addToCartNow}
+              disabled={!canProceed || isAdding}
+            >
+              {isAdding ? "Adding..." : "Add to Cart"}
             </button>
+
+            {addedMsg && (
+              <p style={{ color: "green", fontWeight: 700 }}>
+                {addedMsg} {addedAccessoryID && `• ID ${addedAccessoryID}`}
+              </p>
+            )}
           </section>
         </div>
       </div>

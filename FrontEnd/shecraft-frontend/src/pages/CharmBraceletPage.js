@@ -42,7 +42,7 @@ const CHAINS = [
   { name: "Thin", img: Thin },
 ];
 
-const LENGTHS = [6, 6.5, 7, 7.5, 8];
+const LENGTHS = [6, 6.5, 7, 7.5];
 const CHARM_COLORS = ["Multicolor", "Silver", "Gold", "RoseGold"];
 
 /* ---------------- HELPERS ---------------- */
