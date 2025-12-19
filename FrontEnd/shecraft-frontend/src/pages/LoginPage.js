@@ -28,60 +28,123 @@ export default function LoginPage({ closePopup }) {
     setBranch("");
   }, [role, activeTab]);
 
+  // async function handleSubmit(e, type) {
+  //   e.preventDefault();
+  //   setErrorMessage("");
+  //   setLoading(true);
+
+  //   const form = e.target;
+  //   const name = form.elements.name?.value.trim();
+  //   const email = form.elements.email?.value.trim();
+  //   const password = form.elements.password?.value.trim();
+
+  //   if (!email || !password) {
+  //     setErrorMessage("Please fill in all fields.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   if (type === "signup" && !name) {
+  //     setErrorMessage("Please enter your name.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   if (type === "signup" && role === "designer" && !branch.trim()) {
+  //     setErrorMessage("Please enter your branch.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     let data;
+
+  //     if (type === "login") {
+  //       data = await api.login({ role, email, password });
+  //     } else {
+  //       data =
+  //         role === "customer"
+  //           ? await api.signupCustomer({ name, email, password })
+  //           : await api.signupDesigner({ name, email, password, branch });
+  //     }
+
+  //     // ✅ Save auth in context
+  //     login({
+  //       role,
+  //       user: data.user,
+  //     });
+
+  //     closePopup?.();
+  //     navigate("/orderpage");
+  //   } catch (err) {
+  //     setErrorMessage(err.message || "Authentication failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
   async function handleSubmit(e, type) {
-    e.preventDefault();
-    setErrorMessage("");
-    setLoading(true);
+  e.preventDefault();
+  setErrorMessage("");
+  setLoading(true);
 
-    const form = e.target;
-    const name = form.elements.name?.value.trim();
-    const email = form.elements.email?.value.trim();
-    const password = form.elements.password?.value.trim();
+  const form = e.target;
+  const name = form.elements.name?.value.trim();
+  const email = form.elements.email?.value.trim();
+  const password = form.elements.password?.value.trim();
 
-    if (!email || !password) {
-      setErrorMessage("Please fill in all fields.");
-      setLoading(false);
-      return;
-    }
-
-    if (type === "signup" && !name) {
-      setErrorMessage("Please enter your name.");
-      setLoading(false);
-      return;
-    }
-
-    if (type === "signup" && role === "designer" && !branch.trim()) {
-      setErrorMessage("Please enter your branch.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      let data;
-
-      if (type === "login") {
-        data = await api.login({ role, email, password });
-      } else {
-        data =
-          role === "customer"
-            ? await api.signupCustomer({ name, email, password })
-            : await api.signupDesigner({ name, email, password, branch });
-      }
-
-      // ✅ Save auth in context
-      login({
-        role,
-        user: data.user,
-      });
-
-      closePopup?.();
-      navigate("/orderpage");
-    } catch (err) {
-      setErrorMessage(err.message || "Authentication failed");
-    } finally {
-      setLoading(false);
-    }
+  if (!email || !password) {
+    setErrorMessage("Please fill in all fields.");
+    setLoading(false);
+    return;
   }
+
+  if (type === "signup" && !name) {
+    setErrorMessage("Please enter your name.");
+    setLoading(false);
+    return;
+  }
+
+  if (type === "signup" && role === "designer" && !branch.trim()) {
+    setErrorMessage("Please enter your branch.");
+    setLoading(false);
+    return;
+  }
+
+  try {
+    let data;
+
+    if (type === "login") {
+      data = await api.login({ role, email, password });
+    } else {
+      data =
+        role === "customer"
+          ? await api.signupCustomer({ name, email, password })
+          : await api.signupDesigner({ name, email, password, branch });
+    }
+
+    // Save auth in context
+    login({
+      role,
+      user: data.user,
+    });
+
+    // Close modal
+    closePopup?.();
+
+    // ✅ Navigate based on role
+    if (role === "designer") {
+      navigate("/designer/dashboard");
+    } else {
+      navigate("/orderpage");
+    }
+
+  } catch (err) {
+    setErrorMessage(err.message || "Authentication failed");
+  } finally {
+    setLoading(false);
+  }
+}
+
 
   return (
     <div className="login-overlay">
