@@ -120,7 +120,19 @@ exports.getOrdersByCustomer = async (req, res) => {
     return res.status(500).json({ message: "Failed to fetch customer orders" });
   }
 };
-
+exports.getOrdersByDesigner = async (req, res) => {
+  const { designerID } = req.params;
+  try {
+    const rows = await orderModel.getOrdersByDesigner(designerID);
+    res.json(rows.map(o => ({
+      ...o,
+      status: o.completionDate ? "completed" : "pending",
+    })));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch designer orders" });
+  }
+};
 /**
  * GET /api/orders
  */

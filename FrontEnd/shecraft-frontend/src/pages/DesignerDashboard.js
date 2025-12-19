@@ -10,17 +10,29 @@ const DesignerDashboard = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
+      setError("");
+
       const designerID = localStorage.getItem("designerID");
       if (!designerID) throw new Error("Designer not logged in");
 
-      const res = await fetch(`http://localhost:5000/api/orders/customer/${designerID}`);
+      const res = await fetch(
+        `http://localhost:5000/api/orders/designer/${designerID}`
+      );
       if (!res.ok) throw new Error("Failed to fetch orders");
 
       const data = await res.json();
-      setOrders(data);
+
+      // ✅ Ensure "status" exists even if backend didn't include it
+      const normalized = (Array.isArray(data) ? data : []).map((o) => ({
+        ...o,
+        status: o.status || (o.completionDate ? "completed" : "pending"),
+      }));
+
+      setOrders(normalized);
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      setError(err.message || "Failed to load orders");
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -36,19 +48,36 @@ const DesignerDashboard = () => {
       const designerID = localStorage.getItem("designerID");
       if (!designerID) throw new Error("Designer not logged in");
 
-      const res = await fetch(`http://localhost:5000/api/orders/${orderID}/complete`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ designerID }),
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/orders/${orderID}/complete`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ designerID }),
+        }
+      );
+
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Failed to complete order");
+        throw new Error(data.message || "Failed to complete order");
       }
 
-      // Refresh orders after completing
-      fetchOrders();
+      // ✅ Instant UI update (keep status logic)
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.orderID === orderID
+            ? {
+                ...o,
+                status: "completed",
+                completionDate: o.completionDate || new Date().toISOString(),
+              }
+            : o
+        )
+      );
+
+      // Optional: also refetch to be 100% synced with DB
+      // fetchOrders();
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -56,7 +85,7 @@ const DesignerDashboard = () => {
   };
 
   if (loading) return <p>Loading orders...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div className="designer-dashboard">
@@ -79,6 +108,7 @@ const DesignerDashboard = () => {
                 <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
               {orders.map((order) => (
                 <tr key={order.orderID}>
@@ -86,26 +116,45 @@ const DesignerDashboard = () => {
                   <td>{order.customerID}</td>
                   <td>{order.qty}</td>
                   <td>${order.price}</td>
+
                   <td
-                    className={order.status === "completed" ? "status-completed" : "status-pending"}
+                    className={
+                      order.status === "completed"
+                        ? "status-completed"
+                        : "status-pending"
+                    }
                   >
                     {order.status}
                   </td>
-                  <td>{new Date(order.orderDate).toLocaleString()}</td>
-                  <td>{order.completionDate ? new Date(order.completionDate).toLocaleString() : "N/A"}</td>
+
                   <td>
-                    {order.status === "pending" && (
+                    {order.orderDate
+                      ? new Date(order.orderDate).toLocaleString()
+                      : "N/A"}
+                  </td>
+
+                  <td>
+                    {order.completionDate
+                      ? new Date(order.completionDate).toLocaleString()
+                      : "N/A"}
+                  </td>
+
+                  <td>
+                    {order.status !== "completed" ? (
                       <button
                         className="complete-btn"
                         onClick={() => completeOrder(order.orderID)}
                       >
                         Complete
                       </button>
+                    ) : (
+                      <span>—</span>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       )}

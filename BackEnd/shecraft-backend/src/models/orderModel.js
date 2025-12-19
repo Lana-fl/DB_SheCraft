@@ -267,7 +267,13 @@ async function markOrderCompleted(orderID, designerID) {
 
   return result.affectedRows > 0;
 }
-
+async function getOrdersByDesigner(designerID) {
+  const [rows] = await pool.query(
+    "SELECT * FROM orders WHERE designerID = ? ORDER BY orderDate DESC",
+    [designerID]
+  );
+  return rows;
+}
 
 
 module.exports = {
@@ -282,6 +288,7 @@ module.exports = {
   getAllOrders,
   getBestSellersByType,
   markOrderCompleted,
+  getOrdersByDesigner,
   
 
 };

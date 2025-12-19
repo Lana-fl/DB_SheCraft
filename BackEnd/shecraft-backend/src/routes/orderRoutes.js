@@ -14,6 +14,8 @@ router.get("/", orderController.getAllOrders);
 // Orders by customer
 router.get("/customer/:customerID", orderController.getOrdersByCustomer);
 
+router.get("/designer/:designerID", orderController.getOrdersByDesigner);
+
 // Order details
 router.get("/:orderID", orderController.getOrderDetails);
 
