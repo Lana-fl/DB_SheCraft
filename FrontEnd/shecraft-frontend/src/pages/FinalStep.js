@@ -680,6 +680,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import "../styles/finalstep.css";
 import { api } from "../api/client";
 
@@ -687,6 +688,8 @@ export default function FinalStep() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { clearCart } = useCart();
+
 
   const { cartItems: cartFromCartPage = [] } = location.state || {};
   const [cartItems] = useState(cartFromCartPage);
@@ -804,6 +807,7 @@ export default function FinalStep() {
 
     try {
       await api.createOrder(orderPayload);
+      clearCart();
       navigate("/", { state: { message: "Order placed successfully! ✅" } });
     } catch (err) {
       console.error("Failed to place order:", err);
