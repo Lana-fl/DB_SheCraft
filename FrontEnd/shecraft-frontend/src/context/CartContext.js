@@ -1,11 +1,27 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import useAuth from "./AuthContext"; // ✅ uses your existing AuthContext
 
 const CartContext = createContext(null);
-const CART_KEY = "tala_cart_v1";
 
-function loadCart() {
+// ✅ build a per-user storage key
+function getCartKey(user) {
+  // handle both shapes: user.customerID or user.user.customerID
+  const id =
+    user?.customerID ||
+    user?.customerId ||
+    user?.id ||
+    user?.user?.customerID ||
+    user?.user?.customerId ||
+    user?.user?.id ||
+    "guest";
+
+  const role = user?.role || user?.user?.role || "guest";
+  return `shecraft_cart_v1_${role}_${id}`;
+}
+
+function loadCart(key) {
   try {
-    const raw = localStorage.getItem(CART_KEY);
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -13,16 +29,26 @@ function loadCart() {
 }
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState(() => loadCart());
+  const { user } = useAuth();
 
+  const cartKey = useMemo(() => getCartKey(user), [user]);
+
+  const [cartItems, setCartItems] = useState(() => loadCart(cartKey));
+
+  // ✅ when user changes, load that user's cart
   useEffect(() => {
-    localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
-  }, [cartItems]);
+    setCartItems(loadCart(cartKey));
+  }, [cartKey]);
+
+  // ✅ persist per user
+  useEffect(() => {
+    localStorage.setItem(cartKey, JSON.stringify(cartItems));
+  }, [cartItems, cartKey]);
 
   const addToCart = (item) => {
-    // avoid duplicates by accessoryID
     setCartItems((prev) => {
-      if (prev.some((x) => x.accessoryID === item.accessoryID)) return prev;
+      // avoid duplicates by accessoryID when present
+      if (item?.accessoryID && prev.some((x) => x.accessoryID === item.accessoryID)) return prev;
       return [...prev, item];
     });
   };
@@ -34,7 +60,7 @@ export function CartProvider({ children }) {
   const clearCart = () => setCartItems([]);
 
   const total = useMemo(() => {
-    return cartItems.reduce((sum, it) => sum + Number(it.price || 0), 0);
+    return cartItems.reduce((sum, x) => sum + Number(x?.price || 0) * Number(x?.qty || 1), 0);
   }, [cartItems]);
 
   const value = useMemo(
@@ -47,6 +73,6 @@ export function CartProvider({ children }) {
 
 export function useCart() {
   const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used inside CartProvider");
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
   return ctx;
 }
