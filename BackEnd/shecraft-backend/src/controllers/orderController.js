@@ -1,5 +1,8 @@
 // src/controllers/orderController.js
+
+
 const orderModel = require("../models/orderModel");
+
 
 /**
  * POST /api/orders
@@ -170,16 +173,5 @@ exports.completeOrder = async (req, res) => {
   } catch (err) {
     console.error("completeOrder error:", err);
     return res.status(500).json({ message: "Failed to complete order" });
-  }
-};
-exports.getAllOrdersForDesigner = async (req, res) => {
-  const { designerID } = req.params;
-  try {
-    const orders = await orderModel.getOrdersByDesigner(designerID); 
-    // make sure orderModel.getOrdersByDesigner queries ORDERS table where designerID = ?
-    return res.json(orders);
-  } catch (err) {
-    console.error("Error fetching designer orders:", err);
-    return res.status(500).json({ message: "Failed to fetch orders" });
   }
 };
