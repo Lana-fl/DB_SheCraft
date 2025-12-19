@@ -46,7 +46,7 @@ export default function BraceletsPage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const [activePanel, setActivePanel] = useState(null); // "nameStyle" | "chainLength" | null
+  const [activePanel, setActivePanel] = useState(null); 
 
   const [selectedNameStyle, setSelectedNameStyle] = useState({
     ...NAME_STYLES[0],
@@ -62,7 +62,7 @@ export default function BraceletsPage() {
   const [uiError, setUiError] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  // bottom bar feedback
+
   const [addedMsg, setAddedMsg] = useState("");
   const [addedAccessoryID, setAddedAccessoryID] = useState(null);
 
@@ -71,7 +71,7 @@ export default function BraceletsPage() {
     [selectedChain]
   );
 
-  // Auto-cycle preview until style is fixed
+  
   useEffect(() => {
     if (selectedNameStyle.fixed) return;
     const interval = setInterval(() => {
@@ -87,7 +87,7 @@ export default function BraceletsPage() {
     setActivePanel((prev) => (prev === panel ? null : panel));
   };
 
-  // ✅ Add to cart immediately (POST DB + CartContext), no navigation
+  
   const addToCartNow = async () => {
     setUiError("");
     setAddedMsg("");
@@ -106,16 +106,16 @@ export default function BraceletsPage() {
     setIsAdding(true);
     try {
       const payload = {
-        type: "bracelet", // ✅ ONLY CHANGE
-        metal: metal.api, // controller should map -> materialID
+        type: "bracelet", 
+        metal: metal.api,
         nbOfCharms: 0,
         nbOfStones: 0,
         product: {
           chain: chainDbValue,
-          style: NAME_BRACELET_DB_STYLE, // ✅ "name" => base price 40 (fixed-price rule)
+          style: NAME_BRACELET_DB_STYLE,
           length: selectedLength,
 
-          // optional extras for UI
+          
           nameText: trimmedName,
           nameStyle: selectedNameStyle.name,
         },
@@ -145,7 +145,7 @@ export default function BraceletsPage() {
 
       if (!accessoryID) throw new Error("Backend did not return accessoryID.");
 
-      // ✅ add to CartContext (uses tala_cart_v1)
+      
       addToCart({
         accessoryID,
         type: "bracelet",
@@ -313,7 +313,7 @@ export default function BraceletsPage() {
                 <span className="nk-chevron" aria-hidden="true" />
               </button>
   
-              {/* ✅ Removed the second Add button here (only bottom bar remains) */}
+              
             </section>
   
             {/* RIGHT SLIDE PANEL */}
@@ -429,7 +429,7 @@ export default function BraceletsPage() {
           </div>
         </div>
   
-        {/* ✅ BOTTOM BAR: show base price, single Add to Cart button */}
+      
         <div
           style={{
             position: "sticky",

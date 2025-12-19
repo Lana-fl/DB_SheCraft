@@ -8,7 +8,7 @@ export default function CartPage() {
   const [removingId, setRemovingId] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ valid DB ids: X001 / R001 / N001 / B001 / E001 ...
+
   const isValidAccessoryID = (id) => /^[XRNBE]\d{3,}$/i.test(String(id || "").trim());
 
   const handleCheckout = () => {
@@ -21,7 +21,7 @@ export default function CartPage() {
     try {
       setRemovingId(accessoryID || "unknown");
 
-      // ✅ If it’s NOT a real DB accessoryID, just remove locally (no cancel call)
+     
       if (!isValidAccessoryID(accessoryID)) {
         removeFromCart(accessoryID);
         return;
@@ -42,7 +42,7 @@ export default function CartPage() {
     } catch (e) {
       console.error(e);
 
-      // ✅ If cancel fails, still remove from UI to avoid user being stuck
+      
       removeFromCart(accessoryID);
 
       alert("Removed from cart. (Reservation cancel failed or item was not reservable.)");

@@ -4,6 +4,41 @@ import { api } from "../api/client";
 
 const TOKEN_KEY = "authToken";
 
+function parseJwt(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    if (!base64Url) return null;
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const json = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+function getCustomerIDFromToken(token) {
+  const p = parseJwt(token);
+  if (!p) return null;
+
+
+  return (
+    p.customerID ||
+    p.customerId ||
+    p.customer_id ||
+    p.customer ||
+    p.id || 
+    p.userID ||
+    p.userId ||
+    p.sub ||
+    null
+  );
+}
+
 function inferStatus(o) {
   return o?.completionDate ? "completed" : "pending";
 }
@@ -12,7 +47,7 @@ export default function AccountOrdersPage() {
   const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
-  const [tab, setTab] = useState("all"); // all | pending | completed
+  const [tab, setTab] = useState("all");
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,20 +65,16 @@ export default function AccountOrdersPage() {
           return;
         }
 
-        // 1) get logged-in customer account (token-based)
-        const account = await api.getMyCustomerAccount();
-
-        const customerID =
-          account?.customerID ||
-          (Array.isArray(account) ? account?.[0]?.customerID : null);
+        const customerID = getCustomerIDFromToken(token);
 
         if (!customerID) {
-          throw new Error("Could not find customerID from /api/customers/account");
+          
+          throw new Error(
+            "Could not read customerID from token. You may be logged in as designer, or the token payload doesn't include customerID."
+          );
         }
 
-        // 2) fetch only this customer's orders
         const data = await api.getOrdersByCustomer(customerID);
-
         const normalized = (Array.isArray(data) ? data : []).map((o) => ({
           ...o,
           _status: inferStatus(o),
@@ -70,7 +101,6 @@ export default function AccountOrdersPage() {
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
-
     return orders
       .filter((o) => {
         if (tab === "pending") return o._status === "pending";
@@ -94,7 +124,6 @@ export default function AccountOrdersPage() {
       });
   }, [orders, tab, q]);
 
-  // not logged in
   if (!token) {
     return (
       <div style={{ padding: 40 }}>

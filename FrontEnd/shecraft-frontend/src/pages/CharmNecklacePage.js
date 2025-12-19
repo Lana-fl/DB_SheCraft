@@ -862,13 +862,13 @@ export default function CharmNecklacePage() {
   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
   const [selectedLength, setSelectedLength] = useState(16);
 
-  // UI mode: editing vs checkout-summary
+  
   const [isCheckoutView, setIsCheckoutView] = useState(false);
 
   const [uiError, setUiError] = useState("");
   const [isPaying, setIsPaying] = useState(false);
 
-  /* ---------------- FETCH CHARMS ---------------- */
+  
   useEffect(() => {
     async function fetchCharms() {
       try {
@@ -895,7 +895,7 @@ export default function CharmNecklacePage() {
     fetchCharms();
   }, [charmColor]);
 
-  /* ---------------- HELPERS ---------------- */
+  
 
   const toggleShape = (charm) => {
     setUiError("");
@@ -926,15 +926,13 @@ export default function CharmNecklacePage() {
     [selectedChain]
   );
 
-  /**
-   * Confirm in panel -> locks design selection (no API call)
-   */
+  
   const confirmSelection = () => {
     setUiError("");
 
     const trimmed = letterText.trim().slice(0, 10);
 
-    // constraint: cannot confirm letter style without text
+    
     if (selectedLetterStyle && !trimmed) {
       setUiError("Enter the letters/word (max 10) before confirming a letter charm.");
       return;
@@ -943,7 +941,7 @@ export default function CharmNecklacePage() {
     const letterCustom = selectedLetterStyle
       ? [
           {
-            charmID: selectedLetterStyle.charmID, // REAL charmID from DB
+            charmID: selectedLetterStyle.charmID, 
             type: "letter-custom",
             design: selectedLetterStyle.design,
             color: charmColor,
@@ -959,9 +957,7 @@ export default function CharmNecklacePage() {
     setIsCheckoutView(false);
   };
 
-  /**
-   * “Go to Checkout” (NO API) - just opens summary
-   */
+ 
   const goToCheckoutView = () => {
     setUiError("");
 
@@ -970,7 +966,7 @@ export default function CharmNecklacePage() {
       return;
     }
 
-    // safety: if letter exists, must have text
+    
     if (letterInConfirmed && !letterInConfirmed.text?.trim()) {
       setUiError("Letter charm requires text (max 10).");
       return;
@@ -984,22 +980,17 @@ export default function CharmNecklacePage() {
     setIsCheckoutView(true);
   };
 
-  /**
-   * “Edit Design” - return to editing mode
-   */
+ 
   const editDesign = () => {
     setUiError("");
     setIsCheckoutView(false);
     setActivePanel("charms");
   };
 
-  /**
-   * Estimated total = charms prices + material base (if you don’t have material price here,
-   * this will only sum charms. If you DO have metal base price from backend, plug it here.)
-   */
+  
   const estimatedTotal = useMemo(() => {
     const charmsSum = confirmedCharms.reduce((sum, c) => sum + safeNum(c.price), 0);
-    // If you later fetch metal price, replace 0 with that metal price.
+    
     const metalBase = 0;
     return charmsSum + metalBase;
   }, [confirmedCharms]);
@@ -1019,10 +1010,7 @@ export default function CharmNecklacePage() {
     });
   }, [confirmedCharms, charmColor]);
 
-  /**
-   * “Confirm and Pay” = ONLY place to call POST /api/accessory-instance
-   * then add to cart ONCE and navigate to OrderPage.
-   */
+  
   const confirmAndPay = async () => {
     setUiError("");
 
@@ -1051,21 +1039,21 @@ export default function CharmNecklacePage() {
     setIsPaying(true);
 
     try {
-      // IMPORTANT: Your accessoryInstanceModel expects charms as objects with charmID/quantity
+      
       const payload = {
         type: "necklace",
-        metal: metal.api, // controller resolves materialID
+        metal: metal.api, 
         nbOfCharms: confirmedCharms.length,
         nbOfStones: 0,
         product: {
-          chain: chainDbValue, // cable/thin/rope/box
-          style: NECKLACE_DB_STYLE, // 'free charm'
+          chain: chainDbValue,
+          style: NECKLACE_DB_STYLE,
           length: selectedLength,
         },
         charms: confirmedCharms.map((c) => ({
           charmID: c.charmID,
           quantity: 1,
-          // optional for your app logic (DB doesn’t use this column in ornaments)
+          
           text: c.type === "letter-custom" ? c.text : null,
         })),
         stones: [],
@@ -1097,7 +1085,7 @@ export default function CharmNecklacePage() {
   metal: metal.name,
   price: computedPrice ?? estimatedTotal,
 
-  // ✅ CartPage reads item.summary.charms
+  
   summary: {
     chain: selectedChain.name,
     length: selectedLength,
@@ -1112,7 +1100,7 @@ export default function CharmNecklacePage() {
   },
 });
 
-      // ✅ go to OrderPage (as you asked)
+      
       navigate(ORDER_PAGE_ROUTE);
     } catch (err) {
       console.error("confirmAndPay error:", err);
@@ -1148,7 +1136,7 @@ export default function CharmNecklacePage() {
         ) : null}
 
         <div className="nk-customizer">
-          {/* LEFT: SUMMARY / PREVIEW */}
+         
           <section className="nk-preview">
             <div className="nk-previewCard">
               <div className="nk-previewTop">
@@ -1157,7 +1145,7 @@ export default function CharmNecklacePage() {
                 </span>
               </div>
 
-              {/* images */}
+              
               <div className="nk-imageWrap nk-charmPreview">
                 {confirmedCharms.length === 0 ? (
                   <p className="nk-placeholder">No charms confirmed yet.</p>
@@ -1173,7 +1161,7 @@ export default function CharmNecklacePage() {
                 )}
               </div>
 
-              {/* details */}
+             
               <div className="nk-previewMeta">
                 <div className="nk-metaRow">
                   <span>Metal</span>
@@ -1192,7 +1180,7 @@ export default function CharmNecklacePage() {
                   <strong>{charmColor}</strong>
                 </div>
 
-                {/* LIST OF CHARMS (IDs + color + name) */}
+              
                 <div style={{ marginTop: 10 }}>
                   <div style={{ fontWeight: 800, marginBottom: 6 }}>Charms</div>
                   {charmSummaryList.length === 0 ? (
@@ -1214,7 +1202,7 @@ export default function CharmNecklacePage() {
                 </div>
               </div>
 
-              {/* when in checkout-view show the pay buttons here (like your screenshot) */}
+             
               {isCheckoutView && (
                 <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
                   <button
@@ -1315,7 +1303,7 @@ export default function CharmNecklacePage() {
               </span>
             </button>
 
-            {/* ✅ This is the UI-only checkout step */}
+           
             <button className="nk-next" onClick={goToCheckoutView} type="button">
               Go to Checkout
             </button>
