@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/designerdashboard.css";
 
-
 const DesignerDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,8 +11,9 @@ const DesignerDashboard = () => {
     try {
       setLoading(true);
       const designerID = localStorage.getItem("designerID");
+      if (!designerID) throw new Error("Designer not logged in");
 
-      const res = await fetch(`/api/orders/customer/${designerID}`);
+      const res = await fetch(`http://localhost:5000/api/orders/customer/${designerID}`);
       if (!res.ok) throw new Error("Failed to fetch orders");
 
       const data = await res.json();
@@ -30,11 +30,13 @@ const DesignerDashboard = () => {
     fetchOrders();
   }, []);
 
+  // Mark an order as completed
   const completeOrder = async (orderID) => {
     try {
       const designerID = localStorage.getItem("designerID");
+      if (!designerID) throw new Error("Designer not logged in");
 
-      const res = await fetch(`/api/orders/${orderID}/complete`, {
+      const res = await fetch(`http://localhost:5000/api/orders/${orderID}/complete`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ designerID }),
@@ -59,43 +61,53 @@ const DesignerDashboard = () => {
   return (
     <div className="designer-dashboard">
       <h1>Designer Dashboard</h1>
+
       {orders.length === 0 ? (
         <p>No orders yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Qty</th>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Order Date</th>
-              <th>Completion Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.orderID}>
-                <td>{order.orderID}</td>
-                <td>{order.customerID}</td>
-                <td>{order.qty}</td>
-                <td>{order.price}</td>
-                <td>{order.status}</td>
-                <td>{order.orderDate}</td>
-                <td>{order.completionDate || "N/A"}</td>
-                <td>
-                  {order.status === "pending" && (
-                    <button onClick={() => completeOrder(order.orderID)}>
-                      Complete
-                    </button>
-                  )}
-                </td>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Order Date</th>
+                <th>Completion Date</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.orderID}>
+                  <td>{order.orderID}</td>
+                  <td>{order.customerID}</td>
+                  <td>{order.qty}</td>
+                  <td>${order.price}</td>
+                  <td
+                    className={order.status === "completed" ? "status-completed" : "status-pending"}
+                  >
+                    {order.status}
+                  </td>
+                  <td>{new Date(order.orderDate).toLocaleString()}</td>
+                  <td>{order.completionDate ? new Date(order.completionDate).toLocaleString() : "N/A"}</td>
+                  <td>
+                    {order.status === "pending" && (
+                      <button
+                        className="complete-btn"
+                        onClick={() => completeOrder(order.orderID)}
+                      >
+                        Complete
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

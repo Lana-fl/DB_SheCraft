@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+
 
 /* =======================
    PAGES
@@ -91,16 +93,8 @@ function App() {
             {/* ACCOUNT */}
             <Route path="/account" element={<AccountPage />} />
             <Route path="/account/edit" element={<EditAccountPage />} />
-            <Route
-  path="/designer/dashboard"
-  element={
-    isLoggedIn && userRole === "designer" ? (
-      <DesignerDashboard />
-    ) : (
-      <WelcomePage openLogin={openLogin} />
-    )
-  }
-/>
+            <Route path="/designer/dashboard" element={<DesignerDashboard />} />
+
 <Route path="/account/orders" element={<AccountOrdersPage />} />
 
 
