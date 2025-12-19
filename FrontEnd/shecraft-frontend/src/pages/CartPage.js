@@ -207,13 +207,25 @@ export default function CartPage() {
   const [removingId, setRemovingId] = useState(null);
   const navigate = useNavigate();
 
+  // ✅ valid DB ids: X001 / R001 / N001 / B001 / E001 ...
+  const isValidAccessoryID = (id) => /^[XRNBE]\d{3,}$/i.test(String(id || "").trim());
+
   const handleCheckout = () => {
-    navigate("/final-step", { state: { cartItems, total } }); // Pass cart to FinalStep
+    navigate("/final-step", { state: { cartItems, total } });
   };
 
-  const handleRemove = async (accessoryID) => {
+  const handleRemove = async (item) => {
+    const accessoryID = item?.accessoryID;
+
     try {
-      setRemovingId(accessoryID);
+      setRemovingId(accessoryID || "unknown");
+
+      // ✅ If it’s NOT a real DB accessoryID, just remove locally (no cancel call)
+      if (!isValidAccessoryID(accessoryID)) {
+        removeFromCart(accessoryID);
+        return;
+      }
+
       const API_BASE = "http://localhost:5000";
 
       const res = await fetch(`${API_BASE}/api/accessory-instance/${accessoryID}/cancel`, {
@@ -228,7 +240,11 @@ export default function CartPage() {
       removeFromCart(accessoryID);
     } catch (e) {
       console.error(e);
-      alert("Failed to remove item (cancel reservation).");
+
+      // ✅ If cancel fails, still remove from UI to avoid user being stuck
+      removeFromCart(accessoryID);
+
+      alert("Removed from cart. (Reservation cancel failed or item was not reservable.)");
     } finally {
       setRemovingId(null);
     }
@@ -245,33 +261,50 @@ export default function CartPage() {
       ) : (
         <>
           <div className="cart-items">
-            {cartItems.map((item) => (
-              <div key={item.accessoryID} className="cart-card no-image">
-                <div className="cart-info">
-                  <h3>{item.type || "Accessory"} — {item.accessoryID}</h3>
-                  <p>Metal: {item.metal || "—"}</p>
-                  <p>Price: ${Number(item.price || 0).toFixed(2)}</p>
-                  {item.summary?.charms?.length && (
-                    <p>
-                      Charms: {item.summary.charms.map(c => `${c.charmID}x${c.quantity ?? 1}`).join(", ")}
-                    </p>
-                  )}
-                  <p>Qty: {item.qty || 1}</p>
+            {cartItems.map((item, idx) => {
+              const id = item?.accessoryID;
+              const valid = isValidAccessoryID(id);
 
-                  <button
-                    className="complete-btn"
-                    onClick={() => handleRemove(item.accessoryID)}
-                    disabled={removingId === item.accessoryID}
-                  >
-                    {removingId === item.accessoryID ? "Removing..." : "Remove"}
-                  </button>
+              return (
+                <div
+                  key={valid ? id : `${item?.type || "item"}-${idx}`}
+                  className="cart-card no-image"
+                >
+                  <div className="cart-info">
+                    <h3>
+                      {item.type || "Accessory"} —{" "}
+                      {valid ? id : "❌ MISSING accessoryID"}
+                    </h3>
+
+                    <p>Metal: {item.metal || "—"}</p>
+                    <p>Price: ${Number(item.price || 0).toFixed(2)}</p>
+
+                    {item.summary?.charms?.length ? (
+                      <p>
+                        Charms:{" "}
+                        {item.summary.charms
+                          .map((c) => `${c.charmID}x${c.quantity ?? 1}`)
+                          .join(", ")}
+                      </p>
+                    ) : null}
+
+                    <p>Qty: {item.qty || 1}</p>
+
+                    <button
+                      className="complete-btn"
+                      onClick={() => handleRemove(item)}
+                      disabled={removingId === (id || "unknown")}
+                    >
+                      {removingId === (id || "unknown") ? "Removing..." : "Remove"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div style={{ marginTop: 16 }}>
-            <h2>Total: ${total.toFixed(2)}</h2>
+            <h2>Total: ${Number(total || 0).toFixed(2)}</h2>
             <button className="complete-btn" onClick={handleCheckout}>
               Proceed to Checkout
             </button>

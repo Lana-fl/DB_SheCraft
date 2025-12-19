@@ -167,6 +167,27 @@ async function getMyCustomerAccount(req, res) {
   }
 }
 
+// exports.getMyCustomer = async (req, res) => {
+//   try {
+//     if (req.user?.role !== "customer") {
+//       return res.status(403).json({ message: "Not a customer account" });
+//     }
+
+//     // decoded.id MUST be like "C001"
+//     const customerID = req.user.id;
+
+//     const [rows] = await pool.query(
+//       "SELECT * FROM customer WHERE customerID = ? LIMIT 1",
+//       [customerID]
+//     );
+
+//     if (!rows.length) return res.status(404).json({ message: "Customer not found" });
+//     return res.json(rows[0]);
+//   } catch (err) {
+//     console.error("getMyCustomer error:", err);
+//     return res.status(500).json({ message: "Failed to load customer" });
+//   }
+// };
 
 module.exports = {
   getCustomers,

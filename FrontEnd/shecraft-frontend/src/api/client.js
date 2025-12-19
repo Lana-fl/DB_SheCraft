@@ -314,6 +314,115 @@
 // }
 
 
+// const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+// const TOKEN_KEY = "authToken";
+
+// class ApiClient {
+//   constructor(baseURL) {
+//     this.baseURL = baseURL;
+//   }
+
+//   async request(endpoint, options = {}) {
+//     const url = `${this.baseURL}${endpoint}`;
+//     const config = {
+//       ...options,
+//       headers: {
+//         "Content-Type": "application/json",
+//         ...(options.headers || {}),
+//       },
+//     };
+
+//     const token = localStorage.getItem(TOKEN_KEY);
+//     if (token) config.headers.Authorization = `Bearer ${token}`;
+
+//     const res = await fetch(url, config);
+//     const data = await res.json().catch(() => ({}));
+
+//     if (!res.ok) throw new Error(data.message || data.error || "Request failed");
+
+//     if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
+
+//     return data;
+//   }
+
+//   // Auth
+//   login({ role, email, password }) {
+//     return this.request("/api/auth/login", {
+//       method: "POST",
+//       body: JSON.stringify({ role, email, password }),
+//     });
+//   }
+
+//   signupCustomer({ name, email, password }) {
+//     return this.request("/api/auth/signup/customer", {
+//       method: "POST",
+//       body: JSON.stringify({ name, email, password }),
+//     });
+//   }
+
+//   signupDesigner({ name, email, password, branch }) {
+//     return this.request("/api/auth/signup/designer", {
+//       method: "POST",
+//       body: JSON.stringify({ name, email, password, branch }),
+//     });
+//   }
+
+//   // Customer
+//   getMyCustomerAccount() {
+//     return this.request("/api/customers/account", { method: "GET" });
+//   }
+
+//   // Designers
+//   getDesigners() {
+//     return this.request("/api/designers", { method: "GET" });
+//   }
+
+//   // Orders
+//   createOrder(orderPayload) {
+//     return this.request("/api/orders", {
+//       method: "POST",
+//       body: JSON.stringify(orderPayload),
+//     });
+//   }
+// }
+
+// // Export a single instance
+// export const api = new ApiClient(API_BASE_URL);
+
+
+// src/api/client.js
+
+// const API_BASE = "http://localhost:5000"; // change if needed
+
+// async function request(path, { method = "GET", body, headers } = {}) {
+//   const res = await fetch(`${API_BASE}${path}`, {
+//     method,
+//     headers: {
+//       "Content-Type": "application/json",
+//       ...(headers || {}),
+//     },
+//     body: body ? JSON.stringify(body) : undefined,
+//   });
+
+//   const data = await res.json().catch(() => ({}));
+
+//   if (!res.ok) {
+//     // backend often sends { message: "..." }
+//     throw new Error(data?.message || `Request failed (${res.status})`);
+//   }
+
+//   return data;
+// }
+
+// export const api = {
+//   // ✅ sends the body EXACTLY like backend expects (top-level keys)
+//   createOrder(payload) {
+//     return request("/api/orders", { method: "POST", body: payload });
+//   },
+
+//   // keep your other API methods here...
+// };
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 const TOKEN_KEY = "authToken";
 

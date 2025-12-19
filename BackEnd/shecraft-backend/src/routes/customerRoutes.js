@@ -1,5 +1,6 @@
 // src/routes/customerRoutes.js
 const express = require("express");
+const customerController = require("../controllers/customerController");
 const { protect } = require("../middleware");
 const {
   getCustomers,
@@ -32,4 +33,5 @@ router.post("/", createCustomer);
 router.put("/:id", updateCustomer);
 router.delete("/:id", deleteCustomer);
 
+// router.get("/me", protect, customerController.getMyCustomer);
 module.exports = router;
