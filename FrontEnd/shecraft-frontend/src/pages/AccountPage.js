@@ -121,6 +121,9 @@ export default function AccountPage() {
           >
             Edit Account
           </button>
+         <button className="edit-btn" onClick={() => navigate("/account/orders")}>
+  Orders
+</button>
 
           <button
             className="edit-btn"

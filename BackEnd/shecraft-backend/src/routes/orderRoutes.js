@@ -18,6 +18,6 @@ router.get("/customer/:customerID", orderController.getOrdersByCustomer);
 router.get("/:orderID", orderController.getOrderDetails);
 
 router.patch("/:orderID/complete", orderController.completeOrder);
-router.get("/designer/:designerID", authMiddleware, orderController.getAllOrdersForDesigner);
+
 
 module.exports = router;

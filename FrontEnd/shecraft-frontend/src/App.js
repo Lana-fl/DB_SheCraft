@@ -39,6 +39,10 @@ import EditAccountPage from "./pages/EditAccountPage";
    ======================= */
 import CartPage from "./pages/CartPage";
 import DesignerDashboard from "./pages/DesignerDashboard";
+import AccountOrdersPage from "./pages/AccountOrdersPage";
+
+<Route path="/account/orders" element={<AccountOrdersPage />} />
+
 
 function App() {
   const [showLogin, setShowLogin] = useState(false);

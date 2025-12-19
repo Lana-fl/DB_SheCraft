@@ -454,7 +454,7 @@ class ApiClient {
     return data;
   }
 
-  // Auth
+  // ---------------- AUTH ----------------
   login({ role, email, password }) {
     return this.request("/api/auth/login", {
       method: "POST",
@@ -476,21 +476,63 @@ class ApiClient {
     });
   }
 
-  // Customer
+  // ---------------- CUSTOMER ----------------
   getMyCustomerAccount() {
     return this.request("/api/customers/account", { method: "GET" });
   }
 
-  // Designers
+  // OPTIONAL: if you have it later
+  // getMyDesignerAccount() {
+  //   return this.request("/api/designers/account", { method: "GET" });
+  // }
+
+  // ---------------- DESIGNERS ----------------
   getDesigners() {
     return this.request("/api/designers", { method: "GET" });
   }
 
-  // Orders
+  // ---------------- ORDERS ----------------
+
+  // Create order from reserved accessories
   createOrder(orderPayload) {
     return this.request("/api/orders", {
       method: "POST",
       body: JSON.stringify(orderPayload),
+    });
+  }
+
+  // Get ALL orders (designer/admin usage)
+  getAllOrders() {
+    return this.request("/api/orders", { method: "GET" });
+  }
+
+  // Get orders by customerID (customer page)
+  getOrdersByCustomer(customerID) {
+    return this.request(`/api/orders/customer/${customerID}`, { method: "GET" });
+  }
+
+  // Get order details by orderID
+  getOrderDetails(orderID) {
+    return this.request(`/api/orders/${orderID}`, { method: "GET" });
+  }
+
+  // Mark order completed (PATCH /api/orders/:orderID/complete)
+  // Your backend requires designerID in body
+  completeOrder(orderID, designerID) {
+    return this.request(`/api/orders/${orderID}/complete`, {
+      method: "PATCH",
+      body: JSON.stringify({ designerID }),
+    });
+  }
+
+  // Best sellers endpoint you already have
+  getBestSellersByType({ from, to } = {}) {
+    const params = new URLSearchParams();
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    const qs = params.toString();
+    return this.request(`/api/orders/best-sellers-by-type${qs ? `?${qs}` : ""}`, {
+      method: "GET",
     });
   }
 }
