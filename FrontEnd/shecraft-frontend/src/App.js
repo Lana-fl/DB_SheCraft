@@ -41,7 +41,6 @@ import CartPage from "./pages/CartPage";
 import DesignerDashboard from "./pages/DesignerDashboard";
 import AccountOrdersPage from "./pages/AccountOrdersPage";
 
-<Route path="/account/orders" element={<AccountOrdersPage />} />
 
 
 function App() {
@@ -102,6 +101,10 @@ function App() {
     )
   }
 />
+<Route path="/account/orders" element={<AccountOrdersPage />} />
+
+
+
             {/* CART */}
             <Route
               path="/cart"
