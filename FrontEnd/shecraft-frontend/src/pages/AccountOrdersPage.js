@@ -25,13 +25,13 @@ function getCustomerIDFromToken(token) {
   const p = parseJwt(token);
   if (!p) return null;
 
-  // common payload keys (adjust if yours differs)
+
   return (
     p.customerID ||
     p.customerId ||
     p.customer_id ||
     p.customer ||
-    p.id || // sometimes stores customer id here
+    p.id || 
     p.userID ||
     p.userId ||
     p.sub ||
@@ -68,7 +68,7 @@ export default function AccountOrdersPage() {
         const customerID = getCustomerIDFromToken(token);
 
         if (!customerID) {
-          // This means your JWT does NOT contain customerID (or you're logged in as designer)
+          
           throw new Error(
             "Could not read customerID from token. You may be logged in as designer, or the token payload doesn't include customerID."
           );

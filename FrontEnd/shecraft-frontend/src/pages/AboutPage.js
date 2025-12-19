@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/AboutPage.css";
 import Footer from './Footer';
-// use your own images here
+
 import aboutStoryImg from "../assets/ourstory.png";
 import aboutCraftImg from "../assets/craftmanship.png";
 import aboutValuesImg from "../assets/ourvalues.png";
