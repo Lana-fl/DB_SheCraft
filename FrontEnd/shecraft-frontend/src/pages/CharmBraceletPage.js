@@ -329,7 +329,7 @@ export default function CharmBraceletPage() {
       <div className="nk-container">
         <header className="nk-header">
           <h2>Customize Your Charm Bracelet</h2>
-          <p className="nk-subtitle">Design → Go to Checkout (no API) → Confirm & Pay (API + cart).</p>
+          <p className="nk-subtitle">Design → Go to Checkout → Confirm & Pay.</p>
         </header>
 
         {uiError && (
