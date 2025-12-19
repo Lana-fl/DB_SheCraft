@@ -4,16 +4,16 @@ import "../styles/necklace.css";
 import "../styles/charmNecklace.css";
 import { useCart } from "../context/CartContext";
 
-/* ================= ASSETS ================= */
+
 import HoopRound from "../assets/Earring/hoopwithcharm.jpeg";
 import HoopSquare from "../assets/Earring/hoopsquarewithgem.png";
 import Dangling from "../assets/Earring/danglingwithcharm.jpeg";
 
-/* ================= API ================= */
+
 const API_BASE = "http://localhost:5000";
 const ORDER_PAGE_ROUTE = "/orderpage";
 
-/* ================= DATA ================= */
+
 const EARRING_STYLES = [
   { name: "Hoop Round", img: HoopRound },
   { name: "Hoop Square", img: HoopSquare },
@@ -28,7 +28,7 @@ const METALS = [
 
 const CHARM_COLORS = ["Multicolor", "Silver", "Gold", "RoseGold"];
 
-const NECKLACE_DB_STYLE = "free charm"; // you can rename for earrings if needed
+const NECKLACE_DB_STYLE = "free charm"; 
 
 function safeNum(n) {
   const x = Number(n);
@@ -53,7 +53,7 @@ export default function EarringCharmPage() {
   const [uiError, setUiError] = useState("");
   const [isPaying, setIsPaying] = useState(false);
 
-  /* ---------------- FETCH CHARMS ---------------- */
+
   useEffect(() => {
     async function fetchCharms() {
       try {
@@ -79,7 +79,7 @@ export default function EarringCharmPage() {
     fetchCharms();
   }, [charmColor]);
 
-  /* ---------------- HELPERS ---------------- */
+  
   const toggleShape = (charm) => {
     setUiError("");
     setSelectedShapes((prev) =>

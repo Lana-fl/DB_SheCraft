@@ -72,7 +72,7 @@ export default function BirthstoneEarring() {
 
   const [selectedCut, setSelectedCut] = useState(null);
   const [metal, setMetal] = useState(METALS[0].color);
-  const [backing, setBacking] = useState(null); // 🔥 STORES "screw" | "clasp"
+  const [backing, setBacking] = useState(null); 
 
   /* UI FEEDBACK (same as bracelet) */
   const [uiError, setUiError] = useState("");
@@ -158,7 +158,7 @@ export default function BirthstoneEarring() {
     selectedColorStones?.[0]?.price ??
     0;
 
-  /* ✅ ADD TO CART — SAME LOGIC AS BRACELET */
+  
   const addToCartNow = async () => {
     setUiError("");
     setAddedMsg("");
@@ -189,7 +189,7 @@ export default function BirthstoneEarring() {
         nbOfStones: 1,
         product: {
           style: EARRING_DB_STYLE,
-          backing, // ✅ "screw" | "clasp"
+          backing, 
           birthstoneMonth: selectedMonth,
           birthstoneColor: selectedColor.label,
           birthstoneColorHex: selectedColor.hex,
@@ -237,7 +237,7 @@ export default function BirthstoneEarring() {
     }
   };
 
-  /* ================= UI ================= */
+ 
   return (
     <div className="nk-page">
       <div className="nk-container">
@@ -285,7 +285,7 @@ export default function BirthstoneEarring() {
             </div>
           </section>
 
-          {/* CONTROLS */}
+         
           <section className="nk-controls">
             {/* MONTH */}
             <div className="nk-section">
@@ -367,7 +367,7 @@ export default function BirthstoneEarring() {
               </div>
             </div>
 
-            {/* BACKING */}
+           
             <div className="nk-section">
               <label className="nk-label">Backing</label>
               <div className="nk-grid">

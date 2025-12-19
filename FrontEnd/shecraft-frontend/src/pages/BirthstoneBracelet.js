@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "../styles/necklace.css";
 
-
+/* chain/length assets */
 import LengthImg from "../assets/Bracelet/length.jpg";
 import Cable from "../assets/chains/cable.png";
 import Rope from "../assets/chains/rope.jpg";
@@ -13,6 +13,7 @@ import Thin from "../assets/chains/thin.png";
 
 import GemImg from "../assets/gems/birthstone.jpeg";
 import ColorPreviewImg from "../assets/Bracelet/birthstone.png";
+
 
 import CutOval from "../assets/Cuts/oval.jpeg";
 import CutPear from "../assets/Cuts/pear.jpeg";
@@ -53,7 +54,7 @@ function norm(s) {
   return String(s || "").trim().toLowerCase();
 }
 
-
+/** tries to pick the “best” stone row for the selected cut */
 function pickStoneForCut(stones, selectedCut) {
   if (!Array.isArray(stones) || stones.length === 0) return null;
   if (!selectedCut) return stones[0];
@@ -83,23 +84,24 @@ export default function BirthstoneBracelet() {
   const { addToCart } = useCart();
 
  
-  const [activePanel, setActivePanel] = useState(null); 
+  const [activePanel, setActivePanel] = useState(null); // "chainLength" | null
 
+  // data
+  const [allBirthstones, setAllBirthstones] = useState([]); // raw B* stones
 
-  const [allBirthstones, setAllBirthstones] = useState([]); 
-
-  
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [monthStones, setMonthStones] = useState([]); 
-  const [availableColors, setAvailableColors] = useState([]); 
-  const [selectedColor, setSelectedColor] = useState(null); 
-  const [selectedColorStones, setSelectedColorStones] = useState([]); 
+  // selections
+  const [selectedMonth, setSelectedMonth] = useState(null); // string month
+  const [monthStones, setMonthStones] = useState([]); // all stones for selected month
+  const [availableColors, setAvailableColors] = useState([]); // unique colors for month [{label, hex, price}]
+  const [selectedColor, setSelectedColor] = useState(null); // {label, hex, price}
+  const [selectedColorStones, setSelectedColorStones] = useState([]); // stones filtered by color
 
   const [selectedCut, setSelectedCut] = useState(null);
   const [metal, setMetal] = useState(METALS[0].color);
   const [selectedChain, setSelectedChain] = useState(CHAINS[0]);
   const [selectedLength, setSelectedLength] = useState(16);
 
+ 
   const [uiError, setUiError] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [addedMsg, setAddedMsg] = useState("");
@@ -141,7 +143,7 @@ export default function BirthstoneBracelet() {
   const closePanel = () => setActivePanel(null);
   const togglePanel = (panel) => setActivePanel((prev) => (prev === panel ? null : panel));
 
- 
+  // Month pick: load month stones + unique colors
   const onPickMonth = (month) => {
     setSelectedMonth(month);
     setSelectedColor(null);
@@ -172,7 +174,7 @@ export default function BirthstoneBracelet() {
     setSelectedColorStones([]);
   };
 
- 
+  // Color pick: filter monthStones -> selectedColorStones
   const onPickColor = (c) => {
     setSelectedColor(c);
     const filtered = monthStones.filter((s) => (s.colorHex || "").trim() === c.hex);
@@ -203,17 +205,17 @@ export default function BirthstoneBracelet() {
     !!selectedLength &&
     !!chainDbValue;
 
-
+  // stone price to display (you asked: show price for stones below)
   const stonePrice =
     selectedColor?.price ??
     selectedColorStones?.[0]?.price ??
     monthStones?.[0]?.price ??
     0;
 
-  
+
   const shownTotal = Number(stonePrice || 0);
 
-
+ 
   const addToCartNow = async () => {
     setUiError("");
     setAddedMsg("");
@@ -243,7 +245,7 @@ export default function BirthstoneBracelet() {
           style: BIRTHSTONE_BRACELET_DB_STYLE, 
           length: selectedLength,
 
-
+          // optional extras (safe)
           birthstoneMonth: selectedMonth,
           birthstoneColor: selectedColor?.label,
           birthstoneColorHex: selectedColor?.hex,
@@ -284,6 +286,7 @@ export default function BirthstoneBracelet() {
         chainDb: chainDbValue,
         length: selectedLength,
 
+        // birthstone summary for cart display
         summary: {
           birthstone: {
             month: selectedMonth,
@@ -293,7 +296,7 @@ export default function BirthstoneBracelet() {
           },
         },
 
-     
+        // use backend price when available
         price: computedPrice ?? shownTotal,
       });
 
@@ -379,7 +382,6 @@ export default function BirthstoneBracelet() {
                   <strong>{selectedLength}"</strong>
                 </div>
 
-           
                 <div className="nk-metaRow">
                   <span>Stone price</span>
                   <strong>${Number(stonePrice || 0).toFixed(2)}</strong>
@@ -524,7 +526,7 @@ export default function BirthstoneBracelet() {
                 ))}
               </div>
 
-       
+              {/* ✅ show stone + total price BELOW (as you requested) */}
               <div style={{ marginTop: 10 }}>
                 <p className="nk-help" style={{ margin: 0 }}>
                   Stone price: <strong>${Number(stonePrice || 0).toFixed(2)}</strong>
@@ -558,7 +560,7 @@ export default function BirthstoneBracelet() {
               <span className="nk-chevron" aria-hidden="true" />
             </button>
 
-   
+            {/* ✅ Replace checkout flow with Add to Cart */}
             <button
               className="nk-next"
               type="button"
@@ -592,7 +594,7 @@ export default function BirthstoneBracelet() {
             </button>
           </section>
 
-          {/* RIGHT SLIDE PANEL */}
+          {/* RIGHT SLIDE PANEL (Chain & Length) */}
           <aside className={`nk-panel ${activePanel ? "open" : ""}`} aria-hidden={!activePanel}>
             <div className="nk-panelHeader">
               <div>
@@ -667,3 +669,4 @@ export default function BirthstoneBracelet() {
     </div>
   );
 }
+
