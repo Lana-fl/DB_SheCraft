@@ -402,10 +402,10 @@ import CutRound from "../assets/Cuts/round.jpg";
 
 const API_BASE = "http://localhost:5000";
 
-/** ✅ Map UI chain name -> DB value (matches your accessoryInstanceModel expectations) */
+
 const CHAIN_DB_MAP = { Cable: "cable", Rope: "rope", Box: "box", Thin: "thin" };
 
-/** ✅ DB style for this product (NOT fixed-price in your model, so material + stone will apply) */
+
 const BIRTHSTONE_NECKLACE_DB_STYLE = "birthstone";
 
 const METALS = [
@@ -434,7 +434,7 @@ function norm(s) {
   return String(s || "").trim().toLowerCase();
 }
 
-/** tries to pick the “best” stone row for the selected cut */
+
 function pickStoneForCut(stones, selectedCut) {
   if (!Array.isArray(stones) || stones.length === 0) return null;
   if (!selectedCut) return stones[0];

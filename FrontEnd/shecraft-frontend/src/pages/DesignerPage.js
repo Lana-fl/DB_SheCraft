@@ -12,7 +12,7 @@ export default function DesignerPage() {
 
   const itemType = state?.itemType || "ring";
 
-  // RING DATA (may be undefined if necklace)
+ 
   const {
     ringType,
     baseColor,
@@ -23,7 +23,7 @@ export default function DesignerPage() {
     selectedDiamond,
   } = state || {};
 
-  // NECKLACE DATA
+  
   const {
     selectedNameStyle,
     chainType,
@@ -134,7 +134,7 @@ export default function DesignerPage() {
 
         </div>
 
-        {/* RIGHT SIDE (Designer options) */}
+        
         <div className="tabs-sidebar">
           {designers.map((d) => (
             <div

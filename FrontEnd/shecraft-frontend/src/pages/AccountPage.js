@@ -11,7 +11,7 @@ export default function AccountPage() {
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ---------------- LOAD ACCOUNT FROM BACKEND ----------------
+  
   useEffect(() => {
     async function loadAccount() {
       try {
@@ -34,7 +34,7 @@ export default function AccountPage() {
     if (user) loadAccount();
   }, [user]);
 
-  // ---------------- NOT LOGGED IN ----------------
+ 
   if (!user) {
     return (
       <div className="account-container">
@@ -51,7 +51,7 @@ export default function AccountPage() {
     );
   }
 
-  // ---------------- LOADING ----------------
+ 
   if (loading) {
     return (
       <div className="account-container">
@@ -60,7 +60,7 @@ export default function AccountPage() {
     );
   }
 
-  // ---------------- LOGOUT ----------------
+  
   function handleLogout() {
     logout();
     navigate("/");
