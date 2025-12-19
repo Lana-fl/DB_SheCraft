@@ -1,54 +1,66 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../context/AuthContext";
 import { api } from "../api/client";
 
+const TOKEN_KEY = "authToken";
 
-function toStatus(order) {
-  // if backend already sends status, use it
-  if (order?.status) return String(order.status).toLowerCase();
-  // otherwise infer from completionDate
-  return order?.completionDate ? "completed" : "pending";
+function inferStatus(o) {
+  return o?.completionDate ? "completed" : "pending";
 }
 
 export default function AccountOrdersPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("all"); // all | pending | completed
   const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const token = localStorage.getItem(TOKEN_KEY);
 
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
+        setError("");
 
-        let data = [];
-        if (user?.role === "customer") {
-          // IMPORTANT: make sure your auth user object contains customerID
-          data = await api.getOrdersByCustomer(user.customerID);
-        } else if (user?.role === "designer") {
-          data = await api.getAllOrders();
+        if (!token) {
+          setOrders([]);
+          return;
         }
+
+        // 1) get logged-in customer account (token-based)
+        const account = await api.getMyCustomerAccount();
+
+        const customerID =
+          account?.customerID ||
+          (Array.isArray(account) ? account?.[0]?.customerID : null);
+
+        if (!customerID) {
+          throw new Error("Could not find customerID from /api/customers/account");
+        }
+
+        // 2) fetch only this customer's orders
+        const data = await api.getOrdersByCustomer(customerID);
 
         const normalized = (Array.isArray(data) ? data : []).map((o) => ({
           ...o,
-          _status: toStatus(o),
+          _status: inferStatus(o),
         }));
 
         setOrders(normalized);
       } catch (err) {
-        console.error("Failed to load orders:", err);
+        console.error("Orders load error:", err);
+        setError(err.message || "Failed to load orders");
         setOrders([]);
       } finally {
         setLoading(false);
       }
     }
 
-    if (user) load();
-  }, [user]);
+    load();
+  }, [token]);
 
   const counts = useMemo(() => {
     const pending = orders.filter((o) => o._status === "pending").length;
@@ -57,7 +69,7 @@ export default function AccountOrdersPage() {
   }, [orders]);
 
   const filtered = useMemo(() => {
-    const normQ = q.trim().toLowerCase();
+    const term = q.trim().toLowerCase();
 
     return orders
       .filter((o) => {
@@ -66,11 +78,9 @@ export default function AccountOrdersPage() {
         return true;
       })
       .filter((o) => {
-        if (!normQ) return true;
+        if (!term) return true;
         const hay = [
           o.orderID,
-          o.customerID,
-          o.designerID,
           o.address,
           o.paymentType,
           o.orderDate,
@@ -80,128 +90,71 @@ export default function AccountOrdersPage() {
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
-        return hay.includes(normQ);
+        return hay.includes(term);
       });
   }, [orders, tab, q]);
 
-  if (!user) {
+  // not logged in
+  if (!token) {
     return (
-      <div className="orders-container">
-        <div className="orders-card">
-          <h2 className="orders-title">Please log in</h2>
-          <button className="orders-btn" onClick={() => navigate("/login")}>
-            Go to Login
-          </button>
+      <div style={{ padding: 40 }}>
+        <h2>Please log in to view your orders</h2>
+        <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+          <button onClick={() => navigate("/login")}>Login</button>
+          <button onClick={() => navigate("/")}>Back Home</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="orders-container">
-      <div className="orders-banner">
-        <h1 className="orders-banner-title">Orders</h1>
-        <p className="orders-banner-subtitle">
-          {user.role === "designer"
-            ? "All customer orders"
-            : "Track your pending & completed orders"}
-        </p>
+    <div style={{ padding: 40 }}>
+      <h1>My Orders</h1>
+
+      <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+        <button onClick={() => setTab("all")}>All ({counts.all})</button>
+        <button onClick={() => setTab("pending")}>Pending ({counts.pending})</button>
+        <button onClick={() => setTab("completed")}>Completed ({counts.completed})</button>
       </div>
 
-      <div className="orders-card">
-        <div className="orders-topbar">
-          <button className="orders-btn subtle" onClick={() => navigate("/account")}>
-            ← Back to Account
-          </button>
+      <input
+        style={{ marginTop: 12, padding: 8, width: 360, maxWidth: "100%" }}
+        placeholder="Search orderID, address, payment..."
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+      />
 
-          <input
-            className="orders-search"
-            placeholder="Search orderID, address, payment..."
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-        </div>
+      {loading && <p style={{ marginTop: 12 }}>Loading...</p>}
+      {!loading && error && <p style={{ marginTop: 12, color: "red" }}>{error}</p>}
 
-        <div className="orders-tabs">
-          <button
-            className={`orders-tab ${tab === "all" ? "active" : ""}`}
-            onClick={() => setTab("all")}
-          >
-            All ({counts.all})
-          </button>
-          <button
-            className={`orders-tab ${tab === "pending" ? "active" : ""}`}
-            onClick={() => setTab("pending")}
-          >
-            Pending ({counts.pending})
-          </button>
-          <button
-            className={`orders-tab ${tab === "completed" ? "active" : ""}`}
-            onClick={() => setTab("completed")}
-          >
-            Completed ({counts.completed})
-          </button>
-        </div>
+      {!loading && !error && filtered.length === 0 && (
+        <p style={{ marginTop: 12 }}>No orders found.</p>
+      )}
 
-        {loading ? (
-          <p style={{ color: "#e4c67b", marginTop: 12 }}>Loading orders...</p>
-        ) : filtered.length === 0 ? (
-          <p style={{ color: "#e4c67b", marginTop: 12 }}>No orders found.</p>
-        ) : (
-          <div className="orders-list">
-            {filtered.map((o) => (
-              <div key={o.orderID} className="order-item">
-                <div className="order-row">
-                  <div className="order-id">{o.orderID}</div>
-                  <span className={`order-badge ${o._status}`}>
-                    {o._status === "pending" ? "Pending" : "Completed"}
-                  </span>
-                </div>
-
-                <div className="order-grid">
-                  <div className="order-field">
-                    <span className="label">Order Date</span>
-                    <span className="value">{o.orderDate || "-"}</span>
-                  </div>
-                  <div className="order-field">
-                    <span className="label">Completion Date</span>
-                    <span className="value">{o.completionDate || "-"}</span>
-                  </div>
-                  <div className="order-field">
-                    <span className="label">Qty</span>
-                    <span className="value">{o.qty ?? "-"}</span>
-                  </div>
-                  <div className="order-field">
-                    <span className="label">Total</span>
-                    <span className="value">{o.price ?? "-"}</span>
-                  </div>
-                  <div className="order-field">
-                    <span className="label">Payment</span>
-                    <span className="value">{o.paymentType || "-"}</span>
-                  </div>
-                  <div className="order-field">
-                    <span className="label">Address</span>
-                    <span className="value">{o.address || "-"}</span>
-                  </div>
-
-                  {user.role === "designer" && (
-                    <>
-                      <div className="order-field">
-                        <span className="label">Customer ID</span>
-                        <span className="value">{o.customerID || "-"}</span>
-                      </div>
-                      <div className="order-field">
-                        <span className="label">Designer ID</span>
-                        <span className="value">{o.designerID || "-"}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
+      {!loading && !error && filtered.length > 0 && (
+        <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
+          {filtered.map((o) => (
+            <div
+              key={o.orderID}
+              style={{ border: "1px solid #ddd", borderRadius: 10, padding: 12 }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <strong>{o.orderID}</strong>
+                <span>{o._status === "pending" ? "Pending" : "Completed"}</span>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+
+              <div style={{ marginTop: 8 }}>
+                <div>Order Date: {o.orderDate || "-"}</div>
+                <div>Completion: {o.completionDate || "-"}</div>
+                <div>Qty: {o.qty ?? "-"}</div>
+                <div>Total: {o.price ?? "-"}</div>
+                <div>Payment: {o.paymentType || "-"}</div>
+                <div>Address: {o.address || "-"}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
