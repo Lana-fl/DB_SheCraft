@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/BraceletSelection.css";
 
-/* PNG IMAGES */
 import nameBraceletImg from "../assets/Bracelet/names.jpg";
 import charmBraceletImg from "../assets/Bracelet/charms.jpg";
 import birthstoneBraceletImg from "../assets/Bracelet/birthstone.png";
 
-/* 3 Bracelet Types */
+
 const bracelets = [
   {
     id: 1,
