@@ -24,8 +24,10 @@ import BirthstoneNecklace from "./pages/BirthstoneNecklace";
 import BraceletSelection from "./pages/BraceletSelection";
 import Header from "./pages/Header";
 import Footer from "./pages/Footer";
-
+import EarringBirthstone from "./pages/EarringBirthstone";
+import EarringCharm from "./pages/EarringCharm";
 import BirthstoneBracelet from "./pages/BirthstoneBracelet";
+import FinalStep from "./pages/FinalStep"; 
 /* =======================
    ACCOUNT SYSTEM
    ======================= */
@@ -128,16 +130,27 @@ function App() {
             />
             <Route
               path="/bracelet/birthstone"
-              element={<BirthstoneNecklace />}
+              element={<BirthstoneBracelet />}
             />
 
             {/* EARRINGS */}
-            <Route path="/earrings" element={<EarringsPage />} />
+           <Route path="/earrings" element={<EarringsPage />} />
+
+<Route
+  path="/earrings/birthstone"
+  element={<EarringBirthstone />}
+/>
+
+<Route
+  path="/earrings/charm"
+  element={<EarringCharm />}
+/>
 
             {/* OTHER */}
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/designer" element={<DesignerPage />} />
             <Route path="/steps" element={<StepsBar />} />
+            <Route path="/final-step" element={<FinalStep />} />
           </Routes>
         </main>
 
