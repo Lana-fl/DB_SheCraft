@@ -210,6 +210,6 @@ Response:
 - Database paths start with ```bash /images/ ```
 
 ## Contributors👩‍💻
-- Lana Fliti
-- Michelle Baalbaky
-- Rajaa Ghanem
+- **Lana Fliti** — @Lana-fl
+- **Michelle Baalbaky** — @michelle-baalbaky
+- **Rajaa Ghanem** — @RDGH5825825
