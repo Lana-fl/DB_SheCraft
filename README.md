@@ -5,7 +5,7 @@ SheCraft is a full-stack jewelry web application built with modern web technolog
 
 ---
 
-## 🌐 Live Development Ports
+## Live Development Ports 🌐
 - **Frontend:** http://localhost:3000
 - **Backend:** http://localhost:5000
 - **Database:** MySQL (`jewelry`)
@@ -30,7 +30,7 @@ SheCraft is a full-stack jewelry web application built with modern web technolog
 
 ---
 
-## 📁 Project Structure
+## Project Structure📁 
 
 
 ```text
@@ -63,7 +63,7 @@ DB_SHECRAFT/
       └─ package.json
 ```
 
-## 🛠 Tech Stack
+## Tech Stack🛠 
 - **Frontend:** React
 - **Backend:** Node.js, Express
 - **Database:** MySQL (8+)
@@ -72,7 +72,7 @@ DB_SHECRAFT/
 
 ---
 
-## ✅ Prerequisites
+## Prerequisites✅
 - Node.js (LTS)
 - npm
 - MySQL Server (running)
@@ -98,26 +98,27 @@ cd FrontEnd/shecraft-frontend
 npm install
 npm start
 ```
-## 🗄 Database Setup
+## Database Setup🗄
 SQL scripts location:
 
 - BackEnd/sql/Database jewelry.sql
 - BackEnd/sql/Seed Data.sql
 
 Create Schema
-bash
-Copier le code
+```bash
 mysql -u root -p < "BackEnd/sql/Database jewelry.sql"
+```
 Seed Data
-bash
+```bash
 Copier le code
 mysql -u root -p jewelry < "BackEnd/sql/Seed Data.sql"
+```
 ✔ Safe to rerun
 ✔ Uses ON DUPLICATE KEY UPDATE and INSERT IGNORE
 
-###🔌 Backend Setup (Port 5000)
+## Backend Setup (Port 5000)🔌
 Create a .env file inside BackEnd/shecraft-backend/:
-
+```bash
 env
 PORT=5000
 DB_HOST=localhost
@@ -125,96 +126,90 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=jewelry
 JWT_SECRET=your_secret
+```
+
 Run the backend:
 
-bash
-Copier le code
+```bash
+npm i
 npm run dev
+```
 Backend URL:
-
-arduino
-Copier le code
 http://localhost:5000
-🖥 Frontend Setup (Port 3000)
-bash
-Copier le code
+
+## Frontend Setup (Port 3000)🖥 
+```bash
 cd FrontEnd/shecraft-frontend
 npm install
 npm start
+```
 Frontend URL:
 
-arduino
-Copier le code
 http://localhost:3000
-🔐 Environment Variables
+## Environment Variables🔐
 ❌ Never commit .env
 
 ✅ Use .env.example
 
-🔗 API Routes
+## API Routes🔗
 Base URL:
+## 🔗 API Routes
 
-bash
-Copier le code
-http://localhost:5000/api
-Route	Description
-/api/auth	Authentication
-/api/customers	Customers
-/api/accessories	Accessories
-/api/orders	Orders
-/api/designers	Designers
-/api/charms	Charms
-/api/materials	Materials
-/api/stones	Stones
-/api/accessory-instance	Custom accessory builds
+**Base URL:**  
+`http://localhost:5000/api`
 
-🖼 Static Images
+| Route                     | Description                |
+|---------------------------|----------------------------|
+| `/api/auth`               | Authentication             |
+| `/api/customers`          | Customers                  |
+| `/api/accessories`        | Accessories                |
+| `/api/orders`             | Orders                     |
+| `/api/designers`          | Designers                  |
+| `/api/charms`             | Charms                     |
+| `/api/materials`          | Materials                  |
+| `/api/stones`             | Stones                     |
+| `/api/accessory-instance` | Custom accessory builds    |
+
+## Static Images🖼 
 Images are served from:
 
-swift
-Copier le code
+```swift
 BackEnd/shecraft-backend/public/images
+```
 Example:
 
-bash
-Copier le code
+```bash
 http://localhost:5000/images/Charms/colorful/A001.jpg
-❤️ Health Check
-Endpoint:
-
-bash
-Copier le code
+```
+## Health Check
+### Endpoint
+```http
 GET http://localhost:5000/api/health/db
+```
+
 Response:
 
-json
-Copier le code
+```json
 { "db": "up" }
-🧯 Troubleshooting
-Frontend cannot reach backend
-Backend running on port 5000
+```
+## Troubleshooting🧯
 
-Frontend running on port 3000
+#### Frontend cannot reach backend
+- Backend running on port 5000
+- Frontend running on port 3000
+- Correct API base URL
+- CORS enabled
 
-Correct API base URL
+#### Database errors
+- MySQL server running
+- Correct .env credentials
+- Schema imported successfully
 
-CORS enabled
+#### Images not loading
+- Images exist in ```bash public/images```
+- Database paths start with ```bash /images/ ```
 
-Database errors
-MySQL server running
-
-Correct .env credentials
-
-Schema imported successfully
-
-Images not loading
-Images exist in public/images
-
-Database paths start with /images/
-
-👩‍💻 Contributors
-Lana Fliti
-
-Michelle Baalbaky
-
-Rajaa Ghanem
+## Contributors👩‍💻
+- Lana Fliti
+- Michelle Baalbaky
+- Rajaa Ghanem
