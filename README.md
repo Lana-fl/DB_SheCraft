@@ -1,23 +1,24 @@
-# SheCraft 💍✨ (React + Express + MySQL)
+# SheCraft 💍✨
+## Full-Stack Jewelry Web Application
 
-SheCraft is a full-stack jewelry web application built with:
-- **Frontend:** React (`http://localhost:3000`)
-- **Backend:** Node.js + Express (`http://localhost:5000`)
-- **Database:** MySQL (`jewelry`)
-
-The backend also serves product images from:
-- `http://localhost:5000/images/...`
+SheCraft is a full-stack jewelry web application built with modern web technologies.
 
 ---
 
-## Table of Contents
+## 🌐 Live Development Ports
+- **Frontend:** http://localhost:3000
+- **Backend:** http://localhost:5000
+- **Database:** MySQL (`jewelry`)
+- **Images:** http://localhost:5000/images/...
+
+---
+
+## 📚 Table of Contents
 - [Project Structure](#project-structure)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Database Setup](#database-setup)
-  - [1) Create Schema](#1-create-schema)
-  - [2) Seed Data](#2-seed-data)
 - [Backend Setup (Port 5000)](#backend-setup-port-5000)
 - [Frontend Setup (Port 3000)](#frontend-setup-port-3000)
 - [Environment Variables](#environment-variables)
@@ -29,52 +30,50 @@ The backend also serves product images from:
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
+
+```text
 DB_SHECRAFT/
 ├─ BackEnd/
-│ ├─ shecraft-backend/
-│ │ ├─ controllers/
-│ │ ├─ models/
-│ │ ├─ routes/
-│ │ ├─ config/
-│ │ ├─ middleware/
-│ │ ├─ public/
-│ │ │ └─ images/
-│ │ ├─ app.js
-│ │ └─ package.json
-│ │
-│ ├─ sql/
-│ │ ├─ Database jewelry.sql
-│ │ └─ Seed Data.sql
-│ │
-│ └─ .env (NOT committed)
+│  ├─ shecraft-backend/
+│  │  ├─ controllers/
+│  │  ├─ models/
+│  │  ├─ routes/
+│  │  ├─ config/
+│  │  ├─ middleware/
+│  │  ├─ public/
+│  │  │  └─ images/
+│  │  ├─ app.js
+│  │  └─ package.json
+│  │
+│  ├─ sql/
+│  │  ├─ Database jewelry.sql
+│  │  └─ Seed Data.sql
+│  │
+│  └─ .env (NOT committed)
 │
 └─ FrontEnd/
-└─ shecraft-frontend/
-├─ src/
-│ ├─ api/
-│ ├─ context/
-│ ├─ hooks/
-│ └─ pages/
-└─ package.json
+   └─ shecraft-frontend/
+      ├─ src/
+      │  ├─ api/
+      │  ├─ context/
+      │  ├─ hooks/
+      │  └─ pages/
+      └─ package.json
+```
 
-yaml
-Copier le code
-
----
-
-## Tech Stack
+## 🛠 Tech Stack
 - **Frontend:** React
 - **Backend:** Node.js, Express
-- **Database:** MySQL (MySQL 8+ recommended)
+- **Database:** MySQL (8+)
+- **Security:** JWT Authentication
 - **Other:** CORS enabled for `http://localhost:3000`
 
 ---
 
-## Prerequisites
-Install:
-- Node.js (LTS recommended)
+## ✅ Prerequisites
+- Node.js (LTS)
 - npm
 - MySQL Server (running)
 
@@ -82,99 +81,83 @@ Install:
 
 ## Quick Start
 
-### 1) Database
+### 1️⃣ Database
 - Import schema
 - Import seed data
 
-### 2) Backend (5000)
+### 2️⃣ Backend (Port 5000)
 
 ```bash
 cd BackEnd/shecraft-backend
 npm install
 npm run dev
-3) Frontend (3000)
-bash
-Copier le code
+```
+### 3️⃣ Frontend (Port 3000)
+```bash
 cd FrontEnd/shecraft-frontend
 npm install
 npm start
-Database Setup
-Your SQL scripts are located here:
+```
+## 🗄 Database Setup
+SQL scripts location:
 
-BackEnd/sql/Database jewelry.sql (schema + tables + constraints)
+- BackEnd/sql/Database jewelry.sql
+- BackEnd/sql/Seed Data.sql
 
-BackEnd/sql/Seed Data.sql (seed inserts/updates)
-
-1) Create Schema
+Create Schema
 bash
 Copier le code
 mysql -u root -p < "BackEnd/sql/Database jewelry.sql"
-✅ This script creates the jewelry database (if not exists) and all tables.
-
-2) Seed Data
+Seed Data
 bash
 Copier le code
 mysql -u root -p jewelry < "BackEnd/sql/Seed Data.sql"
-✅ Notes:
+✔ Safe to rerun
+✔ Uses ON DUPLICATE KEY UPDATE and INSERT IGNORE
 
-Seed uses ON DUPLICATE KEY UPDATE and INSERT IGNORE
-
-Safe to rerun
-
-Image paths use /images/... which matches backend static hosting
-
-Backend Setup (Port 5000)
-bash
-Copier le code
-cd BackEnd/shecraft-backend
-npm install
-Create a .env file in BackEnd/shecraft-backend/:
+###🔌 Backend Setup (Port 5000)
+Create a .env file inside BackEnd/shecraft-backend/:
 
 env
-Copier le code
 PORT=5000
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=jewelry
 JWT_SECRET=your_secret
-Run backend:
+Run the backend:
 
 bash
 Copier le code
 npm run dev
-Backend runs on:
+Backend URL:
 
+arduino
+Copier le code
 http://localhost:5000
-
-Frontend Setup (Port 3000)
+🖥 Frontend Setup (Port 3000)
 bash
 Copier le code
 cd FrontEnd/shecraft-frontend
 npm install
 npm start
-Frontend runs on:
+Frontend URL:
 
-http://localhost:3000
-
-Environment Variables
-Backend .env example
-env
+arduino
 Copier le code
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=jewelry
-JWT_SECRET=your_secret
-✅ Do NOT commit .env. Use .env.example.
+http://localhost:3000
+🔐 Environment Variables
+❌ Never commit .env
 
-API Routes
+✅ Use .env.example
+
+🔗 API Routes
 Base URL:
 
+bash
+Copier le code
 http://localhost:5000/api
-
-Route Prefix	Purpose
+Route	Description
 /api/auth	Authentication
 /api/customers	Customers
 /api/accessories	Accessories
@@ -185,20 +168,21 @@ Route Prefix	Purpose
 /api/stones	Stones
 /api/accessory-instance	Custom accessory builds
 
-Static Images
-Folder: BackEnd/shecraft-backend/public/images
+🖼 Static Images
+Images are served from:
 
-URL: http://localhost:5000/images/...
-
+swift
+Copier le code
+BackEnd/shecraft-backend/public/images
 Example:
 
 bash
 Copier le code
 http://localhost:5000/images/Charms/colorful/A001.jpg
-Health Check
-Database health endpoint:
+❤️ Health Check
+Endpoint:
 
-http
+bash
 Copier le code
 GET http://localhost:5000/api/health/db
 Response:
@@ -206,29 +190,29 @@ Response:
 json
 Copier le code
 { "db": "up" }
-Troubleshooting
-Frontend cannot fetch backend
-Backend running on 5000
+🧯 Troubleshooting
+Frontend cannot reach backend
+Backend running on port 5000
 
-Frontend running on 3000
+Frontend running on port 3000
 
-API base URL points to http://localhost:5000
+Correct API base URL
 
-CORS allows http://localhost:3000
+CORS enabled
 
 Database errors
-MySQL is running
+MySQL server running
 
-.env credentials are correct
+Correct .env credentials
 
-Schema script executed successfully
+Schema imported successfully
 
 Images not loading
 Images exist in public/images
 
-DB photoURL starts with /images/
+Database paths start with /images/
 
-Contributors
+👩‍💻 Contributors
 Lana Fliti
 
 Michelle Baalbaky
