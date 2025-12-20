@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import useAuth from "./AuthContext"; // ✅ uses your existing AuthContext
+import useAuth from "./AuthContext"; 
 
 const CartContext = createContext(null);
 
-// ✅ build a per-user storage key
+
 function getCartKey(user) {
   // handle both shapes: user.customerID or user.user.customerID
   const id =
@@ -35,19 +35,20 @@ export function CartProvider({ children }) {
 
   const [cartItems, setCartItems] = useState(() => loadCart(cartKey));
 
-  // ✅ when user changes, load that user's cart
+
   useEffect(() => {
     setCartItems(loadCart(cartKey));
   }, [cartKey]);
 
-  // ✅ persist per user
+
+
   useEffect(() => {
     localStorage.setItem(cartKey, JSON.stringify(cartItems));
   }, [cartItems, cartKey]);
 
   const addToCart = (item) => {
     setCartItems((prev) => {
-      // avoid duplicates by accessoryID when present
+      // avoid duplICAcates by accessoryID when present
       if (item?.accessoryID && prev.some((x) => x.accessoryID === item.accessoryID)) return prev;
       return [...prev, item];
     });

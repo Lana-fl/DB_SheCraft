@@ -2,12 +2,11 @@ import { useNavigate } from "react-router-dom";
 import "../styles/necklaceselections.css";
 import Footer from "./Footer";
 
-/* ✅ PNG IMAGES */
 import nameNecklaceImg from "../assets/necklace/name.png";
 import charmNecklaceImg from "../assets/necklace/charms.png";
 import birthstoneNecklaceImg from "../assets/necklace/birthstone.png";
 
-/* ✅ 3 Necklace Types */
+
 const necklaces = [
   {
     id: 1,
@@ -46,7 +45,7 @@ const handleSelectNecklace = (necklaceType) => {
     return;
   }
 
-  // name (default)
+
   navigate("/necklacespage", { state: { necklaceType } });
 };
 
