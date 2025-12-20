@@ -4,6 +4,10 @@
 SheCraft is a full-stack jewelry web application built with modern web technologies.
 
 ---
+## Contributors 
+- **Lana Fliti** — [@Lana-fl](https://github.com/Lana-fl)
+- **Michelle Baalbaky** — [@michelle-baalbaky](https://github.com/michelle-baalbaky)
+- **Rajaa Ghanem** — [@RDGH5825825](https://github.com/RDGH5825825)
 
 ## Live Development Ports 🌐
 - **Frontend:** http://localhost:3000
@@ -209,7 +213,3 @@ Response:
 - Images exist in ```bash public/images```
 - Database paths start with ```bash /images/ ```
 
-## Contributors 
-- **Lana Fliti** — [@Lana-fl](https://github.com/Lana-fl)
-- **Michelle Baalbaky** — [@michelle-baalbaky](https://github.com/michelle-baalbaky)
-- **Rajaa Ghanem** — [@RDGH5825825](https://github.com/RDGH5825825)
