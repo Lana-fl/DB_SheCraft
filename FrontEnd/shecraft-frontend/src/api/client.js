@@ -59,26 +59,25 @@ class ApiClient {
 
   updateMyCustomerAccount(payload) {
   return this.request("/api/customers/account", {
-    method: "PUT", // or "PATCH" depending on your backend
+    method: "PUT", 
     body: JSON.stringify(payload),
   });
 }
 
 changePassword(payload) {
   return this.request("/api/auth/change-password", {
-    method: "PUT", // or PUT
+    method: "PUT", 
     body: JSON.stringify(payload), // { oldPassword, newPassword }
   });
 }
 
-  // OPTIONAL: if you have it later
   getMyDesignerAccount() {
     return this.request("/api/designers/account", { method: "GET" });
   }
 
 updateMyDesignerAccount(payload) {
   return this.request("/api/designers/account", {
-    method: "PUT", // or "PATCH" if your backend uses PATCH
+    method: "PUT", 
     body: JSON.stringify(payload),
   });
 }
@@ -89,7 +88,7 @@ updateMyDesignerAccount(payload) {
 
   // ---------------- ORDERS ----------------
 
-  // Create order from reserved accessories
+  
   createOrder(orderPayload) {
     return this.request("/api/orders", {
       method: "POST",
@@ -97,23 +96,22 @@ updateMyDesignerAccount(payload) {
     });
   }
 
-  // Get ALL orders (designer/admin usage)
+  
   getAllOrders() {
     return this.request("/api/orders", { method: "GET" });
   }
 
-  // Get orders by customerID (customer page)
+  
   getOrdersByCustomer(customerID) {
     return this.request(`/api/orders/customer/${customerID}`, { method: "GET" });
   }
 
-  // Get order details by orderID
+  
   getOrderDetails(orderID) {
     return this.request(`/api/orders/${orderID}`, { method: "GET" });
   }
 
-  // Mark order completed (PATCH /api/orders/:orderID/complete)
-  // Your backend requires designerID in body
+ 
   completeOrder(orderID, designerID) {
     return this.request(`/api/orders/${orderID}/complete`, {
       method: "PATCH",
@@ -121,7 +119,7 @@ updateMyDesignerAccount(payload) {
     });
   }
 
-  // Best sellers endpoint you already have
+ 
   getBestSellersByType({ from, to } = {}) {
     const params = new URLSearchParams();
     if (from) params.set("from", from);
@@ -133,5 +131,5 @@ updateMyDesignerAccount(payload) {
   }
 }
 
-// Export a single instance
+
 export const api = new ApiClient(API_BASE_URL);

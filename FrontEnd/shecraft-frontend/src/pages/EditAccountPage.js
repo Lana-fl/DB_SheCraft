@@ -9,13 +9,13 @@ export default function EditAccountPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // ✅ Hooks MUST be at top (no returns before them)
+  
   const [loading, setLoading] = useState(true);
 
-  // source of truth loaded from backend (so required fields always exist)
+  
   const [original, setOriginal] = useState(null);
 
-  // editable form values
+ 
   const [formData, setFormData] = useState({
     name: "",
     branch: "",
@@ -38,7 +38,7 @@ export default function EditAccountPage() {
   const [message, setMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  // ================= LOAD PREVIOUS INFO FIRST =================
+  
   useEffect(() => {
     if (!user) {
       setLoading(false);
@@ -59,7 +59,7 @@ export default function EditAccountPage() {
 
         if (!mounted) return;
 
-        // normalize possible backend field names
+        
         const normalized = {
           name:
             data?.name ||
@@ -90,7 +90,7 @@ export default function EditAccountPage() {
     };
   }, [user]);
 
-  // ================= ONLY CHANGE WHAT USER MODIFIED =================
+  
   const changed = useMemo(() => {
     if (!original) return {};
     const out = {};
@@ -102,7 +102,7 @@ export default function EditAccountPage() {
     return out;
   }, [formData, original]);
 
-  // ================= HANDLERS =================
+  
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -123,7 +123,7 @@ export default function EditAccountPage() {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   }
 
-  // ================= SAVE ACCOUNT =================
+  
   async function handleSave() {
     try {
       setMessage("");
@@ -133,13 +133,13 @@ export default function EditAccountPage() {
         return;
       }
 
-      // nothing changed => do nothing
+      
       if (Object.keys(changed).length === 0) {
         setMessage("No changes to save.");
         return;
       }
 
-      // validate phone only if changed and not empty
+      
       let phoneDigits = null;
       if ("phone" in changed) {
         phoneDigits = changed.phone ? changed.phone.replace(/\D/g, "") : "";
@@ -150,7 +150,7 @@ export default function EditAccountPage() {
       }
 
       if (user.role === "customer") {
-        // final values (changed overrides original)
+        
         const finalName =
           ("name" in changed ? changed.name : original.name) || original.name;
         const finalEmail =
@@ -165,7 +165,7 @@ export default function EditAccountPage() {
             ? phoneDigits || null
             : String(original.phone || "").replace(/\D/g, "") || null;
 
-        // ✅ keep required fields always sent (even if user didn't change them)
+        
         await api.updateMyCustomerAccount({
           firstName,
           lastName,
@@ -186,7 +186,7 @@ export default function EditAccountPage() {
             ? phoneDigits || null
             : String(original.phone || "").replace(/\D/g, "") || null;
 
-        // ✅ keep required fields always sent
+        
         await api.updateMyDesignerAccount({
           name: finalName,
           branch: finalBranch,
@@ -198,7 +198,7 @@ export default function EditAccountPage() {
 
       setMessage("Account updated successfully!");
 
-      // refresh values so inputs show what is now saved
+      
       const refreshed =
         user.role === "designer"
           ? await api.getMyDesignerAccount()
@@ -226,7 +226,7 @@ export default function EditAccountPage() {
     }
   }
 
-  // ================= PASSWORD =================
+ 
   async function handlePasswordSave() {
     if (passwordError) return;
 
@@ -251,7 +251,7 @@ export default function EditAccountPage() {
     }
   }
 
-  // ================= RENDER (returns AFTER hooks) =================
+ 
   if (!user) {
     return (
       <div className="account-container">
