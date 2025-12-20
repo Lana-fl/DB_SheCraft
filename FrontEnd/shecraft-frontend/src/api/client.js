@@ -57,11 +57,31 @@ class ApiClient {
     return this.request("/api/customers/account", { method: "GET" });
   }
 
-  // OPTIONAL: if you have it later
-  // getMyDesignerAccount() {
-  //   return this.request("/api/designers/account", { method: "GET" });
-  // }
+  updateMyCustomerAccount(payload) {
+  return this.request("/api/customers/account", {
+    method: "PUT", // or "PATCH" depending on your backend
+    body: JSON.stringify(payload),
+  });
+}
 
+changePassword(payload) {
+  return this.request("/api/auth/change-password", {
+    method: "PUT", // or PUT
+    body: JSON.stringify(payload), // { oldPassword, newPassword }
+  });
+}
+
+  // OPTIONAL: if you have it later
+  getMyDesignerAccount() {
+    return this.request("/api/designers/account", { method: "GET" });
+  }
+
+updateMyDesignerAccount(payload) {
+  return this.request("/api/designers/account", {
+    method: "PUT", // or "PATCH" if your backend uses PATCH
+    body: JSON.stringify(payload),
+  });
+}
   // ---------------- DESIGNERS ----------------
   getDesigners() {
     return this.request("/api/designers", { method: "GET" });

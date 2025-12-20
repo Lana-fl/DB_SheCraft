@@ -43,14 +43,20 @@ const Header = ({ openLogin }) => {
         </button>
 
         {/* ORDERS */}
-        <button
-          type="button"
-          className="icon-button"
-          aria-label="Orders"
-          onClick={() => handleProtectedNav("/orderpage")}
-        >
-          <img src={orderImg} alt="Orders" className="icon-img" />
-        </button>
+        {/* ORDERS */}
+<button
+  type="button"
+  className="icon-button"
+  aria-label="Orders"
+  onClick={() => {
+    if (!isLoggedIn) return openLogin?.();
+    const target = user?.role === "designer" ? "/designer/dashboard" : "/orderpage";
+    navigate(target);
+  }}
+>
+  <img src={orderImg} alt="Orders" className="icon-img" />
+</button>
+
 
         {/* ACCOUNT */}
         <button

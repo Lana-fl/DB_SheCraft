@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { api } from "../api/client";
 import "../styles/AccountPage.css";
+console.log("api proto methods:", Object.getOwnPropertyNames(Object.getPrototypeOf(api)));
+
 
 export default function AccountPage() {
   const navigate = useNavigate();
@@ -14,27 +16,37 @@ export default function AccountPage() {
   
   useEffect(() => {
     async function loadAccount() {
-      try {
-        let data;
+  try {
+    let data;
 
-        if (user.role === "customer") {
-          data = await api.getMyCustomerAccount();
-        } else if (user.role === "designer") {
-          data = await api.getMyDesignerAccount();
-        }
-
-        setAccount(data);
-      } catch (err) {
-        console.error("Failed to load account:", err);
-      } finally {
-        setLoading(false);
-      }
+    if (user.role === "customer") {
+      data = await api.getMyCustomerAccount();
+    } else if (user.role === "designer") {
+      data = await api.getMyDesignerAccount();
     }
+
+    const normalized = {
+      ...data,
+      phone:
+        data?.phone ??
+        data?.phoneNb ??
+        data?.phone_number ??
+        data?.phoneNumber ??
+        null,
+    };
+
+    setAccount(normalized);
+  } catch (err) {
+    console.error("Failed to load account:", err);
+  } finally {
+    setLoading(false);
+  }
+}
+
 
     if (user) loadAccount();
   }, [user]);
 
- 
   if (!user) {
     return (
       <div className="account-container">
@@ -138,5 +150,7 @@ export default function AccountPage() {
         </div>
       </div>
     </div>
+    
   );
 }
+
