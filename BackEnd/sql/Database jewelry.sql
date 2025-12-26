@@ -35,11 +35,11 @@ CREATE TABLE designer (
 CREATE TABLE customer (
   customerID    VARCHAR(4)   NOT NULL,
   firstName     VARCHAR(50)  NOT NULL,
-  lastName      VARCHAR(50)  NOT NULL,
+  lastName      VARCHAR(50),
   countryCode   VARCHAR(5)   NOT NULL DEFAULT '+961',
-  phoneNb       CHAR(8)      NULL,
+  phoneNb       CHAR(8)      ,
   email         VARCHAR(100) NOT NULL,
-  cardNb        VARCHAR(255) NULL,
+  cardNb        VARCHAR(255),
   passwordHash  VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (customerID),
