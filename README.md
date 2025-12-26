@@ -107,15 +107,8 @@ SQL scripts location:
 
 - BackEnd/sql/Database jewelry.sql
 - BackEnd/sql/Seed Data.sql
+  These scripts should be executed in mysql in order to create the database in mysql
 
-Create Schema
-```bash
-mysql -u root -p < "BackEnd/sql/Database jewelry.sql"
-```
-Seed Data
-```bash
-mysql -u root -p jewelry < "BackEnd/sql/Seed Data.sql"
-```
 ✔ Safe to rerun
 ✔ Uses ON DUPLICATE KEY UPDATE and INSERT IGNORE
 
