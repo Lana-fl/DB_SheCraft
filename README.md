@@ -92,7 +92,7 @@ DB_SHECRAFT/
 ### 2️⃣ Backend (Port 5000)
 
 ```bash
-cd BackEnd/shecraft-backend
+cd BackEnd/shecraft-backend/src
 npm install
 npm run dev
 ```
@@ -141,6 +141,13 @@ Backend URL:
 http://localhost:5000
 
 ## Frontend Setup (Port 3000)🖥 
+
+Be sure to have a .env file in shecraft-frontend with the following code
+```bash
+REACT_APP_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000
+```
+Then run the following
 ```bash
 cd FrontEnd/shecraft-frontend
 npm install
