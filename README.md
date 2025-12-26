@@ -114,7 +114,6 @@ mysql -u root -p < "BackEnd/sql/Database jewelry.sql"
 ```
 Seed Data
 ```bash
-Copier le code
 mysql -u root -p jewelry < "BackEnd/sql/Seed Data.sql"
 ```
 ✔ Safe to rerun
