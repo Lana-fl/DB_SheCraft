@@ -317,31 +317,55 @@ CREATE TABLE orderitems (
 -- 7) SUPPLIER ITEMS (as in your diagram: supplieditems)
 -- ============================================
 
-CREATE TABLE supplieditems (
-  supplierID VARCHAR(4) NOT NULL,
-  materialID VARCHAR(4) NOT NULL,
-  charmID    VARCHAR(4) NULL,
-  stoneID    VARCHAR(4) NULL,
+
+CREATE TABLE supplier_material (
+  supplierID VARCHAR(10) NOT NULL,
+  materialID VARCHAR(10) NOT NULL,
 
   PRIMARY KEY (supplierID, materialID),
 
-  CONSTRAINT fk_supplied_supplier
+  CONSTRAINT fk_sm_supplier
     FOREIGN KEY (supplierID) REFERENCES supplier(supplierID)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+    ON DELETE CASCADE ON UPDATE CASCADE,
 
-  CONSTRAINT fk_supplied_material
+  CONSTRAINT fk_sm_material
     FOREIGN KEY (materialID) REFERENCES material(materialID)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
-
-  CONSTRAINT fk_supplied_charm
-    FOREIGN KEY (charmID) REFERENCES charm(charmID)
-    ON UPDATE CASCADE
-    ON DELETE SET NULL,
-
-  CONSTRAINT fk_supplied_stone
-    FOREIGN KEY (stoneID) REFERENCES stone(stoneID)
-    ON UPDATE CASCADE
-    ON DELETE SET NULL
+    ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE supplier_stone (
+  supplierID VARCHAR(10) NOT NULL,
+  stoneID    VARCHAR(10) NOT NULL,
+  qty        INT NOT NULL DEFAULT 1,
+
+  PRIMARY KEY (supplierID, stoneID),
+
+  CONSTRAINT chk_ss_qty CHECK (qty >= 0),
+
+  CONSTRAINT fk_ss_supplier
+    FOREIGN KEY (supplierID) REFERENCES supplier(supplierID)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+  CONSTRAINT fk_ss_stone
+    FOREIGN KEY (stoneID) REFERENCES stone(stoneID)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE supplier_charm (
+  supplierID VARCHAR(10) NOT NULL,
+  charmID    VARCHAR(10) NOT NULL,
+  qty        INT NOT NULL DEFAULT 1,
+
+  PRIMARY KEY (supplierID, charmID),
+
+  CONSTRAINT chk_sc_qty CHECK (qty >= 0),
+
+  CONSTRAINT fk_sc_supplier
+    FOREIGN KEY (supplierID) REFERENCES supplier(supplierID)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+
+  CONSTRAINT fk_sc_charm
+    FOREIGN KEY (charmID) REFERENCES charm(charmID)
+    ON DELETE CASCADE ON UPDATE CASCADE
+);
+
