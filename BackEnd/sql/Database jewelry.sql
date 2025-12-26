@@ -89,7 +89,7 @@ CREATE TABLE accessory (
   PRIMARY KEY (accessoryID),
 
   CONSTRAINT chk_accessory_price  CHECK (price >= 0),
-  CONSTRAINT chk_accessory_status CHECK (status IN ('reserved','available','sold')),
+  CONSTRAINT chk_accessory_status CHECK (status IN ('reserved','available','ordered')),
 
   CONSTRAINT fk_accessory_material
     FOREIGN KEY (materialID)
@@ -275,7 +275,7 @@ CREATE TABLE orders (
   address         VARCHAR(100)  ,
   paymentType     VARCHAR(50)   ,
   customerID      VARCHAR(4)    ,
-  status          VARCHAR(20)    DEFAULT 'pending',
+  status          VARCHAR(20)   DEFAULT 'pending',
 
   PRIMARY KEY (orderID),
 
