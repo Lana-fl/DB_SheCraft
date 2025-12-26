@@ -107,7 +107,12 @@ SQL scripts location:
 
 - BackEnd/sql/Database jewelry.sql
 - BackEnd/sql/Seed Data.sql
-  These scripts should be executed in mysql in order to create the database in mysql
+  
+  These scripts should be executed in mysql in order to create the database in mysql (using the mysql command line)
+  you can run in mysql:
+  ```bash
+  SOURCE <your-path-where-put-the-project>/BackEnd/sql/Database jewelry.sql;
+  ```
 
 ✔ Safe to rerun
 ✔ Uses ON DUPLICATE KEY UPDATE and INSERT IGNORE
