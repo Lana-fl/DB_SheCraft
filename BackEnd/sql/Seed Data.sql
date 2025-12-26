@@ -1,8 +1,21 @@
 USE jewelry;
 
--- Auto-generated from BackEnd/public/images/Charms (no random values).
--- qty and price set to 0 by default; update them as needed.
+-- =========================
+-- 0) MATERIALS FIRST
+-- =========================
+INSERT INTO MATERIAL (materialID, metal, price) VALUES
+('MT01', '14K Gold', 12.00),
+('MT02', 'gold', 15.00),
+('MT03', '14K Silver', 15.00),
+('MT04', 'silver', 2.00),
+('MT05', 'rose gold', 13.00)
+ON DUPLICATE KEY UPDATE
+metal=VALUES(metal),
+price=VALUES(price);
 
+-- =========================
+-- 1) CHARMS
+-- =========================
 INSERT INTO CHARM (charmID, qty, price, color, design, photoURL) VALUES
 ('A001', 1, 63.21, 'Multicolor', 'shapes', '/images/Charms/colorful/A001.jpg'),
 ('A002', 1, 63.32, 'Multicolor', 'shapes', '/images/Charms/colorful/A002.jpg'),
@@ -95,14 +108,15 @@ INSERT INTO CHARM (charmID, qty, price, color, design, photoURL) VALUES
 ('A090', 91, 70.12, 'Silver', 'letter cursive', '/images/Charms/letter/cursive.jpg'),
 ('A091', 24, 91.06, 'Silver', 'letter spark', '/images/Charms/letter/letter sprak1.jpg'),
 ('A092', 55, 61.70, 'Silver', 'letter spark', '/images/Charms/letter/letterspark2.jpg')
-ON DUPLICATE KEY UPDATE qty=VALUES(qty), price=VALUES(price), color=VALUES(color), design=VALUES(design), photoURL=VALUES(photoURL);
+ON DUPLICATE KEY UPDATE
+qty=VALUES(qty), price=VALUES(price), color=VALUES(color), design=VALUES(design), photoURL=VALUES(photoURL);
 
-DELETE FROM GEMS;
-DELETE FROM STONE;
-
-ALTER TABLE STONE ADD COLUMN colorHex VARCHAR(7);
+-- =========================
+-- 2) STONE (YOUR FULL LIST)
+-- (NO DELETE, NO ALTER)
+-- =========================
 INSERT INTO STONE
-(stoneID, certificationID, cut, gem, purity, rarity, price, color, weight, qty, photoURL,colorHex)
+(stoneID, certificationID, cut, gem, purity, rarity, price, color, weight, qty, photoURL, colorHex)
 VALUES
 ('S001', 'CERT-DIA-ROU-001', 'round', 'Diamond', 'real gem', 'rare', 450.00, 'clear', 1.210, 157, '/images/gems/diamond.jpg',NULL),
 ('S002', 'CERT-DIA-OVA-002', 'oval', 'Diamond', 'real gem', 'rare', 471.00, 'clear', 1.290, 140, '/images/gems/diamond.jpg',NULL),
@@ -123,146 +137,105 @@ VALUES
 
 ('S017', 'GIA-LG-SAP-YEL-RD-001', 'round',    'Sapphire', 'lab grown', NULL, 59.99, 'Yellow',     1.100, 140, NULL, '#F4D03F'),
 ('S018', 'GIA-LG-SAP-YEL-OV-002', 'oval',     'Sapphire', 'lab grown', NULL, 64.99, 'Yellow',     1.250, 120, NULL, '#F4D03F'),
-
--- Pink Sapphires
 ('S019', 'GIA-LG-SAP-PNK-PR-003', 'princess', 'Sapphire', 'lab grown', NULL, 62.99, 'Pink',       1.050, 130, NULL, '#FFB6C1'),
 ('S020', 'GIA-LG-SAP-PNK-PE-004', 'pear',     'Sapphire', 'lab grown', NULL, 66.99, 'Pink',       1.200, 115, NULL, '#FFB6C1'),
-
--- Lavender Sapphires
 ('S021', 'GIA-LG-SAP-LAV-RD-005', 'round',    'Sapphire', 'lab grown', NULL, 61.99, 'Lavender',   1.100, 125, NULL, '#E6E6FA'),
 ('S022', 'GIA-LG-SAP-LAV-OV-006', 'oval',     'Sapphire', 'lab grown', NULL, 65.99, 'Lavender',   1.250, 110, NULL, '#E6E6FA'),
-
--- Ice Sapphires
 ('S023', 'GIA-LG-SAP-ICE-PR-007', 'princess', 'Sapphire', 'lab grown', NULL, 58.99, 'Ice',        1.000, 150, NULL, '#E3F4FF'),
 ('S024', 'GIA-LG-SAP-ICE-PE-008', 'pear',     'Sapphire', 'lab grown', NULL, 63.99, 'Ice',        1.150, 130, NULL, '#E3F4FF'),
-
--- Peach Sapphires
 ('S025', 'GIA-LG-SAP-PEA-RD-009', 'round',    'Sapphire', 'lab grown', NULL, 60.99, 'Peach',      1.100, 135, NULL, '#FFDAB9'),
 ('S026', 'GIA-LG-SAP-PEA-OV-010', 'oval',     'Sapphire', 'lab grown', NULL, 64.49, 'Peach',      1.250, 120, NULL, '#FFDAB9'),
-
--- Blue Green Sapphires
 ('S027', 'GIA-LG-SAP-BLG-PR-011', 'princess', 'Sapphire', 'lab grown', NULL, 63.49, 'Blue Green', 1.050, 125, NULL, '#5F9EA0'),
 ('S028', 'GIA-LG-SAP-BLG-PE-012', 'pear',     'Sapphire', 'lab grown', NULL, 68.49, 'Blue Green', 1.200, 110, NULL, '#5F9EA0'),
-
--- Salmon Sapphires
 ('S029', 'GIA-LG-SAP-SAL-RD-013', 'round',    'Sapphire', 'lab grown', NULL, 62.49, 'Salmon',     1.100, 120, NULL, '#FA8072'),
 ('S030', 'GIA-LG-SAP-SAL-OV-014', 'oval',     'Sapphire', 'lab grown', NULL, 66.49, 'Salmon',     1.250, 105, NULL, '#FA8072'),
-
--- Orange Sapphires
 ('S031', 'GIA-LG-SAP-ORG-PR-015', 'princess', 'Sapphire', 'lab grown', NULL, 64.99, 'Orange',     1.050, 115, NULL, '#FF8C00'),
 ('S032', 'GIA-LG-SAP-ORG-PE-016', 'pear',     'Sapphire', 'lab grown', NULL, 69.99, 'Orange',     1.200, 100, NULL, '#FF8C00'),
-
--- White Sapphires
 ('S033', 'GIA-LG-SAP-WHT-RD-017', 'round',    'Sapphire', 'lab grown', NULL, 57.99, 'White',      1.000, 160, NULL, '#F5F5F5'),
 ('S034', 'GIA-LG-SAP-WHT-OV-018', 'oval',     'Sapphire', 'lab grown', NULL, 61.99, 'White',      1.150, 145, NULL, '#F5F5F5'),
-
--- Cognac Sapphires
 ('S035', 'GIA-LG-SAP-COG-PR-019', 'princess', 'Sapphire', 'lab grown', NULL, 66.99, 'Cognac',     1.100, 110, NULL, '#8B4513'),
 ('S036', 'GIA-LG-SAP-COG-PE-020', 'pear',     'Sapphire', 'lab grown', NULL, 71.99, 'Cognac',     1.250,  95, NULL, '#8B4513'),
-
--- Black Sapphires
 ('S037', 'GIA-LG-SAP-BLK-RD-021', 'round',    'Sapphire', 'lab grown', NULL, 65.49, 'Black',      1.200, 120, NULL, '#1C1C1C'),
 ('S038', 'GIA-LG-SAP-BLK-OV-022', 'oval',     'Sapphire', 'lab grown', NULL, 69.49, 'Black',      1.350, 100, NULL, '#1C1C1C'),
-
--- Traditional Sapphires (Deep Blue)
 ('S039', 'GIA-LG-SAP-TRD-PR-023', 'princess', 'Sapphire', 'lab grown', NULL, 67.99, 'Traditional',1.150, 110, NULL, '#1E3A8A'),
 ('S040', 'GIA-LG-SAP-TRD-PE-024', 'pear',     'Sapphire', 'lab grown', NULL, 72.99, 'Traditional',1.300,  95, NULL, '#1E3A8A'),
-
--- Fire Sapphires (Crimson Red/Orange)
 ('S041', 'GIA-LG-SAP-FIR-RD-025', 'round',    'Sapphire', 'lab grown', NULL, 68.99, 'Fire',       1.200, 105, NULL, '#DC143C'),
 ('S042', 'GIA-LG-SAP-FIR-OV-026', 'oval',     'Sapphire', 'lab grown', NULL, 73.99, 'Fire',       1.350,  90, NULL, '#DC143C'),
-
--- Green Sapphires
 ('S043', 'GIA-LG-SAP-GRN-PR-027', 'princess', 'Sapphire', 'lab grown', NULL, 64.49, 'Green',      1.100, 120, NULL, '#228B22'),
 ('S044', 'GIA-LG-SAP-GRN-PE-028', 'pear',     'Sapphire', 'lab grown', NULL, 69.49, 'Green',      1.250, 105, NULL, '#228B22'),
-
--- Raspberry Sapphires
 ('S045', 'GIA-LG-SAP-RAS-RD-029', 'round',    'Sapphire', 'lab grown', NULL, 66.49, 'Raspberry',  1.150, 115, NULL, '#E30B5C'),
 ('S046', 'GIA-LG-SAP-RAS-OV-030', 'oval',     'Sapphire', 'lab grown', NULL, 71.49, 'Raspberry',  1.300, 100, NULL, '#E30B5C'),
-
--- Kentucky Sapphires (Deep Blue)
 ('S047', 'GIA-LG-SAP-KEN-PR-031', 'princess', 'Sapphire', 'lab grown', NULL, 63.99, 'Kentucky',   1.100, 125, NULL, '#0033A0'),
 ('S048', 'GIA-LG-SAP-KEN-PE-032', 'pear',     'Sapphire', 'lab grown', NULL, 68.99, 'Kentucky',   1.250, 110, NULL, '#0033A0'),
 
--- January - Garnet (Deep Red)
-('B001', NULL, 'round',    'January', 'lab grown', NULL, 55.99, 'Garnet Red', 1.00, 1, NULL, '#9A2A2A'),
-('B002', NULL, 'oval',     'January', 'lab grown', NULL, 55.99, 'Garnet Red', 1.10, 45, NULL, '#9A2A2A'),
-('B003', NULL, 'pear',     'January', 'lab grown', NULL, 55.99, 'Garnet Red', 1.20, 40, NULL, '#9A2A2A'),
-('B004', NULL, 'princess', 'January', 'lab grown', NULL, 55.99, 'Garnet Red', 1.25, 35, NULL, '#9A2A2A'),
+('B001', NULL, 'round',    'January',   'lab grown', NULL, 55.99, 'Garnet Red',        1.00,  1, NULL, '#9A2A2A'),
+('B002', NULL, 'oval',     'January',   'lab grown', NULL, 55.99, 'Garnet Red',        1.10, 45, NULL, '#9A2A2A'),
+('B003', NULL, 'pear',     'January',   'lab grown', NULL, 55.99, 'Garnet Red',        1.20, 40, NULL, '#9A2A2A'),
+('B004', NULL, 'princess', 'January',   'lab grown', NULL, 55.99, 'Garnet Red',        1.25, 35, NULL, '#9A2A2A'),
+('B005', NULL, 'round',    'February',  'lab grown', NULL, 52.99, 'Amethyst Purple',   1.00,  2, NULL, '#9966CC'),
+('B006', NULL, 'oval',     'February',  'lab grown', NULL, 52.99, 'Amethyst Purple',   1.10, 45, NULL, '#9966CC'),
+('B007', NULL, 'pear',     'February',  'lab grown', NULL, 52.99, 'Amethyst Purple',   1.20, 40, NULL, '#9966CC'),
+('B008', NULL, 'princess', 'February',  'lab grown', NULL, 52.99, 'Amethyst Purple',   1.25, 35, NULL, '#9966CC'),
+('B009', NULL, 'round',    'March',     'lab grown', NULL, 54.99, 'Aquamarine Blue',   1.00, 50, NULL, '#7FDBFF'),
+('B010', NULL, 'oval',     'March',     'lab grown', NULL, 54.99, 'Aquamarine Blue',   1.10, 45, NULL, '#7FDBFF'),
+('B011', NULL, 'pear',     'March',     'lab grown', NULL, 54.99, 'Aquamarine Blue',   1.20, 40, NULL, '#7FDBFF'),
+('B012', NULL, 'princess', 'March',     'lab grown', NULL, 54.99, 'Aquamarine Blue',   1.25, 35, NULL, '#7FDBFF'),
+('B013', NULL, 'round',    'April',     'lab grown', NULL, 65.99, 'Diamond Clear',     1.00, 50, NULL, '#F0F8FF'),
+('B014', NULL, 'oval',     'April',     'lab grown', NULL, 65.99, 'Diamond Clear',     1.10, 45, NULL, '#F0F8FF'),
+('B015', NULL, 'pear',     'April',     'lab grown', NULL, 65.99, 'Diamond Clear',     1.20, 40, NULL, '#F0F8FF'),
+('B016', NULL, 'princess', 'April',     'lab grown', NULL, 65.99, 'Diamond Clear',     1.25, 35, NULL, '#F0F8FF'),
+('B017', NULL, 'round',    'May',       'lab grown', NULL, 62.99, 'Emerald Green',     1.00, 50, NULL, '#50C878'),
+('B018', NULL, 'oval',     'May',       'lab grown', NULL, 62.99, 'Emerald Green',     1.10, 45, NULL, '#50C878'),
+('B019', NULL, 'pear',     'May',       'lab grown', NULL, 62.99, 'Emerald Green',     1.20, 40, NULL, '#50C878'),
+('B020', NULL, 'princess', 'May',       'lab grown', NULL, 62.99, 'Emerald Green',     1.25, 35, NULL, '#50C878'),
+('B021', NULL, 'round',    'June',      'lab grown', NULL, 50.99, 'Pearl White',       1.00, 50, NULL, '#FAF0E6'),
+('B022', NULL, 'oval',     'June',      'lab grown', NULL, 50.99, 'Pearl White',       1.10, 45, NULL, '#FAF0E6'),
+('B023', NULL, 'pear',     'June',      'lab grown', NULL, 50.99, 'Pearl White',       1.20, 40, NULL, '#FAF0E6'),
+('B024', NULL, 'princess', 'June',      'lab grown', NULL, 50.99, 'Pearl White',       1.25, 35, NULL, '#FAF0E6'),
+('B025', NULL, 'round',    'July',      'lab grown', NULL, 63.99, 'Ruby Red',          1.00, 50, NULL, '#E0115F'),
+('B026', NULL, 'oval',     'July',      'lab grown', NULL, 63.99, 'Ruby Red',          1.10, 45, NULL, '#E0115F'),
+('B027', NULL, 'pear',     'July',      'lab grown', NULL, 63.99, 'Ruby Red',          1.20, 40, NULL, '#E0115F'),
+('B028', NULL, 'princess', 'July',      'lab grown', NULL, 63.99, 'Ruby Red',          1.25, 35, NULL, '#E0115F'),
+('B029', NULL, 'round',    'August',    'lab grown', NULL, 58.99, 'Peridot-Light Green',1.00, 50, NULL, '#B5E61D'),
+('B030', NULL, 'oval',     'August',    'lab grown', NULL, 58.99, 'Peridot-Light Green',1.10, 45, NULL, '#B5E61D'),
+('B031', NULL, 'pear',     'August',    'lab grown', NULL, 58.99, 'Peridot-Light Green',1.20, 40, NULL, '#B5E61D'),
+('B032', NULL, 'princess', 'August',    'lab grown', NULL, 58.99, 'Peridot-Light Green',1.25, 35, NULL, '#B5E61D'),
+('B033', NULL, 'round',    'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue',     1.00, 50, NULL, '#0F52BA'),
+('B034', NULL, 'oval',     'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue',     1.10, 45, NULL, '#0F52BA'),
+('B035', NULL, 'pear',     'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue',     1.20, 40, NULL, '#0F52BA'),
+('B036', NULL, 'princess', 'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue',     1.25, 35, NULL, '#0F52BA'),
+('B037', NULL, 'round',    'October',   'lab grown', NULL, 57.99, 'Opal-Multi',        1.00, 50, NULL, '#A8C3BC'),
+('B038', NULL, 'oval',     'October',   'lab grown', NULL, 57.99, 'Opal-Multi',        1.10, 45, NULL, '#A8C3BC'),
+('B039', NULL, 'pear',     'October',   'lab grown', NULL, 57.99, 'Opal-Multi',        1.20, 40, NULL, '#A8C3BC'),
+('B040', NULL, 'princess', 'October',   'lab grown', NULL, 57.99, 'Opal-Multi',        1.25, 35, NULL, '#A8C3BC'),
+('B041', NULL, 'round',    'November',  'lab grown', NULL, 59.99, 'Topaz-Yellow',      1.00, 50, NULL, '#FFD700'),
+('B042', NULL, 'oval',     'November',  'lab grown', NULL, 59.99, 'Topaz-Yellow',      1.10, 45, NULL, '#FFD700'),
+('B043', NULL, 'pear',     'November',  'lab grown', NULL, 59.99, 'Topaz-Yellow',      1.20, 40, NULL, '#FFD700'),
+('B044', NULL, 'princess', 'November',  'lab grown', NULL, 59.99, 'Topaz-Yellow',      1.25, 35, NULL, '#FFD700'),
+('B045', NULL, 'round',    'December',  'lab grown', NULL, 61.99, 'Blue Topaz',        1.00, 50, NULL, '#4682B4'),
+('B046', NULL, 'oval',     'December',  'lab grown', NULL, 61.99, 'Blue Topaz',        1.10, 45, NULL, '#4682B4'),
+('B047', NULL, 'pear',     'December',  'lab grown', NULL, 61.99, 'Blue Topaz',        1.20, 40, NULL, '#4682B4'),
+('B048', NULL, 'princess', 'December',  'lab grown', NULL, 61.99, 'Blue Topaz',        1.25, 35, NULL, '#4682B4'),
+('B049', NULL, 'round',    'December',  'lab grown', NULL, 61.99, 'Zircon Cyan',       1.00, 50, NULL, '#00CED1'),
+('B050', NULL, 'oval',     'December',  'lab grown', NULL, 61.99, 'Zircon Cyan',       1.10, 45, NULL, '#00CED1'),
+('B051', NULL, 'pear',     'December',  'lab grown', NULL, 61.99, 'Zircon Cyan',       1.20, 40, NULL, '#00CED1'),
+('B052', NULL, 'princess', 'December',  'lab grown', NULL, 61.99, 'Zircon Cyan',       1.25, 35, NULL, '#00CED1')
+ON DUPLICATE KEY UPDATE
+certificationID=VALUES(certificationID),
+cut=VALUES(cut),
+gem=VALUES(gem),
+purity=VALUES(purity),
+rarity=VALUES(rarity),
+price=VALUES(price),
+color=VALUES(color),
+weight=VALUES(weight),
+qty=VALUES(qty),
+photoURL=VALUES(photoURL),
+colorHex=VALUES(colorHex);
 
--- February - Amethyst (Medium Purple)
-('B005', NULL, 'round',    'February', 'lab grown', NULL, 52.99, 'Amethyst Purple', 1.00, 2, NULL, '#9966CC'),
-('B006', NULL, 'oval',     'February', 'lab grown', NULL, 52.99, 'Amethyst Purple', 1.10, 45, NULL, '#9966CC'),
-('B007', NULL, 'pear',     'February', 'lab grown', NULL, 52.99, 'Amethyst Purple', 1.20, 40, NULL, '#9966CC'),
-('B008', NULL, 'princess', 'February', 'lab grown', NULL, 52.99, 'Amethyst Purple', 1.25, 35, NULL, '#9966CC'),
-
--- March - Aquamarine (Light Blue)
-('B009', NULL, 'round',    'March', 'lab grown', NULL, 54.99, 'Aquamarine Blue', 1.00, 50, NULL, '#7FDBFF'),
-('B010', NULL, 'oval',     'March', 'lab grown', NULL, 54.99, 'Aquamarine Blue', 1.10, 45, NULL, '#7FDBFF'),
-('B011', NULL, 'pear',     'March', 'lab grown', NULL, 54.99, 'Aquamarine Blue', 1.20, 40, NULL, '#7FDBFF'),
-('B012', NULL, 'princess', 'March', 'lab grown', NULL, 54.99, 'Aquamarine Blue', 1.25, 35, NULL, '#7FDBFF'),
-
--- April - Diamond (Clear/White)
-('B013', NULL, 'round',    'April', 'lab grown', NULL, 65.99, 'Diamond Clear', 1.00, 50, NULL, '#F0F8FF'),
-('B014', NULL, 'oval',     'April', 'lab grown', NULL, 65.99, 'Diamond Clear', 1.10, 45, NULL, '#F0F8FF'),
-('B015', NULL, 'pear',     'April', 'lab grown', NULL, 65.99, 'Diamond Clear', 1.20, 40, NULL, '#F0F8FF'),
-('B016', NULL, 'princess', 'April', 'lab grown', NULL, 65.99, 'Diamond Clear', 1.25, 35, NULL, '#F0F8FF'),
-
--- May - Emerald (Rich Green)
-('B017', NULL, 'round',    'May', 'lab grown', NULL, 62.99, 'Emerald Green', 1.00, 50, NULL, '#50C878'),
-('B018', NULL, 'oval',     'May', 'lab grown', NULL, 62.99, 'Emerald Green', 1.10, 45, NULL, '#50C878'),
-('B019', NULL, 'pear',     'May', 'lab grown', NULL, 62.99, 'Emerald Green', 1.20, 40, NULL, '#50C878'),
-('B020', NULL, 'princess', 'May', 'lab grown', NULL, 62.99, 'Emerald Green', 1.25, 35, NULL, '#50C878'),
-
--- June - Pearl (Cream White)
-('B021', NULL, 'round',    'June', 'lab grown', NULL, 50.99, 'Pearl White', 1.00, 50, NULL, '#FAF0E6'),
-('B022', NULL, 'oval',     'June', 'lab grown', NULL, 50.99, 'Pearl White', 1.10, 45, NULL, '#FAF0E6'),
-('B023', NULL, 'pear',     'June', 'lab grown', NULL, 50.99, 'Pearl White', 1.20, 40, NULL, '#FAF0E6'),
-('B024', NULL, 'princess', 'June', 'lab grown', NULL, 50.99, 'Pearl White', 1.25, 35, NULL, '#FAF0E6'),
-
--- July - Ruby (Bright Red)
-('B025', NULL, 'round',    'July', 'lab grown', NULL, 63.99, 'Ruby Red', 1.00, 50, NULL, '#E0115F'),
-('B026', NULL, 'oval',     'July', 'lab grown', NULL, 63.99, 'Ruby Red', 1.10, 45, NULL, '#E0115F'),
-('B027', NULL, 'pear',     'July', 'lab grown', NULL, 63.99, 'Ruby Red', 1.20, 40, NULL, '#E0115F'),
-('B028', NULL, 'princess', 'July', 'lab grown', NULL, 63.99, 'Ruby Red', 1.25, 35, NULL, '#E0115F'),
-
--- August - Peridot (Yellow-Green)
-('B029', NULL, 'round',    'August', 'lab grown', NULL, 58.99, 'Peridot-Light Green', 1.00, 50, NULL, '#B5E61D'),
-('B030', NULL, 'oval',     'August', 'lab grown', NULL, 58.99, 'Peridot-Light Green', 1.10, 45, NULL, '#B5E61D'),
-('B031', NULL, 'pear',     'August', 'lab grown', NULL, 58.99, 'Peridot-Light Green', 1.20, 40, NULL, '#B5E61D'),
-('B032', NULL, 'princess', 'August', 'lab grown', NULL, 58.99, 'Peridot-Light Green', 1.25, 35, NULL, '#B5E61D'),
-
--- September - Sapphire (Royal Blue)
-('B033', NULL, 'round',    'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue', 1.00, 50, NULL, '#0F52BA'),
-('B034', NULL, 'oval',     'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue', 1.10, 45, NULL, '#0F52BA'),
-('B035', NULL, 'pear',     'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue', 1.20, 40, NULL, '#0F52BA'),
-('B036', NULL, 'princess', 'September', 'lab grown', NULL, 62.99, 'Sapphire-Blue', 1.25, 35, NULL, '#0F52BA'),
-
--- October - Opal (Iridescent Multi)
-('B037', NULL, 'round',    'October', 'lab grown', NULL, 57.99, 'Opal-Multi', 1.00, 50, NULL, '#A8C3BC'),
-('B038', NULL, 'oval',     'October', 'lab grown', NULL, 57.99, 'Opal-Multi', 1.10, 45, NULL, '#A8C3BC'),
-('B039', NULL, 'pear',     'October', 'lab grown', NULL, 57.99, 'Opal-Multi', 1.20, 40, NULL, '#A8C3BC'),
-('B040', NULL, 'princess', 'October', 'lab grown', NULL, 57.99, 'Opal-Multi', 1.25, 35, NULL, '#A8C3BC'),
-
--- November - Topaz (Golden Yellow)
-('B041', NULL, 'round',    'November', 'lab grown', NULL, 59.99, 'Topaz-Yellow', 1.00, 50, NULL, '#FFD700'),
-('B042', NULL, 'oval',     'November', 'lab grown', NULL, 59.99, 'Topaz-Yellow', 1.10, 45, NULL, '#FFD700'),
-('B043', NULL, 'pear',     'November', 'lab grown', NULL, 59.99, 'Topaz-Yellow', 1.20, 40, NULL, '#FFD700'),
-('B044', NULL, 'princess', 'November', 'lab grown', NULL, 59.99, 'Topaz-Yellow', 1.25, 35, NULL, '#FFD700'),
-
--- December - Blue Topaz (Steel Blue)
-('B045', NULL, 'round',    'December', 'lab grown', NULL, 61.99, 'Blue Topaz', 1.00, 50, NULL, '#4682B4'),
-('B046', NULL, 'oval',     'December', 'lab grown', NULL, 61.99, 'Blue Topaz', 1.10, 45, NULL, '#4682B4'),
-('B047', NULL, 'pear',     'December', 'lab grown', NULL, 61.99, 'Blue Topaz', 1.20, 40, NULL, '#4682B4'),
-('B048', NULL, 'princess', 'December', 'lab grown', NULL, 61.99, 'Blue Topaz', 1.25, 35, NULL, '#4682B4'),
-
--- December - Blue Zircon (Bright Cyan)
-('B049', NULL, 'round',    'December', 'lab grown', NULL, 61.99, 'Zircon Cyan', 1.00, 50, NULL, '#00CED1'),
-('B050', NULL, 'oval',     'December', 'lab grown', NULL, 61.99, 'Zircon Cyan', 1.10, 45, NULL, '#00CED1'),
-('B051', NULL, 'pear',     'December', 'lab grown', NULL, 61.99, 'Zircon Cyan', 1.20, 40, NULL, '#00CED1'),
-('B052', NULL, 'princess', 'December', 'lab grown', NULL, 61.99, 'Zircon Cyan', 1.25, 35, NULL, '#00CED1');
-
-SELECT * FROM SUPPLIER;
+-- =========================
+-- 3) SUPPLIER
+-- =========================
 INSERT INTO supplier
 (supplierID, name, location, email, countryCode, phoneNb, description)
 VALUES
@@ -281,33 +254,22 @@ countryCode=VALUES(countryCode),
 phoneNb=VALUES(phoneNb),
 description=VALUES(description);
 
+-- =========================
+-- 4) LINK SUPPLIER
+-- (no UPDATE joins needed)
+-- =========================
 
 -- All materials -> SU01
-INSERT IGNORE INTO SUPPLIER_MATERIAL (supplierID, materialID)
+INSERT IGNORE INTO supplier_material (supplierID, materialID)
 SELECT 'SU01', m.materialID
-FROM MATERIAL m;
+FROM material m;
 
--- All stones -> SU01
-INSERT IGNORE INTO SUPPLIER_STONE (supplierID, stoneID)
-SELECT 'SU01', s.stoneID
-FROM STONE s;
+-- All stones -> SU01 (include qty)
+INSERT IGNORE INTO supplier_stone (supplierID, stoneID, qty)
+SELECT 'SU01', s.stoneID, s.qty
+FROM stone s;
 
--- All charms -> SU01
-INSERT IGNORE INTO SUPPLIER_CHARM (supplierID, charmID)
-SELECT 'SU01', c.charmID
-FROM CHARM c;
-
-
-UPDATE supplier_charm sc
-JOIN charm c ON c.charmID = sc.charmID
-SET sc.qty = c.qty;
-UPDATE supplier_stone ss
-JOIN stone s ON s.stoneID = ss.stoneID
-SET ss.qty = s.qty;
-
-INSERT INTO MATERIAL (materialID,metal,price)Values
-('MT01', '14K Gold', 12.00),
-('MT02', 'gold', 15.00),
-('MT03', '14K Silver', 15.00),
-('MT04', 'silver', 2.00),
-('MT05', 'rose gold', 13.00);
+-- All charms -> SU01 (include qty)
+INSERT IGNORE INTO supplier_charm (supplierID, charmID, qty)
+SELECT 'SU01', c.charmID, c.qty
+FROM charm c;
