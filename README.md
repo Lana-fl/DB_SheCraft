@@ -115,7 +115,7 @@ SQL scripts location:
 DO NOTE: the database is initially empty in terms of customers and designers so you would need to populate it in terms of designers before ordering as a customer. 
 
 ## Backend Setup (Port 5000)🔌
-Create a .env file inside BackEnd/shecraft-backend/:
+Create a .env file inside BackEnd/shecraft-backend/src:
 ```bash
 env
 PORT=5000
