@@ -19,9 +19,9 @@ SET sql_mode = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTIT
 CREATE TABLE designer (
   designerID    VARCHAR(4)   NOT NULL,
   name          VARCHAR(100) NOT NULL,
-  branch        VARCHAR(100) NOT NULL,
+  branch        VARCHAR(100) ,
   email         VARCHAR(100) NOT NULL,
-  countryCode   VARCHAR(5)   NOT NULL DEFAULT '+961',
+  countryCode   VARCHAR(5)   DEFAULT '+961',
   phoneNb       CHAR(8)      NULL,
   passwordHash  VARCHAR(255) NOT NULL,
 
@@ -36,7 +36,7 @@ CREATE TABLE customer (
   customerID    VARCHAR(4)   NOT NULL,
   firstName     VARCHAR(50)  NOT NULL,
   lastName      VARCHAR(50),
-  countryCode   VARCHAR(5)   NOT NULL DEFAULT '+961',
+  countryCode   VARCHAR(5)   DEFAULT '+961',
   phoneNb       CHAR(8)      ,
   email         VARCHAR(100) NOT NULL,
   cardNb        VARCHAR(255),
@@ -54,8 +54,8 @@ CREATE TABLE supplier (
   name         VARCHAR(100) NOT NULL,
   location     VARCHAR(200) NULL,
   email        VARCHAR(100) NULL,
-  countryCode  VARCHAR(5)   NOT NULL DEFAULT '+961',
-  phoneNb      CHAR(8)      NULL,
+  countryCode  VARCHAR(5)   DEFAULT '+961',
+  phoneNb      CHAR(8) ,
   description  VARCHAR(100) NULL,
 
   PRIMARY KEY (supplierID),
@@ -72,7 +72,7 @@ CREATE TABLE supplier (
 CREATE TABLE material (
   materialID VARCHAR(4)    NOT NULL,
   metal      VARCHAR(50)   NOT NULL,
-  price      DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  price      DECIMAL(10,2) DEFAULT 0.00,
 
   PRIMARY KEY (materialID),
 
@@ -82,9 +82,9 @@ CREATE TABLE material (
 
 CREATE TABLE accessory (
   accessoryID VARCHAR(4)    NOT NULL,
-  price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  price       DECIMAL(10,2) DEFAULT 0.00,
   materialID  VARCHAR(4)    NULL,
-  status      VARCHAR(20)   NOT NULL DEFAULT 'reserved',
+  status      VARCHAR(20)   DEFAULT 'reserved',
 
   PRIMARY KEY (accessoryID),
 
@@ -104,11 +104,11 @@ CREATE TABLE accessory (
 
 CREATE TABLE charm (
   charmID   VARCHAR(4)    NOT NULL,
-  qty       INT           NOT NULL DEFAULT 0,
-  price     DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  color     VARCHAR(20)   NOT NULL,
-  design    VARCHAR(20)   NOT NULL,
-  photoURL  VARCHAR(500)  NULL,
+  qty       INT           DEFAULT 0,
+  price     DECIMAL(10,2) DEFAULT 0.00,
+  color     VARCHAR(20)   ,
+  design    VARCHAR(20)   ,
+  photoURL  VARCHAR(500)  ,
 
   PRIMARY KEY (charmID),
 
@@ -120,18 +120,17 @@ CREATE TABLE charm (
 
 CREATE TABLE stone (
   stoneID         VARCHAR(4)    NOT NULL,
-  certificationID VARCHAR(50)   NULL,
-  cut             VARCHAR(50)   NOT NULL,
-  gem             VARCHAR(50)   NOT NULL,
-  purity          VARCHAR(50)   NOT NULL,
-  rarity          VARCHAR(50)   NULL,
-  price           DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  color           VARCHAR(30)   NULL,
-  weight          DECIMAL(8,3)  NULL,
-  qty             INT           NOT NULL DEFAULT 0,
-  photoURL        VARCHAR(500)  NULL,
-  colorHex        VARCHAR(7)    NULL,
-
+  certificationID VARCHAR(50)   ,
+  cut             VARCHAR(50)   ,
+  gem             VARCHAR(50)   ,
+  purity          VARCHAR(50)   ,
+  rarity          VARCHAR(50)   ,
+  price           DECIMAL(10,2) DEFAULT 0.00,
+  color           VARCHAR(30)   ,
+  weight          DECIMAL(8,3)  ,
+  qty             INT           DEFAULT 1,
+  photoURL        VARCHAR(500)  ,
+  colorHex        VARCHAR(7)    ,
   PRIMARY KEY (stoneID),
 
   CONSTRAINT chk_stone_qty   CHECK (qty >= 0),
@@ -147,7 +146,7 @@ CREATE TABLE stone (
 CREATE TABLE ornaments (
   charmID     VARCHAR(4) NOT NULL,
   accessoryID VARCHAR(4) NOT NULL,
-  quantity    INT        NOT NULL,
+  quantity    INT        ,
 
   PRIMARY KEY (charmID, accessoryID),
 
@@ -167,7 +166,7 @@ CREATE TABLE ornaments (
 CREATE TABLE gems (
   accessoryID VARCHAR(4)   NOT NULL,
   stoneID     VARCHAR(4)   NOT NULL,
-  quantity    DECIMAL(3,0) NOT NULL,
+  quantity    DECIMAL(3,0) ,
 
   PRIMARY KEY (accessoryID, stoneID),
 
@@ -267,16 +266,16 @@ CREATE TABLE ring (
 
 CREATE TABLE orders (
   orderID         VARCHAR(4)    NOT NULL,
-  qty             DECIMAL(4,0)  NOT NULL,
-  designerID      VARCHAR(4)    NULL,
-  isPickup        TINYINT(1)    NOT NULL DEFAULT 0,
-  price           DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  orderDate       DATE          NOT NULL,
-  completionDate  DATE          NULL,
-  address         VARCHAR(100)  NULL,
-  paymentType     VARCHAR(50)   NOT NULL,
-  customerID      VARCHAR(4)    NOT NULL,
-  status          VARCHAR(20)   NOT NULL DEFAULT 'pending',
+  qty             DECIMAL(4,0)  ,
+  designerID      VARCHAR(4)    ,
+  isPickup        TINYINT(1)     DEFAULT 0,
+  price           DECIMAL(10,2)  DEFAULT 0.00,
+  orderDate       DATE          ,
+  completionDate  DATE          ,
+  address         VARCHAR(100)  ,
+  paymentType     VARCHAR(50)   ,
+  customerID      VARCHAR(4)    ,
+  status          VARCHAR(20)    DEFAULT 'pending',
 
   PRIMARY KEY (orderID),
 
@@ -336,7 +335,7 @@ CREATE TABLE supplier_material (
 CREATE TABLE supplier_stone (
   supplierID VARCHAR(10) NOT NULL,
   stoneID    VARCHAR(10) NOT NULL,
-  qty        INT NOT NULL DEFAULT 1,
+  qty        INT DEFAULT 1,
 
   PRIMARY KEY (supplierID, stoneID),
 
@@ -354,7 +353,7 @@ CREATE TABLE supplier_stone (
 CREATE TABLE supplier_charm (
   supplierID VARCHAR(10) NOT NULL,
   charmID    VARCHAR(10) NOT NULL,
-  qty        INT NOT NULL DEFAULT 1,
+  qty        INT DEFAULT 1,
 
   PRIMARY KEY (supplierID, charmID),
 
